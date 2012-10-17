@@ -23,7 +23,7 @@ Struktura pro práci se zásobníkem (postavené nad jednocestným seznamem)
 	- stackTop - vrací tStackItem na vrcholu zásobníku
 
 Struktura pro práci s vyváženým binárním stromem
- - struktura (tbTree) bude reprezentovat binární strom, kde jednotlivé uzly budou reprezentovány strukturami (tbTreeNode), klíčem by měl být název, tudíž prozatím tString
+ - struktura (tBTree) bude reprezentovat binární strom, kde jednotlivé uzly budou reprezentovány strukturami (tbTreeNode), klíčem by měl být název, tudíž prozatím tString
  - funkce:
 	- btInit - iniciliazce binarního stromu
 	- btFree - uvolnění binárního stromu
