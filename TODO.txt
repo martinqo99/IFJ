@@ -1,0 +1,12 @@
+Vlastní třída pro nekoněčně dlouhé řetězce
+ - struktura (tString) by měla obsahovat samotné pole (char*), délku řetězce (uint) a velikost v paměti (uint)
+ - funkce:
+	- strInit - inicializuje prázdný řetězec
+	- strFree - uvolní řetězec
+	- strClear - vyprázdní řětězec
+	- strAdd - přídá znak (char) na konec řětězce
+	- strCopy - zkopíruje řětězec (char*)
+	- strCmp - porovná dva řětězce (dva tStringy)
+	- strRaw - vrácí ukazatel na char*
+	- strLen - vrátí délku řetězce
+	- strSize - vrátí naalokovanou velikost
