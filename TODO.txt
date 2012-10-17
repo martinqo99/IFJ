@@ -1,4 +1,4 @@
-Vlastní třída pro nekoněčně dlouhé řetězce
+Vlastní struktura pro nekoněčně dlouhé řetězce
  - struktura (tString) by měla obsahovat samotné pole (char*), délku řetězce (uint) a velikost v paměti (uint)
  - funkce:
 	- strInit - inicializuje prázdný řetězec
@@ -10,3 +10,16 @@ Vlastní třída pro nekoněčně dlouhé řetězce
 	- strRaw - vrácí ukazatel na char*
 	- strLen - vrátí délku řetězce
 	- strSize - vrátí naalokovanou velikost
+	
+Struktura pro práci se zásobníkem (postavené nad jednocestným seznamem)
+ - struktura (tStack) by měla obsahovat linerárně řetězený seznam struktur (tStackItem)
+ - funkce:
+	- stackInit - inicializuje zásobník
+	- stackFree - uvolní položky ze zásobníku
+	- stackEmpty - bool vrací pokud je prázdný zásobník
+	- stackPush - přidává tStackItem na vrchol zásobníku
+	- stackPop - vybírá tStackItem z vrcholu zásobníku
+	- stackSize - vrací počet položek v zásobníku
+	- stackTop - vrací tStackItem na vrcholu zásobníku
+
+	
