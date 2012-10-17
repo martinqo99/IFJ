@@ -22,4 +22,12 @@ Struktura pro práci se zásobníkem (postavené nad jednocestným seznamem)
 	- stackSize - vrací počet položek v zásobníku
 	- stackTop - vrací tStackItem na vrcholu zásobníku
 
+Struktura pro práci s vyváženým binárním stromem
+ - struktura (tbTree) bude reprezentovat binární strom, kde jednotlivé uzly budou reprezentovány strukturami (tbTreeNode), klíčem by měl být název, tudíž prozatím tString
+ - funkce:
+	- btInit - iniciliazce binarního stromu
+	- btFree - uvolnění binárního stromu
+	- btInsert - vložení prvku do stromu
+	- btFind - vyhledání v binárním stromu
+	
 	
