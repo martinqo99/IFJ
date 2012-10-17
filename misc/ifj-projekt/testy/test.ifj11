@@ -1,0 +1,26 @@
+function fun(a)
+  local b=a*2;
+  if b<10000 then
+    a=fun(b);
+  else end;
+end
+
+function main()
+local a=1;
+  a=fun(a);
+  end;
+  vracia syntax err na 4. riadku
+  
+  ked to zmenim na:
+  function fun(a)
+  local a=a*2;
+  if b<10000
+  a=fun(a);
+  else
+  end;
+end
+
+function main()
+  local a=1;
+  a=fun(a);
+end;

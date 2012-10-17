@@ -1,0 +1,12 @@
+function fun()
+local main=1;
+if (main*10)<20 then
+  write("ok");
+else
+end;
+end
+
+function main()
+local a;
+a=fun();
+end;

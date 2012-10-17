@@ -1,0 +1,22 @@
+function main()
+return 0+21;
+return 0-21;
+return 0*21;
+return 0/21;
+return 0^21;
+return 0<21;
+return 0<=21;
+return 0>21;
+return 0>=21;
+return 0==21;
+return 0~=21;
+return "abc"<"def";
+return "abc"<="def";
+return "abc">"def";
+return "abc">="def";
+return "abc"=="def";
+return "abc"~="def";
+return "abc".."def";
+return "abc"==21;
+return "abc"~=21;
+end;

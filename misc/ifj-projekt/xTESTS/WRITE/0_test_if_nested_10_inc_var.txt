@@ -1,0 +1,55 @@
+function main()
+local a=0;
+if 1 then
+  a=a+1; --1
+  if 2 then
+    a=a+1; --2
+    if 3 then
+      a=a+1; --3
+      if 4 then
+        a=a+1; --4
+        if 5 then
+          a=a+1; --5
+          if 6 then
+            a=a+1; --6
+	    if 7 then
+              a=a+1; --7
+              if 8 then
+                a=a+1; --8
+                if 9 then
+                  a=a+1; --9
+                  if 10 then
+                    a=a+1; --10
+                    write(a);
+                  else
+                    write("bad");
+                  end;
+                else
+                  write("bad");
+		end;
+	      else
+                write("bad");
+              end;
+	    else
+              write("bad");
+            end;
+          else
+            write("bad");
+          end;
+        else
+          write("bad");
+        end;
+      else
+        write("bad");
+      end;
+    else
+      write("bad");
+    end;
+  else
+    write("bad");
+  end;
+else
+  write("bad");
+end;
+write(a);
+end;

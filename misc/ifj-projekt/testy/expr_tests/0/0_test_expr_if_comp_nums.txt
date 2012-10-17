@@ -1,0 +1,26 @@
+function main()
+if 0<21 then
+write("ok");
+else
+end;
+if 0<=21 then
+write("ok");
+else
+end;
+if 0>21 then
+else
+write("ok");
+end;
+if 0>=21 then
+else
+write("ok");
+end;
+if 0==21 then
+else
+write("ok");
+end;
+if 0~=21 then
+write("ok");
+else
+end;
+end;

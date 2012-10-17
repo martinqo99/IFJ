@@ -1,0 +1,15 @@
+function fun2(main)
+write(main);
+end;
+
+function fun()
+local main;
+local b;
+main=10;
+b=fun2(main);
+end
+
+function main()
+local a;
+a=fun();
+end;

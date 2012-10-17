@@ -1,0 +1,19 @@
+function fun2(a)
+local b=0;
+repeat
+  a=a+1;
+  b=b+1;
+until b==5;
+return a;
+end
+
+function fun(a)
+repeat
+  a=fun2(a)
+until a>100;
+end
+
+function main()
+local a=0;
+a=fun(a);
+end;

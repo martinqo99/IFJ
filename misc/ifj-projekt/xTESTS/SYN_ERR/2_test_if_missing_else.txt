@@ -1,0 +1,5 @@
+function main()
+local a;
+if a then
+end;
+end;

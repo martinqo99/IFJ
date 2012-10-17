@@ -1,0 +1,298 @@
+--
+-- Asymmetric traveling salesman problem – naïve solution
+--
+-- developed by Jaromír Karmazín <xkarma06@stud.fit.vutbr.cz>
+--
+
+--[[ Convert a number from range 1..26 to a letter in range A..Z. ]]
+function num_to_letter(num)
+
+    local letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    local letter;
+
+    letter = substr(letters, num, num);
+
+    return letter;
+
+end
+
+--[[ Convert a letter from range A..Z to a number in range 1..26. ]]
+function letter_to_num(letter)
+
+    local letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    local num;
+
+    num = find(letters, letter);
+
+    return num;
+
+end
+
+--[[ Convert a digit in range 0..9 to its corresponding numeric value. ]]
+function digit_to_num(digit)
+
+    local digits = "0123456789";
+    local num;
+
+    num = find(digits, digit);
+    num = num - 1;
+
+    return num;
+
+end
+
+--[[ Get the first (num) letters from the alphabet, which will represent
+     the cities we have to visit. ]]
+function get_city_list(num)
+
+    local letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    local list;
+
+    list = substr(letters, 1, num);
+
+    return list;
+
+end
+
+--[[ Remove a single letter from a string. ]]
+function remove_letter(haystack, needle)
+
+    local pos;
+    local lpos;
+    local rpos;
+    local epos;
+    local left;
+    local right;
+
+    pos = find(haystack, needle);
+
+    if pos ~= false then
+        lpos = pos - 1;
+        rpos = pos + 1;
+        epos = 0 - 1;
+        left = substr(haystack, 1, lpos);
+        right = substr(haystack, rpos, epos);
+        haystack = left .. right;
+    else end;
+
+    return haystack;
+
+end
+
+--[[ Get the distance between two cities (given as numeric indexes). ]]
+function get_distance(distances, cities, from, to)
+
+    local idx;
+    local char;
+
+    idx = cities * (from - 1) + to;
+    char = substr(distances, idx, idx);
+
+    return char;
+    
+end
+
+--[[ Calculate the length of a path (given as a string of letters). ]]
+function get_path_length(distances, cities, path)
+
+    local total = 0;
+    local from_idx = 1;
+    local to_idx = 2;
+    local from_letter;
+    local to_letter;
+    local from_num;
+    local to_num;
+    local dist;
+
+    from_letter = substr(path, from_idx, from_idx);
+    to_letter = substr(path, to_idx, to_idx);
+    from_num = letter_to_num(from_letter);
+    to_num = letter_to_num(to_letter);
+
+    while to_letter ~= "" do
+
+        dist = get_distance(distances, cities, from_num, to_num);
+        dist = digit_to_num(dist);
+        total = total + dist;
+
+        from_idx = to_idx;
+        to_idx = to_idx + 1;
+        from_letter = to_letter;
+        to_letter = substr(path, to_idx, to_idx);
+        from_num = to_num;
+        to_num = letter_to_num(to_letter);
+
+    end;
+
+    return total;
+
+end
+
+--[[ Print the distance matrix in a neat way. ]]
+function print_matrix(distances, cities)
+    
+    local x = 1;
+    local y = 1;
+    local c;
+    local d;
+
+    -- table header
+    write("    ");
+    while x <= cities do
+        c = num_to_letter(x);
+        write(c, " ");
+        x = x + 1;
+    end;
+    write("\n");
+
+    -- table upper border
+    write("  +-");
+    x = 1;
+    while x <= cities do
+        write("--");
+        x = x + 1;
+    end;
+    write("+\n");
+
+    -- table cells
+    while y <= cities do
+        c = num_to_letter(y);
+        write(c, " | ");
+        x = 1;
+        while x <= cities do
+            d = get_distance(distances, cities, y, x);
+            write(d, " ");
+            x = x + 1;
+        end;
+        write("|\n");
+        y = y + 1;
+    end;
+
+    -- table lower border
+    write("  +-");
+    x = 1;
+    while x <= cities do
+        write("--");
+        x = x + 1;
+    end;
+    write("+\n");
+
+    return distances;
+
+end
+
+--[[ Choose among (remaining) the shortest possible path
+     and return it concatenated with (path). ]]
+function get_best_path(path, remaining, distances, cities)
+
+    local try = 1;
+    local best_path;
+    local best_len = 999999;
+    local new_path;
+    local new_city;
+    local new_rem;
+    local sub_path;
+    local sub_len;
+
+    if remaining == "" then
+
+        return path;
+
+    else
+
+        new_city = substr(remaining, try, try);
+        while new_city ~= "" do
+
+            new_path = path .. new_city;
+            new_rem = remove_letter(remaining, new_city);
+
+            sub_path = get_best_path(new_path, new_rem, distances, cities);
+            sub_len = get_path_length(distances, cities, sub_path);
+
+            if sub_len < best_len then
+                best_len = sub_len;
+                best_path = sub_path;
+            else end;
+            
+            try = try + 1;
+            new_city = substr(remaining, try, try);
+
+        end;
+
+        return best_path;
+
+    end;
+
+end
+
+--[[ Main function. ]]
+function main()
+
+    local cities;
+    local distances = "";
+    local matrix_size;
+    local char;
+    local last_char = "";
+    local best_path;
+    local city_list;
+    local length;
+
+    -- Introduction.
+
+    write("Asymmetric traveling salesman problem – naïve solution\n");
+    write("------------------------------------------------------\n");
+
+    -- Load the number of cities.
+
+    write("Enter the number of cities (between 2 and 26, inclusive):\n");
+    cities = read("*n");
+
+    if cities < 2 then
+        write("Number of cities must be at least 2.\n");
+        return nil;
+    else end;
+
+    if cities > 26 then
+        write("Number of cities must be no more than 26.\n");
+        return nil;
+    else end;
+
+    -- Load the distance matrix.
+
+    matrix_size = cities^2;
+    write("Enter the distance matrix");
+    write(" (", matrix_size, " digits in range 0..9):\n");
+
+    while last_char == "" do
+        char = read(1);
+        if char == nil then
+            write("Too few digits in the distance matrix.\n");
+            return nil;
+        else end;
+        if char >= "0" then
+            if char <= "9" then
+                distances = distances .. char;
+            else end;
+        else end;
+        last_char = substr(distances, matrix_size, matrix_size);
+    end;
+
+    -- Print the distance matrix back.
+
+    write("Distance matrix:\n");
+    distances = print_matrix(distances, cities);
+
+    -- Start solving the problem by brute force.
+
+    write("Solving...\n");
+
+    city_list = get_city_list(cities);
+    best_path = get_best_path("", city_list, distances, cities);
+    length = get_path_length(distances, cities, best_path);
+
+    write("Best path is: ", best_path, "\n");
+    write("Length: ", length, "\n");
+
+end;
+
+-- vim: set sw=4 ts=4 et:

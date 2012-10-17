@@ -1,0 +1,33 @@
+#!/bin/sh
+if [ "$#" -eq 0 ]; then
+  echo ""
+  echo "USE: ./tester PROG SRC1 [SRC2] [SRC3] ..."
+  echo "PROG - testovany program"
+  echo "SRC# - zdrojak pre testovany program"
+  exit 0
+fi
+if [ $# -lt 2 ]; then
+  echo ""
+  echo "Ziaden zdrojovy subor!"
+  exit 1
+fi
+program=$1
+echo ""
+for i in `seq 2 $#`; do
+  source=$2
+  ./$program $source 2>/dev/null >/dev/null
+  err=$?
+  echo "$program so vstupom $source vratil $err"
+  case $err in
+    0) echo "ZIADNA CHYBA\n";;
+    1) echo "LEXIKALNA CHYBA\n";;
+    2) echo "SYNTAKTICKA CHYBA\n";;
+    3) echo "SEMANTICKA CHYBA\n";;
+    4) echo "CHYBA PRI INTERPRETACII\n";;
+    5) echo "INTERNA CHYBA\n";;
+    *) echo "!NEOCAKAVANA CHYBA!\n";;
+  esac
+  shift
+done
+exit 0
+

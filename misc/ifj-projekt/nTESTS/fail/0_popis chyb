@@ -1,0 +1,18 @@
+1. test: case sensitive (end s velkym E)
+2. test: identifikator zacina cislem
+3. test: promenna ma nazev rezervovaneho slova (for)
+4. test: prirazeni zaporneho cisla
+5. test: komentar uvozen pouze jednou pomlckou
+6. test: komentar ukoncem pouze jednou zavorkou
+7. test: 2 funkce se jmenuji stejne
+8. test: carka za poslednim parametrem funkce
+9. test: main neni posledni funkce
+10.test: main neexistuje
+11.test: za main neni strednik
+12.test: za obycejnou funkci je strednik
+13.test: chybejici strednik
+14.test: na leve strane prirazeni neni promenna
+15.test: nedeklarovana promenna
+16.test: if bez then
+17.test: prohozeni else a elseif
+18.test: while neni ukoncen endem

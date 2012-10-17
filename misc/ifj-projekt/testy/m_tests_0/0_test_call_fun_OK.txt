@@ -1,0 +1,12 @@
+function fun1()
+end
+
+function fun2()
+local c;
+c=fun1();
+end
+
+function main()
+local a;
+local b;
+end;

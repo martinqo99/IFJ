@@ -1,0 +1,5 @@
+function main()
+local b="one";
+local c="two";
+local a=b*c;
+end;

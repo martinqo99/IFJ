@@ -1,0 +1,4 @@
+function main()
+local a=2*5;
+write(a);
+end;

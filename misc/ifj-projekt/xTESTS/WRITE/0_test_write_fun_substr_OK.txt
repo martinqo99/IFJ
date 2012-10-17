@@ -1,0 +1,8 @@
+function main()
+local a;
+local b;
+local c;
+a="test";
+b=substr(a,3,4);
+write(b);
+end;

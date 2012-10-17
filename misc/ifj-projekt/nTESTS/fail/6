@@ -1,0 +1,8 @@
+--[[toto 
+je 
+komentar
+]]
+function main()
+  --[[toto 
+je chyba]
+end;--toto je komentar

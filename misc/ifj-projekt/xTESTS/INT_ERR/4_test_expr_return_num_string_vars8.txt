@@ -1,0 +1,5 @@
+function main()
+local a="abc";
+local b=21;
+return a>b;
+end;

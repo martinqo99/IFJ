@@ -1,0 +1,11 @@
+function fun(a)
+local b=a*2;
+return b;
+end
+
+function main()
+local a=1;
+while a<20000 do
+  a=fun(a);
+end;
+end;

@@ -1,0 +1,6 @@
+function main()
+if 0 then
+write("ok");
+else
+end;
+end;

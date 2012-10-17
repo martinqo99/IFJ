@@ -1,0 +1,7 @@
+function main()
+local a=0;
+if a then
+write("ok");
+else
+end;
+end;

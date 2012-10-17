@@ -1,0 +1,4 @@
+function main()
+local a;
+a=true+3;
+end;

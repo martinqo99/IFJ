@@ -1,0 +1,6 @@
+function main()
+if "abc"+"def" then
+write("ok");
+else
+end;
+end;

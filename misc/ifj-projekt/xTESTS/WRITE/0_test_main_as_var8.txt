@@ -1,0 +1,14 @@
+function fun()
+local main;
+local b;
+main=10;
+b=main*2;
+main=b*10;
+return main;
+end
+
+function main()
+local a;
+a=fun();
+write(a);
+end;

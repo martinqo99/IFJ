@@ -1,0 +1,6 @@
+function main()
+local a;
+local b;
+local c;
+c=5/0;
+end;

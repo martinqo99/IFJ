@@ -1,0 +1,10 @@
+function fun1()
+end
+
+function main()
+local a;
+local b;
+end;
+
+function fun2()
+end

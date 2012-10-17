@@ -1,0 +1,12 @@
+function fun(a)
+local b=a*2;
+if b<10000
+e=fun(b);
+else
+end;
+end
+
+function main()
+local a=1;
+a=fun(a);
+end;

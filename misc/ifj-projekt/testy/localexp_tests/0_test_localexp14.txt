@@ -1,0 +1,6 @@
+function main()
+local a="te";
+local b=2;
+local l=a==b;
+local m=a~=b;
+end;

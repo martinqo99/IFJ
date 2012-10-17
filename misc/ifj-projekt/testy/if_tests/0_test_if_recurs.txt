@@ -1,0 +1,16 @@
+function fun(a)
+local b;
+if a<20 then
+  a=a+1;
+  b=fun(a);
+else
+  write("20");
+end;
+end
+
+function main()
+local a=0;
+local b;
+b=fun(a);
+write(a);
+end;

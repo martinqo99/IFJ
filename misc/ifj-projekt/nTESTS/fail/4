@@ -1,0 +1,5 @@
+function main()
+  local zaporne;
+
+  zaporne = -5;
+end;

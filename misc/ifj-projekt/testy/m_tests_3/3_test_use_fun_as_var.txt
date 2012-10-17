@@ -1,0 +1,7 @@
+function fun()
+end
+
+function main()
+local a;
+local fun;
+end;

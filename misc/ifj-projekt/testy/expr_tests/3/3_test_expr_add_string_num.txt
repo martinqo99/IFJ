@@ -1,0 +1,4 @@
+function main()
+local a;
+a="one"+2;
+end;

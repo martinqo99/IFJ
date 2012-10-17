@@ -1,0 +1,6 @@
+function main()
+while 0>=21 do
+return 21;
+end;
+write("ok");
+end;

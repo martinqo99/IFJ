@@ -1,0 +1,26 @@
+function ahoj()
+local a = "ahojkksjdklsjadlkjasl";
+return a;
+end
+
+
+function main()
+
+local d = "ahojik";
+local a;
+local c;
+--d = ahoj();
+
+d = "ahojicek!!!!!!";
+d = read("*l");
+c = read("*l");
+a = find(d,"a");
+
+if (a ~= 1) then
+--if (d ~= "ahojahojahoj") then
+ a = main();
+else
+ return a;
+end;
+
+end;

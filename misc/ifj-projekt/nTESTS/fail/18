@@ -1,0 +1,8 @@
+function main()
+  local str = "retezec";
+  local str2 = "ahoj";
+
+  while true do
+    str = str .. str2;
+
+end;

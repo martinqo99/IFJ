@@ -1,0 +1,7 @@
+function main()
+local a;
+a=substr("test",2,2);
+while a do
+return 0;
+end;
+end;

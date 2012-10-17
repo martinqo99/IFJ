@@ -1,0 +1,18 @@
+testuje a overuje valgrindem, pripadne vypise co se valgrindu nelibi
+projizdi vsechny sady testu
+
+Pouziti:
+  
+  zustan ve slozce kde je program ;)
+  
+  pro otestovani uplne vsechno:
+  
+    sh xTESTS/TEST.sh            -- uvidis vsechno
+    sh xTESTS/TEST.sh >/dev/null -- uvidis jenom chyby
+  
+  pro otestovani jenom jedne sady
+  
+    sh xTESTS/simpleTest.sh 1 xTESTS/LEX_ERR/             -- uvidis vsechno
+    sh xTESTS/simpleTest.sh 1 xTESTS/LEX_ERR/ >/dev/null  -- uvidis jenom chyby
+    
+    prvni parametr je ocekavany navratovy kod, druhy je slozka

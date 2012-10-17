@@ -1,0 +1,26 @@
+function main()
+if "abc"<"def" then
+write("ok");
+else
+end;
+if "abc"<="def" then
+write("ok");
+else
+end;
+if "abc">"def" then
+else
+write("ok");
+end;
+if "abc">="def" then
+else
+write("ok");
+end;
+if "abc"=="def" then
+else
+write("ok");
+end;
+if "abc"~="def" then
+write("ok");
+else
+end;
+end;

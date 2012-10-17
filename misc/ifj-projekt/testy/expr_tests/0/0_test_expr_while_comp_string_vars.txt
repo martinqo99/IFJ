@@ -1,0 +1,8 @@
+function main()
+local a="abc";
+local b="def";
+while a==b do
+return 21;
+end;
+write("ok");
+end;

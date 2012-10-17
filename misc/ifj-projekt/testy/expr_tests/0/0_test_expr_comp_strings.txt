@@ -1,0 +1,9 @@
+function main()
+local a;
+a="one"<"two";
+a="one">"two";
+a="one"<="two";
+a="one">="two";
+a="one"=="two";
+a="one"~="two";
+end;

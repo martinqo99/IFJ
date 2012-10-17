@@ -1,0 +1,6 @@
+function main()
+while "abc"==2 do
+return 21;
+end;
+write("ok");
+end;

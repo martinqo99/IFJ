@@ -1,0 +1,65 @@
+<program> -> function <def_func>
+<def_func> -> main ( ) <stat> end ;
+<def_func> -> id ( <params> ) <stat> end <program>
+  <params> -> eps
+  <params> -> id <params_n>
+  <params_n> -> eps
+  <params_n> -> , id <params_n>
+<stat> -> <def_var> <stat_list>  
+<def_var> -> eps   
+<def_var> -> local id <init> ; <def_var>
+  <init> -> eps
+  <init> -> = <lit>
+    <lit> -> literal
+<stat_list> -> eps
+<stat_list> -> <command> ; <stat_list>  
+  <command> -> if     exp then <stat_list> else <stat_list> end
+  <command> -> while  exp then <stat_list> end
+  <command> -> return exp
+  <command> -> write ( exp <expression_n> )
+    <expression_n> -> eps
+    <expression_n> -> , exp <expression_n>
+  <command> -> id = <assign>
+    <assign> -> exp
+    <assign> -> read ( <lit> )
+    <assign> -> id ( <var_params> ) 
+      <var_params> -> eps
+      <var_params> -> <var> <var_n>
+      <var> -> <lit>
+      <var> -> id
+      <var_n> -> eps
+      <var_n> -> , <var> <var_n> 
+      
+// PRO APPLET NA WEBU
+
+PROGRAM -> function DEF_FUNC
+DEF_FUNC -> main ( ) STAT end ;
+DEF_FUNC -> id ( PARAMS ) STAT end PROGRAM
+  PARAMS -> eps
+  PARAMS -> id PARAMS_N
+  PARAMS_N -> eps
+  PARAMS_N -> , id PARAMS_N
+STAT -> DEF_VAR STAT_LIST  
+DEF_VAR -> eps   
+DEF_VAR -> local id INIT ; DEF_VAR
+  INIT -> eps
+  INIT -> = LIT
+    LIT -> literal
+STAT_LIST -> eps
+STAT_LIST -> COMMAND ; STAT_LIST  
+  COMMAND -> if     exp then STAT_LIST else STAT_LIST end
+  COMMAND -> while  exp then STAT_LIST end
+  COMMAND -> return exp
+  COMMAND -> write ( exp EXPRESSION_N )
+    EXPRESSION_N -> eps
+    EXPRESSION_N -> , exp EXPRESSION_N
+  COMMAND -> id = ASSIGN
+    ASSIGN -> exp
+    ASSIGN -> read ( LIT )
+    ASSIGN -> id ( VAR_PARAMS ) 
+      VAR_PARAMS -> eps
+      VAR_PARAMS -> VAR VAR_N
+      VAR -> LIT
+      VAR -> id
+      VAR_N -> eps
+      VAR_N -> , VAR VAR_N 

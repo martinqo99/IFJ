@@ -1,0 +1,5 @@
+function main()
+local a;
+while a
+end;
+end;

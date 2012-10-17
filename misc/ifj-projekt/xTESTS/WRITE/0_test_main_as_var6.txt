@@ -1,0 +1,14 @@
+function fun()
+local main;
+local b;
+main=10;
+while main<5 do
+return 0;
+end;
+write("ok");
+end
+
+function main()
+local a;
+a=fun();
+end;

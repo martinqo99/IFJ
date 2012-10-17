@@ -1,0 +1,16 @@
+&fucntion&main&(&)&end&;&id&,&local&=&literal&if&exp&then&else&while&return&write&read&repeat&until&\\ \hline
+\mensi program\vetsi &1&&&&&&&&&&&&&&&&&&&&&\\ \hline
+\mensi def_func\vetsi &&2&&&&&3&&&&&&&&&&&&&&&\\ \hline
+\mensi stat\vetsi &&&&&8&&8&&8&&&8&&&&8&8&8&&8&&\\ \hline
+\mensi params\vetsi &&&&4&&&5&&&&&&&&&&&&&&&\\ \hline
+\mensi params_n\vetsi &&&&6&&&&7&&&&&&&&&&&&&&\\ \hline
+\mensi def_var\vetsi &&&&&9&&9&&10&&&9&&&&9&9&9&&9&&\\ \hline
+\mensi stat_list\vetsi &&&&&14&&15&&&&&15&&&14&15&15&15&&15&14&\\ \hline
+\mensi init\vetsi &&&&&&11&&&&12&&&&&&&&&&&&\\ \hline
+\mensi lit\vetsi &&&&&&&&&&&13&&&&&&&&&&&\\ \hline
+\mensi command\vetsi &&&&&&&22&&&&&16&&&&17&18&19&&32&&\\ \hline
+\mensi expression_n\vetsi &&&&20&&&&21&&&&&&&&&&&&&&\\ \hline
+\mensi assign\vetsi &&&&&&&25&&&&&&23&&&&&&24&&&\\ \hline
+\mensi var_params\vetsi &&&&26&&&27&&&&27&&&&&&&&&&&\\ \hline
+\mensi var\vetsi &&&&&&&19&&&&28&&&&&&&&&&&\\ \hline
+\mensi var_n\vetsi &&&&30&&&&31&&&&&&&&&&&&&&\\ \hline

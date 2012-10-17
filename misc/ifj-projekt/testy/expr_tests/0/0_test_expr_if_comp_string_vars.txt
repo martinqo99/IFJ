@@ -1,0 +1,28 @@
+function main()
+local a="abc";
+local b="def";
+if a<b then
+write("ok");
+else
+end;
+if a<=b then
+write("ok");
+else
+end;
+if a>b then
+else
+write("ok");
+end;
+if a>=b then
+else
+write("ok");
+end;
+if a==b then
+else
+write("ok");
+end;
+if a~=b then
+write("ok");
+else
+end;
+end;

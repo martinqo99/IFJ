@@ -1,0 +1,6 @@
+function main()
+if "abc">=2 then
+write("ok");
+else
+end;
+end;

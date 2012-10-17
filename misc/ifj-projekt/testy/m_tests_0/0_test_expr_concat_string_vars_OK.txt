@@ -1,0 +1,8 @@
+function main()
+local a;
+local b;
+local c;
+a="test";
+b="false";
+c=a..b;
+end;

@@ -1,0 +1,66 @@
+function mod(x, k)
+  if (x >= 0) then
+    while (x-k) > 0 do
+      x = x-k;
+    end;
+  else
+    while (x+k) < 0 do
+      x = x+k;
+    end;
+  end;
+  
+  return x;
+end
+
+function abs(x)
+  if(x < 0) then
+    return (0-1)*x;
+  else
+    return x;
+  end;
+end
+
+function sin(x)
+  local k;
+  local t;
+  
+  local abst;
+  local absx;
+  local eps = 0.000001;
+  
+  t = x;
+  k = 1;
+  
+  abst = abs(t);
+  absx = abs(x);
+
+  while(abst >= (eps*absx)) do
+    k = k + 2;
+    t = (0-1)*t*( x*x/(k*(k-1)) ); 
+    x = x + t;
+    
+    abst = abs(t);
+    absx = abs(x);
+  end;
+  return x;
+end
+
+function main()
+  local tmp;
+  local pi = 3.1415926535897932384626433832795028841971693993751058209749;
+  
+  write("Zadejte uhel <0, 45> : ");
+  tmp = read("*n");
+  if(0 > tmp)then
+    return 0;
+  else 
+    if(tmp > 45)then
+      return 0;
+    else end;
+  end;
+  
+  write("sin(", tmp, ") = ");
+  tmp = tmp*pi/180;
+  tmp = sin(tmp);
+  write(tmp);
+end;     

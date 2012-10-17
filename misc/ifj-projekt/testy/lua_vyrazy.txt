@@ -1,0 +1,165 @@
+function convert(a)
+  local typ;
+  typ = type(a);
+  if(typ == "boolean") then
+    write("v typ");
+    if(a == true) then
+      return "true";
+    else
+      return "false";
+    end;
+  else 
+    if(typ == "nil") then
+      return "nil";
+    else
+      return a;
+    end;
+  end;
+end
+
+function test(a,b)
+  local c_a;
+  local c_b;
+  c_a = convert(a);
+  c_b = convert(b);
+  write(c_a, ", coz je "); 
+
+  if(a == b) then
+    write("..... OK! Melo vyjit ", c_b, "\n\n");
+    return 1;
+  else
+    write("..... SPATNE! Melo vyjit ", c_b, "\n\n");
+    return 0;
+  end;
+  write("\n");
+end
+
+function main()
+  local testu = 0;
+  local uspechu = 0;
+  local ret;
+  local val;
+  write("Dobre se usadte, aplikace otestuje vyrazy\n");
+
+  ----------- ZADNA ROZSIRENI --------------
+  write("Zadna rozsireni!:\n\n");
+  -- test priorit
+  testu = testu + 1;
+  write("2 + 4 ^ 3 * 8 / 2 - 5 = \n");
+  val = 2 + 4 ^ 3 * 8 / 2 - 5;
+  ret = test(val, 253);
+  uspechu = uspechu + ret;
+  
+  -- test zanoreni zavorek
+  testu = testu + 1;
+  write("( (((( 1 * (((( 1 )))) ))))  + ((((((( 8 ))))))) ) * 2 = \n");
+  val = ( (((( 1 * (((( 1 )))) ))))  + ((((((( 8 ))))))) ) * 2;
+  ret = test(val, 18);
+  uspechu = uspechu + ret;
+  
+  -- test zanoreni zavorek a priorit
+  testu = testu + 1;
+  val = (((((((((2 + 4) ^ (((3 * 8 / 3))) - 5)  + 1) / 2) * (8 + (2) - 3)) / (2)))));
+  write("(((((((((2 + 4) ^ (((3 * 8 / 3))) - 5)  + 1) / 2) * (8 + (2) - 3)) / (2))))) = \n");
+  ret = test(val, 2939321);
+  uspechu = uspechu + ret;
+ 
+  -- test nilu
+  testu = testu + 1;
+  val = nil;
+  write("nil = \n");
+  ret = test(val, nil);
+  uspechu = uspechu + ret;
+  
+  -- test porovnani retezcu
+  testu = testu + 1;
+  val = "ahoj" > "baba";
+  write("\"ahoj\" > \"baba\" = \n");
+  ret = test(val, false);
+  uspechu = uspechu + ret;
+
+  -- test porovnani retezcu
+  testu = testu + 1;
+  val = "ahoj" == "ahoj";
+  write("\"ahoj\" == \"ahoj\" = \n");
+  ret = test(val, true);
+  uspechu = uspechu + ret;
+  
+  -- test hranicniho porovnavani
+  testu = testu + 1;
+  val = "ahoj" == nil;
+  write("\"ahoj\" == nil = \n");
+  ret = test(val, false);
+  uspechu = uspechu + ret;
+
+  -- test hranicniho porovnavani
+  testu = testu + 1;
+  val = 5 ~= false;
+  write("5 ~= false = \n");
+  ret = test(val, true);
+  uspechu = uspechu + ret;
+--[[  
+  ----------- ROZSIRENI MINUS --------------
+  write("Rozsireni MINUS!:\n\n");
+  -- test
+  testu = testu + 1;
+  val = - - - 5 * 88 - 44 / -2 + -5 * 8 - 2 + -8 * 2 / 4 - -2;
+  write("- - - 5 * 88 - 44 / -2 + -5 * 8 - 2 + -8 * 2 / 4 - -2 = \n");
+  ret = test(val, -462);
+  uspechu = uspechu + ret;
+  
+  -- test
+  testu = testu + 1;
+  val = - (- (- 5) * (88 - (44 / -2) + -5) * (8 - ((2) + -8)) * (2 / 4) - -(2));
+  write("- (- (- 5) * (88 - (44 / -2) + -5) * (8 - ((2) + -8)) * (2 / 4) - -(2)) = \n");
+  ret = test(val, -3677);
+  uspechu = uspechu + ret;
+  
+  ----------- ROZSIRENI LOGOP --------------
+  
+  write("Rozsireni LOGOP!:\n\n");
+  
+  -- test
+  testu = testu + 1;
+  write("not not (not not true and not false) = \n");
+  val = not not (not not true and not false);
+  ret = test(val, true);
+  uspechu = uspechu + ret;
+
+  -- test
+  testu = testu + 1;
+  write("((5 > 3) and 5 >= 5) or (nil == 5) = \n");
+  val = ((5 > 3) and 5 >= 5) or (nil == 5);
+  ret = test(val, true);
+  uspechu = uspechu + ret;
+  
+  ----------- ROZSIRENI % --------------
+  write("Rozsireni %!:\n\n");
+  
+  testu = testu + 1;
+  write("5 + 0.5 % 5 - 2 = \n");
+  val = 5.5 % 3;
+  ret = test(val, 2.5);
+  uspechu = uspechu + ret;
+
+  ----------- ROZSIRENI # --------------
+  write("Rozsireni #!:\n\n");
+  
+  testu = testu + 1;
+  write("#\"babicka\"\n");
+  val = #"babicka";
+  ret = test(val, 7);
+  uspechu = uspechu + ret;
+
+  ----------- ROZSIRENI # a MINUS --------------
+  write("Rozsireni # a MINUS!:\n\n");
+  
+  testu = testu + 1;
+  write("-#\"babicka\"\n");
+  val = -#"babicka";
+  ret = test(val, -7);
+  uspechu = uspechu + ret;
+]]
+  -- vysledek
+  write("\nVysledek: celkem testu je ", testu, ", uspesnych je ",uspechu, "\n");
+end;

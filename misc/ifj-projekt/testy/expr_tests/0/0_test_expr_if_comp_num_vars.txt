@@ -1,0 +1,28 @@
+function main()
+local a=0;
+local b=21;
+if a<b then
+write("ok");
+else
+end;
+if a<=b then
+write("ok");
+else
+end;
+if a>b then
+else
+write("ok");
+end;
+if a>=b then
+else
+write("ok");
+end;
+if a==b then
+else
+write("ok");
+end;
+if a~=b then
+write("ok");
+else
+end;
+end;

@@ -1,0 +1,8 @@
+function main()
+local a=0;
+local b=21;
+while a~=b do
+write("ok");
+return 21;
+end;
+end;

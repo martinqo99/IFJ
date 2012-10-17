@@ -1,0 +1,7 @@
+function main()
+local a;
+local b;
+local c;
+c="test".."false";
+write(c);
+end;

@@ -1,0 +1,5 @@
+function main()
+local a;
+a="one"==2;
+a=1~="two";
+end;

@@ -1,0 +1,7 @@
+function main(a,b,c)
+local a;
+if a then
+  a=main();
+else
+end;
+end;

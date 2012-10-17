@@ -1,0 +1,26 @@
+function main()
+local a=0;
+local b=21;
+local c="abc";
+local d="def";
+return a+b;
+return a-b;
+return a*b;
+return a/b;
+return a^b;
+return a<b;
+return a<=b;
+return a>b;
+return a>=b;
+return a==b;
+return a~=b;
+return c<d;
+return c<=d;
+return c>d;
+return c>=d;
+return c==d;
+return c~=d;
+return c..d;
+return c==b;
+return c~=b;
+end;

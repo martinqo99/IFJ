@@ -1,0 +1,14 @@
+function fun(a)
+local b;
+while a<5 do
+  a=a+1
+  b=fun(a);
+end;
+end
+
+function main()
+local a=0;
+local b;
+b=fun(a);
+write(a);
+end;

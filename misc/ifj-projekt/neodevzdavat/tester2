@@ -1,0 +1,35 @@
+#!/bin/sh
+if [ "$#" -eq 0 ]; then
+  echo ""
+  echo "USE: ./tester2 PROG SRC_DIR"
+  echo "PROG - testovany program(musi byt o jednu uroven vyssie nez zdrojaky)"
+  echo "SRC_DIR - priecinok so zdrojakmi"
+  exit 0
+fi
+if [ $# -lt 2 ]; then
+  echo ""
+  echo "Ziaden zdrojovy priecinok!"
+  exit 1
+fi
+program=$1
+echo ""
+src_dir=$2
+(cd $src_dir
+for i in `ls`; do
+  ../$program $i 2>/dev/null >/dev/null
+  err=$?
+  echo "program: $program"
+  echo "source: $i"
+  echo "return: $err"
+  case $err in
+    0) echo "ZIADNA CHYBA\n";;
+    1) echo "LEXIKALNA CHYBA\n";;
+    2) echo "SYNTAKTICKA CHYBA\n";;
+    3) echo "SEMANTICKA CHYBA\n";;
+    4) echo "CHYBA PRI INTERPRETACII\n";;
+    5) echo "INTERNA CHYBA\n";;
+    *) echo "!NEOCAKAVANA CHYBA!\n";;
+  esac
+done
+)
+exit 0

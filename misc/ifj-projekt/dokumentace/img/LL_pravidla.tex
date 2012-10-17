@@ -1,0 +1,44 @@
+&\multicolumn{4}{l}{{G = (N, T, P, S), kde:}} \smallskip \\ 
+
+&\multicolumn{4}{p{17cm}}{{N = \{ \mensi program\vetsi , \mensi def\_func\vetsi, \mensi params\vetsi , \mensi params\_n\vetsi , \mensi stat\vetsi , \mensi def\_var\vetsi , \mensi init\vetsi , \mensi lit\vetsi , \mensi stat\_list\vetsi , \mensi command\vetsi , \mensi expression\_n\vetsi , \mensi assign\vetsi , \mensi var\_params\vetsi , \mensi var\vetsi , \mensi var\_n\vetsi  \} }} \smallskip \\ 
+
+&\multicolumn{4}{l}{{T = \{ function, main, (, ), \textit{;} , id, end, \textit{,} , local, =, if, then, else, while, do, return, write, read, repeat, until \}}} \smallskip \\ 
+
+&\multicolumn{4}{l}{{S = \mensi program\vetsi}} \smallskip \\ 
+
+&P = \{ \\
+
+&&\mensi program\vetsi &$\longrightarrow$&function \mensi def\_func\vetsi \\
+&&\mensi def\_func\vetsi &$\longrightarrow$&main ( ) \mensi stat\vetsi  end ; \mensi EOF\vetsi \\
+&&     \mensi def\_func\vetsi &$\longrightarrow$&id ( \mensi params\vetsi  ) \mensi stat\vetsi  end \mensi program\vetsi \\
+&&       \mensi params\vetsi &$\longrightarrow$&eps\\
+&&       \mensi params\vetsi &$\longrightarrow$&id \mensi params\_n\vetsi \\
+&&     \mensi params\_n\vetsi &$\longrightarrow$&eps\\
+&&     \mensi params\_n\vetsi &$\longrightarrow$&, id \mensi params\_n\vetsi \\
+&&         \mensi stat\vetsi &$\longrightarrow$&\mensi def\_var\vetsi  \mensi stat\_list\vetsi \\
+&&      \mensi def\_var\vetsi &$\longrightarrow$&eps\\
+&&      \mensi def\_var\vetsi &$\longrightarrow$&local id \mensi init\vetsi  ; \mensi def\_var\vetsi \\
+&&         \mensi init\vetsi &$\longrightarrow$&eps\\
+&&         \mensi init\vetsi &$\longrightarrow$&= exp\\
+&&          \mensi lit\vetsi &$\longrightarrow$&literal\\
+&&    \mensi stat\_list\vetsi &$\longrightarrow$&eps\\
+&&    \mensi stat\_list\vetsi &$\longrightarrow$&\mensi commad\vetsi  ; \mensi stat\_list\vetsi \\
+&&      \mensi command\vetsi &$\longrightarrow$&if exp then \mensi stat\_list\vetsi  else \mensi stat\_list\vetsi  end\\
+&&      \mensi command\vetsi &$\longrightarrow$&while exp do \mensi stat\_list\vetsi  end\\
+&&      \mensi command\vetsi &$\longrightarrow$&return exp\\
+&&      \mensi command\vetsi &$\longrightarrow$&write ( exp \mensi expression\_n\vetsi  )\\
+&& \mensi expression\_n\vetsi &$\longrightarrow$&eps\\
+&& \mensi expression\_n\vetsi &$\longrightarrow$&, exp \mensi expression\_n\vetsi \\
+&&      \mensi command\vetsi &$\longrightarrow$&id = \mensi assign\vetsi \\
+&&       \mensi assign\vetsi &$\longrightarrow$&exp\\
+&&       \mensi assign\vetsi &$\longrightarrow$&read ( \mensi lit\vetsi  )\\
+&&       \mensi assign\vetsi &$\longrightarrow$&id ( \mensi params\vetsi  )\\
+&&   \mensi var\_params\vetsi &$\longrightarrow$&eps\\
+&&   \mensi var\_params\vetsi &$\longrightarrow$&\mensi var\vetsi  \mensi var\_n\vetsi \\
+&&          \mensi var\vetsi &$\longrightarrow$&\mensi lit\vetsi \\
+&&          \mensi var\vetsi &$\longrightarrow$&id\\
+&&        \mensi var\_n\vetsi &$\longrightarrow$&eps\\
+&&        \mensi var\_n\vetsi &$\longrightarrow$&, \mensi var\vetsi  \mensi var\_n\vetsi \\
+&&\mensi command\vetsi &$\longrightarrow$&repeat \mensi stal\_list\vetsi  until exp\\
+
+&\} \\

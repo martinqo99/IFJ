@@ -1,0 +1,4 @@
+function main()
+  local a = true;
+  write(a);
+end;

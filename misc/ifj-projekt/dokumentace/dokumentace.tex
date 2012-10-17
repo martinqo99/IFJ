@@ -1,0 +1,337 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   DOKUMENTACE K PROJEKTU IFJ - 2011
+%   TÝM 55
+
+\documentclass[a4paper, 11pt, titlepage, final]{article}[3. prosinec 2011]
+
+\newcommand{\uv}[1]{\quotedblbase #1\textquotedblleft}
+\newcommand{\mensi}{$<$}
+\newcommand{\vetsi}{$>$}
+
+\usepackage[left=1.5cm,text={18cm, 25cm},top=2.5cm]{geometry}
+\usepackage[czech]{babel}
+\usepackage[latin2]{inputenc}
+\usepackage[IL2]{fontenc}
+\usepackage[dvipdf]{graphicx}
+\usepackage{color}
+
+\newcommand{\url}[1]{\textit{#1}}
+
+\title{Dokumentace projektu z IFJ a IAL}
+\author{Vendula Poncová}
+\date{\today}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% titulni strana - DON'T TOUCH! MAGIC!
+
+\begin{titlepage}
+\begin{center}
+
+\def\imagetop#1{\vtop{\null\hbox{#1}}}
+
+\begin{tabular}{cl}
+    \imagetop{\parbox{5cm}{\centering\includegraphics[height=5cm]{img/logo.eps}}} &
+    \imagetop{\parbox{11cm}{\textsc{\LARGE Fakulta informaèních technologií \medskip\\
+                                           Vysoké uèení technické v Brnì}}} \\
+\end{tabular}
+
+\vspace{\stretch{0.382}}
+
+{{\Huge Dokumentace projektu} \medskip \\
+{\LARGE pro pøedmìty IFJ a IAL}}
+
+\vspace{\stretch{0.618}}
+
+\end{center}
+
+{\Large
+\begin{tabular}{llll}
+  {\Large Identifikace:} & \multicolumn{3}{l}{{\Large Tým 55, varianta a/4/I}} \smallskip \\ 
+  \hline
+  \\[-0.5em]
+  Vedoucí:  & Vendula Poncová & \texttt{xponco00} & 29\% \\
+  Øe¹itelé: & Marek Salát     & \texttt{xsalat00} & 29\% \\
+            & Tomá¹ Trkal     & \texttt{xtrkal00} & 29\% \\
+            & Patrik Hronský  & \texttt{xhrons00} & 13\% \medskip \\
+  Roz¹íøení:& \Large{REPEAT} \\
+            & \Large{LOCALEXPR} \\
+%            & LOGOP \\
+%            & MODULO \\
+%            & LENGTH \\
+\end{tabular}
+}
+
+{\Large \hfill \today}
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% výpis obsahu
+\pagestyle{empty}
+\tableofcontents
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% text dokumentace
+
+\pagestyle{plain}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%------------------------------------------------------------------------
+\section{Úvod}
+ 
+V této zprávì dokumentujeme ná¹ návrh a implementaci interpretu imperativního jazyka IFJ11 a zpùsob, jakým jsme postupovali.
+
+V první øadì jsme se zamìøili na návrh datových struktur (kap. \ref{kapDatStruktury}), nebo» na návrhu tabulky symbolù stojí znaèná èást implementace interpretu. Strukturu interpretu jsme rozdìlili do ètyø modulù, které spoleènì obstarávají v¹echny logické fáze interpretu, a ty implementovali (kap. \ref{kapImplementace}). Také jsme implementovali zadané algoritmy pro vyhledávání podøetìzce v øetìzci a øazení znakù v øetìzci (kap. \ref{kapAlgoritmy}).
+
+Vycházeli jsme z pøedná¹ek a materiálù pøedmìtù IFJ a IAL.
+
+%------------------------------------------------------------------------
+\section{Datové typy a struktury} \label{kapDatStruktury}
+
+Tato kapitola popisuje návrh datových typù a struktur a jejich implementaci. Jsou zde také definovány nìkteré pojmy pou¾ívané v dal¹ích kapitolách. Návrhu jsme vìnovali hodnì pozornosti, nebo» je na nìm postavena celá implementace interpretu.
+
+%------------------------------------------------
+\subsection{Abstraktní datové typy} \label{kapADT}
+
+Implementovali jsme abstraktní datové typy: seznam, zásobník a binární vyhledávací strom. Abstraktní datové struktury v¹ech tìchto typù (obr. \ref{obrADT}) obsahují polo¾ku ukazatel na data typu void. Díky tomu jsou tyto datové typy zcela obecné a nezávislé na dal¹ích èástech programu. V pøípadì pou¾ití nìkterého datového typu bylo nutné v daném modulu implementovat funkce pro práci s daty.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.7]{img/data-ADT.eps}
+  \caption{Zásobník, seznam, binární vyhledávací strom.}
+  \label{obrADT}
+\end{figure}
+
+\paragraph{Seznam} 
+Seznam je lineární, jednosmìrný, s ukazatelem na konec. Umo¾òuje ulo¾it ukazatel na aktivní prvek seznamu a nastavit daný prvek jako aktivní. V rámci optimalizace jsme nìkteré funkce pøepsali na makra.
+
+\paragraph{Binární vyhledávací strom}
+Abstraktní datovou strukturu binárního vyhledávacího stromu jsme pøizpùsobili tomu, ¾e je kostrou tabulky symbolù. Strom je definován samostatnou strukturou s polo¾kami: koøen stromu, typ stromu a poslední pøidaný uzel. Poslední pøidaný uzel umo¾òuje rychlý pøístup k poslednímu pøidanému prvku.
+
+Operace nad binárním stromem jsou implementovány nerekurzivnì s výjimkou operace smazání stromu. Nerekurzivní øe¹ení jsme zvolili kvùli optimalizaci interpretu. Funkce pro smazání je implementovaná, ale nepou¾ívá se, nebo» se strom ma¾e v rámci tabulky symbolù.
+
+Pùvodnì jsme implementovali AVL strom, nebo» je vý¹kovì vyvá¾ený a vyhledávání v nìm má ve v¹ech pøípadech logaritmickou èasovou slo¾itost, zatímco binární vyhledávací strom má nejhor¹í èasovou slo¾itost lineární. Nebyla nám ale taková modifikace dovolena.
+
+%------------------------------------------------
+\subsection{Tabulka symbolù}
+
+Tabulka symbolù je sestavena z abstraktních datových typù popsaných v kapitole \ref{kapADT} a dat typu TFunction, TVar, TVarData a TInstruction. (obr. \ref{obrTabSymbolu})
+
+\paragraph{Tabulka symbolù}
+Tabulka symbolù je reprezentovaná datovou strukturou TTable. Polo¾kou v této struktuøe je strom funkcí, tj. binární vyhledávací strom s daty TFunction. Polo¾kami struktury TFunction jsou: strom promìnných, seznam konstant, seznam pomocných promìnných a seznam instrukcí. Strom promìnných je binární vyhledávací strom s daty typu TVar. Seznam konstant a seznam pomocných promìnných jsou jednosmìrné seznamy s daty typu TVar. Seznam instrukcí je jednosmìrný seznam s daty typu TInstruction. Promìnné, pomocné promìnné a konstanty (tedy datové struktury TVar) mají svoji hodnotu a typ ulo¾ené v datech, tj. datových strukturách typu TVarData. (obr. \ref{obrTabSymbolu} a \ref{obrTabSymbolu2})
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.65]{img/data-obecne.eps}
+  \caption{Model tabulky symbolù.}
+  \label{obrTabSymbolu}
+\end{figure}
+
+\paragraph{Funkce} Funkce jsou jednoznaènì urèené svým názvem, podle názvu jsou funkce øazeny ve stromu funkcí. Souèástí funkce je poèítadlo, které urèuje, kolikrát je daná funkce aktuálnì volaná. Nebo» se toto poèítadlo pou¾ívá jako index pole, je poèáteèní stav poèítadla -1. (obr. \ref{obrTabSymbolu2})
+
+\paragraph{Instrukce} V rámci interpretu generujeme tøíadresný kód. Ten je pro ka¾dou funkci reprezentovnán seznamem instrukcí. Instrukce obsahují polo¾ky: typ instrukce, adresa výsledku, adresa prvního operandu, adresa druhého operandu. (obr. \ref{obrTabSymbolu2})
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.65]{img/data-obecne2.eps}
+  \caption{Datové struktury pro tabulku symbolù, funkce, instrukce.}
+  \label{obrTabSymbolu2}
+\end{figure}
+
+
+\paragraph{Promìnné, konstanty a pomocné promìnné}
+Promìnnou je my¹lena u¾ivatelem deklarovaná promìnná, jsou to tedy lokální promìnné a formální parametry funkcí. Promìnné jsou jednoznaènì urèené svým názvem. Konstanty jsou pomocné promìnné, které nesou hodnotu literálu. Pomocné promìnné pou¾íváme pro ukládání mezivýsledkù pøi zpracování výrazù. (obr. \ref{obrPromenne})
+
+Konstanty a pomocné promìnné nejsou souèástí stromu promìnných, aby jej nezatì¾ovaly pøi vyhledávání. Seznam pomocných promìnných není souèástí seznamu konstant, nebo» se se seznamem pomocných promìnných pracuje odli¹ným zpùsobem. Vycházeli jsme z pøedpokladu, ¾e kdy¾ se pøi zpracování výrazu pou¾ije urèitý poèet pomocných promìnných, tak po vyhodnocení výrazu nebude jejich hodnota u¾ nikdy potøeba. Proto pomocné promìnné tzv.recyklujeme: kdy¾ po¾ádáme o novou pomocnou promìnnou, pou¾ije se ji¾ vygenerovaná, pokud jsme ji¾ v¹echny v daném výrazu pou¾ili, vygeneruje se nová. Toto chování jsme velmi snadno implementovali pomocí aktivity seznamu pomocných promìnných.
+
+\paragraph{Data promìnných}
+Z promìnné pøistupujeme na její data pomocí pole prvkù typu TVarData. Index do pole dat je urèen poèítadlem volání pøíslu¹né funkce. Je tím vyøe¹en problém rekurzivního volání funkce. Pole jsme zvolili kvùli rychlému pøístupu k datùm, na druhou stranu pøi pøíli¹ velkém rekurzivním zanoøení je nutná realokace. Pomocné promìnné a konstanty mají jen jednu hodnotu, proto v jejich pøípadì pøistupujeme v¾dy na nultý prvek pole hodnot. (obr. \ref{obrPromenne})
+
+Hodnota promìnné je implementovaná jako unie. Jedním z datových typù, které unie mù¾e uchovávat, je string. String je datová struktura, která obsahuje øetìzec, délku øetìzce a velikost alokovaného øetìzce. Nad tímto typem je implementovaná knihovna str, kterou jsme pøevzali ze vzorového interpretu IFJ a roz¹íøili.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[scale=0.65]{img/data-var.eps}
+  \caption{Datové struktury pro promìnné a jejich data.}
+  \label{obrPromenne}
+\end{figure}
+
+%------------------------------------------------------------------------
+\section{Popis implementace} \label{kapImplementace}
+
+Èinnost na¹eho pøekladaèe obstarávají ètyøi moduly: scanner, parser, expression a interpret. Scanner provádí lexikální analýzu. Parser zaji¹»uje syntaktickou analýzu shora dolù, sémantickou analýzu a generování vnitøního kódu. Expression se stará o syntaktickou a sémantickou analýzu výrazù a generuje matematicko-logické instrukce. Pøeklad je tedy øízen syntaxí. Interpret interpretuje vnitøní kód a kontroluje sémantiku.
+
+Moduly pracují s datovými strukturami popsanými v kapitole \ref{kapDatStruktury}.
+
+%------------------------------------------------
+\subsection{Modul scanner}
+Modul scanner provádí lexikální analýzu zadaného vstupního souboru a dodává tokeny modulu parser.
+
+\paragraph{Lexikální analýza}
+Pokud je modul scanner po¾ádán o dal¹í token, pøeète ze vstupního souboru jednu lexému a vrátí pøíslu¹ný token. Atributy tokenu (literály a identifikátory) se ukládájí do promìnné typu string, atribut je pak zpracován modulem parser.
+
+ Lexikální analýzu jsme implementovali podle na¹eho návrhu koneèného automatu (pøíloha \ref{kapKonecnyAutomat}). Koneèný automat je reprezentován while cyklem, který ète znaky ze vstupu, a jedním pøíkazem switch se v¹emi stavy automatu. Mezi stavy se pøechází podle pøeèteného znaku. Pokud se pøeète neoèekávaný znak a nejsme v koneèném stavu, dojde k lexikální chybì, pokud jsme v koneèném stavu, vrátí se znak na vstup a je vrácen pøíslu¹ný token. Pro rozpoznání tokenu identifikátor je pøeètený øetìzec porovnán s klíèovými a rezervovanými slovy. Pokud ¾ádnému z nich neodpovídá, jedná se o identifikátor.
+
+Modul scanner obsluhuje èítaè øádkù zdrojového souboru. Hodnota èítaèe se vypisuje v pøípadì chyby v dobì pøekladu a slou¾í k usnadnìní hledání chyby ve zdrojovém souboru.
+
+%------------------------------------------------
+
+\subsection{Modul parser}
+Modul parser ¾ádá o tokeny modul scanner. Na základì tokenù pracuje s tabulkou symbolù a vkládá do ní funkce, promìnné, konstanty a instrukce.
+
+\paragraph{Syntaktická analýza shora dolù}
+Syntaxi jazyka IFJ11 jsme popsali LL-gramatikou a na základì této gramatiky jsme pro potøeby implementace vytvoøili LL-tabulku. (pøíloha \ref{kapLLgram})
+
+Syntaktický analyzátor je implementován podle metody rekurzivního sestupu. Pro ka¾dý neterminál je vytvoøena funkce, která analyzuje v¹echna jemu pøíslu¹ná pravidla. Pokud se v pravidlu objeví terminál \emph{exp}, znamená to, ¾e souèástí pravidla je výraz a je zavolán syntaktický analyzátor výrazù z modulu expression.
+
+\paragraph{Sémantická analýza}
+Z hlediska sémantické analýzy parser kontroluje podle zadání deklarace promìnných a funkcí. Vyhledává je v tabulce symbolù.
+
+\paragraph{Generování vnitøního kódu}
+Syntaktický analyzátor generuje tøíadresný kód pøímým zpùsobem. Nové instrukce se ukládají na konec seznamu instrukcí pøíslu¹né funkce. %Syntaxe a sémantika instrukcí je popsána v kapitole \ref{kapModulInterpret}.
+
+%------------------------------------------------
+\subsection{Modul expression}
+
+Modul expression je volán modulem parser, pokud je tøeba provést analýzu výrazu.
+
+\paragraph{Syntaktická analýza zdola nahoru}
+Syntaktická analýza výrazù probíhá zdola nahoru a vyu¾ívá k analýze precedenèní tabulku a pomocný zásobník tokenù. 
+
+Operace nad zásobníkem jsme se sna¾ili co nejvíce zjednodu¹it. Na zásobník se nevkládají tzv. zará¾ky. Pøi vkládání promìnných a konstant na zásobník rovnou uplatòujeme pravidla \emph{E $\rightarrow$ id} a \emph{E $\rightarrow$ const}, a vkládáme je jako neterminál. Hlídáme pak pøípad, kdy token, který chceme vlo¾it na zásobník je promìnná nebo konstanta a na vrcholu zásobníku je neterminál, nebo» dojde k syntaktické chybì.
+
+Problém urèení konce výrazu jsme vyøe¹ili tak, ¾e první chybný token pova¾ujeme za konec výrazu a dal¹í tokeny nenaèítáme. Chybný token je pak dále zpracováván modulem parser. Tento zpùsob umo¾nil implementovat modul expression nezávisle na modulu parser a jeho syntaktické analýze.
+
+\paragraph{Sémantická analýza}
+Sémantika výrazù se kontroluje jen u konstant, nebo» promìnné nemají v dobì pøekladu definované datové typy. Ovìøuje se, zda jsou datové typy operandù kompatibilní s pøíslu¹nou matematickou nebo logickou operací. Kontrola se provádí pomocí tabulky, kterou pro kontrolu sémantiky matematicko-logických instrukcí pou¾ívá i interpret.
+
+\paragraph{Generování vnitøního kódu}
+Instrukce se generují jen pro pravidla typu \emph{E $\longrightarrow$ E op E}. Pro výsledek operace se generuje pomocná promìnná. Ukazatel na výsledek výrazu se pøedává modulu parser.
+
+%------------------------------------------------
+\subsection{Modul interpret}\label{kapModulInterpret}
+
+Interpretace vnitøního kódu probíhá v modulu interpret. K interpretaci dojde jen v pøípadì, ¾e pøedchozí pøeklad probìhl bez chyb.
+
+\paragraph{Interpretace}
+Modul interpret se zavolá pro funkci \emph{main}, a pokud jsou v nìm volány dal¹í funkce, volá rekurzivnì sám sebe. Interpretace seznamu instrukcí funguje na principu aktivity seznamu, kdy aktivním prvkem seznamu je aktuálnì provádìná instrukce. Na základì typu instrukce se pak provede pøíslu¹ná akce.
+
+Modul interpret pou¾ívá zásobník hodnot promìnných, tj. zásobník dat typu TVarData, pomocí kterého se pøedávají parametry funkcí a návratová hodnota. Parametry jsou na zásobník ukládány v opaèném poøadí. V¾dy platí, ¾e pokud nad prázdným zásobníkem hodnot provedeme instrukci POP, do dané promìnné se ulo¾í hodnota nil. Pokud byla funkce zavolaná s více parametry ne¾ oèekávala, zásobník s nepotøebnými hodnotami se vyprázdní.
+
+\paragraph{Sémantická analýza}
+Sémantická kontrola se provádí dle zadání v¹ude, kde ji ne¹lo provést bìhem pøekladu.
+
+%------------------------------------------------------------------------
+\section{Algoritmy}\label{kapAlgoritmy}
+V této kapitole je popsána na¹e implementace algoritmù po¾adovnaných v rámci pøedmìtu IAL.
+
+\subsection{Knuth-Moris-Prattùv algoritmus}
+Pro vyhledávání podøetìzce v øetìzci jsme implementovali Knuth-Moris-Prattùv algoritmus (zkrácenì KMP). Tento algoritmus je optimalizací triviálního zpùsobu vyhledávání a jeho výhodou je, ¾e se v prohledávaném øetìzci nevrací. Pou¾ívá koneèný automat, který je reprezentovaný vyhledávaným vzorkem a vektorem pøechodù. Stavy jsou pak indexy tìchto polí. Pro stav $i$ platí, ¾e znak na $i$-tém indexu vzorku se bude porovnávat s aktuálním znakem prohledávaného øetìzce, a pokud bude výsledek porovnávní neuspì¹ný, pøejde se do stavu definovaného na $i$-tém indexu vektoru pøechodù. Poøáteèní stav je $-1$, koneèný stav je délka øetìzce.
+
+KMP má dvì fáze: neprve se pro zadaný vzorek vytvoøí vektor pøechodù, a pak se pomocí vzorku a vektoru vyhledává v prohledávaném øetìzci. Pøi generování vektoru pøechodù se postupuje od poèáteèního stavu po koneèný. Pøechod pro následující stav se urèuje s pomocí ji¾ vytvoøené èásti automatu. Hledání probíhá tak, ¾e pokud se nacházíme v poèáteèním stavu nebo je porovnání aktuálního vstupního znaku se znakem ve stavu úspì¹né, pøesuneme se na následující stav a ze vstupu naèteme nový znak. Jinak zùstáváme na aktuálním vstupním znaku a pomocí vektoru pøechodù pøecházíme na nìkterý z pøedchozích stavù. Opakujeme, dokud nedojdeme na konec vstupního øetìzce. Pokud dosáhneme koneèného stavu, je vzorek ve vstupním øetìzci nalezen.
+
+\subsection{Merge sort}
+
+Merge sort je nestabilní, nepøirozený øadící algoritmus. Je to metoda sekvenèní, vyu¾ívá pøímý pøístup k prvkùm pole. Funguje na principu slévání setøídìných posloupností. Postupuje zdrojovým polem zleva i zprava, a proti sobì jdoucí neklesající posloupnosti ukládá do cílového pole. Po ka¾dém kroku se ovìøí, zda je posloupnost znakù ji¾ seøazena, pokud ne, prohodí se role zdrojového a cílového pole a proces se opakuje. Krokem se rozumí vlo¾ení v¹ech prvkù zdrojového pole do pole cílového.
+
+V na¹í implementaci vyu¾íváme jedno pole o velikosti dvojnásobku délky vstupního øetìzce. Do první èásti na¹eho øadícího pole je pøekopírován vstupní øetìzec bez ukonèovacího znaku \textbackslash0, který je pro úèely øazení ignorován. Pomocí tohoto pole se tøídìní uskuteèòuje kopírováním znakù ze zdrojové èásti pole do cílové èásti. Nakonec je setøídìný øetìzec pøekopírován zpìt do pùvodního øetìzce.
+
+Merge sort má ve v¹ech pøípadech linearitmickou èasovou slo¾itost. Jeho nevýhodou je nutnost alokace pole dvojnásobné délky ne¾ je vstupní posloupnost znakù.
+
+%------------------------------------------------------------------------
+\section{Vývoj a práce v týmu} \label{kapTym}
+Tato kapitola popisuje, jakým zpùsobem ná¹ tým pracoval a kdo mìl kterou èást projektu na starosti.
+
+\subsection{Zpùsob práce v týmu}
+
+Na projektu jsme zaèali pracovat co nejdøíve, nebo» jsme chtìli vyu¾ít mo¾nosti pokusného odevzdání. Nejprve jsme implementovali èásti, pro které nebyly nutné znalosti z pøedmìtu IFJ. Pak jsme postupnì vyvíjeli jednotlivé moduly podle toho, co bylo probíráno na pøedná¹kách. Pro nastudování látky jsme vyu¾ívali i záznamy pøedná¹ek z minulých let. V dobì pokusného odevzdání byl ji¾ interpret zcela funkèní, ale kvùli nesplnìní formálních po¾adavkù na odevzdané soubory, selhal pøeklad. Do oficiálního odevzdání jsme ladili, testovali a psali dokumentaci.
+
+Pro vzájemnou komunikaci jsme nejèastìji vyu¾ívali internetové prostøedky (ICQ, diskuze). Osobnì jsme se pravidelnì scházeli jednou týdnì v prostorách ¹koly. Na schùzkách jsme se informovali o souèasném stavu projektu, øe¹ili aktuální problémy a domluvili se, na èem se bude pracovat dal¹í týden.
+
+Zdrojové soubory jsme sdíleli prostøednictvím GIT repozitáøe umístìného na stránkách \url{https://bitbucket.org}. Projekt jsme vyvíjeli na operaèních systémech Ubuntu a Windows 7 a pravidelnì testovali na ¹kolním serveru merlin. Pro testování a ladìní jsme hojnì vyu¾ívali program valgrind. Kód jsme optimalizovali pomocí profileru gprof. Dokumentace je napsaná v {\LaTeX}u.
+
+\subsection{Rozdìlení práce}
+
+Procentuální ohodnocení èlenù týmu je úmìrné práci, kterou odvedli, a èasu, který projektu vìnovali.
+
+\begin{tabular}{ll}\\
+Vendula Poncová & abstraktní datové typy zásobník a seznam \\
+                & Knuth-Moris-Prattùv algoritmus \\
+                & moduly expression a library \\
+                & úprava a roz¹íøení knihovny pro práci s datovým typem string \\
+                & sepsání a úprava dokumentace \medskip \\
+Marek Salát     & abstraktní datový typ binární strom \\
+                & návrh a implementace tabulky symbolù \\
+                & návrh instrukèní sady tøíadresných instrukcí \\
+                & modul parser \\
+                & testování \medskip \\
+Tomá¹ Trkal     & návrh koneèného automatu lexikální analýzy\\
+                & moduly scanner a interpret\\
+                & testování \medskip \\
+Patrik Hronský  & implementace merge sortu \\
+                & testování \bigskip\\
+\end{tabular}
+\par
+
+
+%------------------------------------------------------------------------
+\section{Závìr}
+
+Implementovali jsme interpret jazyka IFJ11 dle specifikace v zadání a upøesnìní na fóru. Pøi návrhu a implementaci jsme vycházeli z poznatkù z pøedmìtù IFJ a IAL a kladli dùraz na úsporu èasu a pamìti pøi bìhu programu. Interpret má v¹echny èásti funkèní, bylo na nìm úspì¹nì otestováno 305 testovacích zdrojových souborù.
+
+Na projektu jsme si vyzkou¹eli implementaci nìkterých zajímavých algoritmù, teorii formálních jazykù v praxi a spolupráci v malém týmu.
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% pøílohy
+
+\appendix
+%------------------------------------------------------------------------
+\section{Koneèný automat} \label{kapKonecnyAutomat}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=16cm]{img/LA-verze3.eps}
+  \caption{Graf koneèného automatu pro lexikální analýzu.}
+  \label{obrKonecnyAutomat}
+\end{figure}
+\newpage
+
+%------------------------------------------------------------------------
+\section{LL-gramatika} \label{kapLLgram}
+
+{ \tabcolsep=6pt
+{\small
+ \begin{tabular}{lrrcl}
+    \input{img/LL_pravidla.tex}
+ \end{tabular}
+}}
+
+\newpage
+
+\begin{table}[!ht]
+  \tabcolsep=2pt
+  \centering
+  {\small
+  \begin{tabular}{|l|c|c|p{1em}|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|} \hline
+    \input{img/LL_tabulka.tex}
+  \end{tabular}
+  }
+  \caption{Tabulka LL gramatiky.}\label{tabLLtabulka}
+\end{table}
+
+%------------------------------------------------------------------------
+\section{Metriky kódu} \label{kapMetriky}
+
+\paragraph{Poèet zdrojových souborù:} 23 souborù
+\paragraph{Poèet øádkù zdrojového textu:} 5440 øádkù
+\paragraph{Procentuální podíl komentáøù:} 33\%
+\paragraph{Velikost statických dat:} 160 789 B
+\paragraph{Velikost spustitelného souboru:} 127 032 B (¹kolní server merlin, bez ladících informací)
+
+%------------------------------------------------------------------------
+\end{document}
+
+% konec souboru dokumentace.tex

@@ -1,0 +1,8 @@
+function fun()
+return main;
+end;
+
+function main()
+local a;
+a=fun();
+end;

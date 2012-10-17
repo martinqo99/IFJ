@@ -1,0 +1,12 @@
+function main()
+local a;
+local b;
+local c;
+local d;
+a=read("*n");
+b=read("*n");
+c=read("*n");
+write(a);
+d=read("*a");
+write(d);
+end;

@@ -1,0 +1,45 @@
+function main()
+if 1 then
+  if 2 then
+    if 3 then
+      if 4 then
+        if 5 then
+          if 6 then
+            if 7 then
+              if 8 then
+                if 9 then
+                  if 10 then
+                    write("10");
+                  else
+                    write("bad");
+                  end;
+                else
+                  write("bad");
+		else
+		end;
+	      else
+                write("bad");
+              end;
+	    else
+              write("bad");
+            end;
+          else
+            write("bad");
+          end;
+        else
+          write("bad");
+        end;
+      else
+        write("bad");
+      end;
+    else
+      write("bad");
+    end;
+  else
+    write("bad");
+  end;
+else
+  write("bad");
+end;
+write("ok");
+end;

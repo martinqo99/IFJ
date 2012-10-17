@@ -1,0 +1,6 @@
+function main()
+local a="te"<"st";
+local b="te">"st";
+local c="te"<="st";
+local d="te">="st";
+end;

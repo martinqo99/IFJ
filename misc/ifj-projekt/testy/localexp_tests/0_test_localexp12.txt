@@ -1,0 +1,16 @@
+function main()
+local a=1;
+local b=2;
+local c=a+b;
+local d=a-b;
+local e=a*b;
+local f=b/a;
+local g=a^b;
+local h=a<b;
+local i=a<=b;
+local j=a>b;
+local k=a>=b;
+local l=a==b;
+local m=a~=b;
+write(a,b,c,d,e,f,g);
+end;

@@ -1,0 +1,6 @@
+function main()
+local a=0;
+local b=4;
+local c="hello";
+write(a,b,c,);
+end;

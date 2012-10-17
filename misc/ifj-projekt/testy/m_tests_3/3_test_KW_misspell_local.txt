@@ -1,0 +1,5 @@
+function main()
+loccal a;
+local b;
+local c;
+end;

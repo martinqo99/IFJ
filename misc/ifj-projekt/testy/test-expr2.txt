@@ -1,0 +1,34 @@
+"shoj" .. false;
+1 / nil;
+x - 5;
+x+ (true);
+1 >= 5;
+x < z;
+"ble" >= "ahoj";
+"ble" >= 6;
+(6 < (x));
+x+(y+/8 ;
+x+a-b/"ahoj";
+"ahoj".."pepo";
+nil * 5;
+((((x)))
+
+
+
+--[[
+1 + "ahoj";
+1 + "ahoj");
+(1 + "ahoj";
+(1 + "ahoj"));
+x + "ahoj";
+x .. + "ahoj";
+
+
+ "ahoj" .. "hello";
+x+y - 78.9 / ((78) ^ z);
+x < z == true;
+nil ~= false;
+x+y+a
+"ahoj" + 1
+]]
+

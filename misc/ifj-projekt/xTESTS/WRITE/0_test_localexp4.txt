@@ -1,0 +1,4 @@
+function main()
+local a=10/5;
+write(a);
+end;

@@ -1,0 +1,42 @@
+SET                       // dst src ---       nastavi promenou vola varReallo!!!
+LAB  --- --- ---          // nedela nic
+RETURN  --- --- ---       // ukonci interpretaci
+
+POP  src  --- ---         // TVar src->data[fce->cnt] da na zasobnik   
+PUSH dest --- ---         // vybere ze zasobniku TVarData a priradi do dest[fce->cnt]
+
+STACK_E --- --- ---       // vyprazni zasobnik
+
+MOV dest src1 ---         // do TVar dest[fce->cnt] proradi to co je v TVar src1[fce->cnt]   pokud to bude konstanta tak src[0]
+MOV dest  --- ---         // TVarData dest[fce->cnt] nastavi na nil
+
+ADD dest src1 src2        // dalsi jsou obdobne jako MOV
+SUB dest src1 src2    
+MUL dest src1 src2        
+DIV dest src1 src2      
+POW dest src1 src2        
+CON dest src1 src2       
+
+CMP_L  dest src1 src2
+CMP_LE dest src1 src2
+CMP_G  dest src1 src2
+CMP_GE dest src1 src2
+CMP_E  dest src1 src2
+CMP_NE dest src1 src2
+
+JMP    lab --- ---        // nastavi akticni instrukci na lab, lab je ukazatel na list item 
+JMP_Z  lab src ---        // obdobne
+JMP_NZ lab src ---
+
+CALL fptr --- ---         // zvedne cnt o jedna a zintepretuje fptr(rekurzivne) pokud bude vse OK snizi index
+
+WRITE  src --- ---        // vypise co je v TVar src
+READ   dst prm ---
+
+TYPE   --- --- ---        // udela co se ceka + *
+SUBSTR --- --- ---
+FIND   --- --- ---
+SORT   --- --- --- 
+
+* presune se na dalsi instrukci ktera vzdy bude POP a nastavi navratovou hodnotu
+* pokracuje za POPem ;)

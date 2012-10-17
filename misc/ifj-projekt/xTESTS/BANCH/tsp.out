@@ -1,0 +1,19 @@
+Asymmetric traveling salesman problem – naïve solution
+------------------------------------------------------
+Enter the number of cities (between 2 and 26, inclusive):
+Enter the distance matrix (64 digits in range 0..9):
+Distance matrix:
+    A B C D E F G H 
+  +-----------------+
+A | 0 9 9 5 9 9 9 9 |
+B | 9 0 9 9 9 9 5 9 |
+C | 1 9 0 9 9 9 9 9 |
+D | 9 9 9 0 9 5 9 9 |
+E | 9 9 9 9 0 9 9 5 |
+F | 9 5 9 9 9 0 9 9 |
+G | 9 9 9 9 5 9 0 9 |
+H | 9 9 5 9 9 9 9 0 |
+  +-----------------+
+Solving...
+Best path is: BGEHCADF
+Length: 31

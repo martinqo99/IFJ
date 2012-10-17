@@ -1,0 +1,6 @@
+function main()
+local a;
+local b="one";
+local c=2;
+a=b<c;
+end;

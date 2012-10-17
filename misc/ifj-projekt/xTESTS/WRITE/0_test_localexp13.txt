@@ -1,0 +1,12 @@
+function main()
+local a="te";
+local b="st";
+local c=a..b;
+local h=a<b;
+local i=a<=b;
+local j=a>b;
+local k=a>=b;
+local l=a==b;
+local m=a~=b;
+write(a,b,c);
+end;

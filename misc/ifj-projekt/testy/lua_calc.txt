@@ -1,0 +1,217 @@
+-- vrati delku retezce
+function strlen(str)
+  local i = 1;
+  local c;
+  local n = 0;
+  c = substr(str, i, i);
+  while c ~= "" do
+    n = n + 1;
+    i = i + 1;
+    c = substr(str, i, i);
+  end;
+  return n;
+end
+
+-- prevede znak na cislo, jinak vrati nil
+function ctoi(c)
+  if c == "0" then return 0; else end;
+  if c == "1" then return 1; else end;
+  if c == "2" then return 2; else end;
+  if c == "3" then return 3; else end;
+  if c == "4" then return 4; else end;
+  if c == "5" then return 5; else end;
+  if c == "6" then return 6; else end;
+  if c == "7" then return 7; else end;
+  if c == "8" then return 8; else end;
+  if c == "9" then return 9; else end;
+  return nil;
+end
+
+-- prevede (jednociferne, ale muze byt desetinne) cislo na znak
+function itoc(i)
+  if i < 0.999999 then return "0"; else end;
+  if i < 1.999999 then return "1"; else end;
+  if i < 2.999999 then return "2"; else end;
+  if i < 3.999999 then return "3"; else end;
+  if i < 4.999999 then return "4"; else end;
+  if i < 5.999999 then return "5"; else end;
+  if i < 6.999999 then return "6"; else end;
+  if i < 7.999999 then return "7"; else end;
+  if i < 8.999999 then return "8"; else end;
+  return "9";
+end
+
+-- prevede cislo na string
+function ntostr(n)
+  local i = 0;
+  local j = 0;
+  local k;
+  local str = "";
+  local c;
+  while n >= 10 do
+    n = n / 10; 
+    i = i + 1;
+  end;
+  i = i + 1;
+  while j ~= i do
+    c = itoc(n);
+    str = str .. c;
+    k = ctoi(c);
+    n = n * 10 - (k * 10);
+    j = j + 1;
+  end;
+  return str;
+end
+
+-- prevede string na cislo
+-- ocekava jen cela cisla
+-- mezery ignoruje
+function strton(str)
+  local i = 1;
+  local j;
+  local k = 0;
+  local num = 0;
+  local c;
+  local n;
+  j = 0 - i; c = substr(str, j, j);
+  while c ~= "" do
+    if c ~= " " then-- ignorujeme mezery
+      n = ctoi(c);
+      if n == nil then return nil; else end; -- chyba
+      num = num + (10 ^ (i-k-1)) * n;
+    else 
+      k = k + 1;
+    end;
+    i = i + 1;
+    j = 0 - i; c = substr(str, j, j);
+  end;
+  return num;
+end
+
+-- doplni retezec mezerami na delku n
+-- ocekava ze retezec neni delsi nez n
+function padding(str, n)
+  local len;
+  len = strlen(str);
+  n = n - len;
+  if n < 0 then return nil; else end; -- chyba
+  while n ~= 0 do
+    str = str .. " ";
+    n = n - 1;
+  end;
+  return str;
+end
+
+-- pushne str na zasobnik stack o sirce slova n, vraci zasobnik
+function push(str, stack, n)
+  local word;
+  word = padding(str, n);
+  if(word == nil) then return nil; else end;
+  stack = word .. stack;
+  return stack;
+end
+
+-- vrati hodnotu z vrchu zasobniku o sirce slova n
+function get(stack, n)
+  local word;
+  word = substr(stack, 1, n);
+  return word;
+end
+
+-- ostrani vrchol zasobniku stack o sirce slova n a vrati zasobnik
+function pop(stack, n)
+  local word;
+  local tmp;
+  tmp = 0 - 1;
+  n = n + 1;
+  stack = substr(stack, n, tmp);
+  return stack;
+end
+
+-- vykona operaci o nad operandy o1 a o2 a vrati vysledek nebo nil
+function op(o, op1, op2)
+  if o == "+" then return op1 + op2; else end;
+  if o == "-" then return op1 - op2; else end;
+  if o == "*" then return op1 * op2; else end;
+  if o == "/" then return op1 / op2; else end;
+  if o == "^" then return op1 ^ op2; else end;
+  return nil;
+end
+
+function main()
+  local size = 10;
+  local stack = "";
+  local str;
+  local i = 1;
+  local c;
+  local buf = "";
+  local o1;
+  local o2;
+  local ret;
+  local h;
+  
+  local tmp;
+ 
+  -- uvodni kecy
+  write("Vita vas kalkulacka postixove notace\n");
+  write("===========================================\n");
+  write("Podporovane binarni operace jsou: + * - / ^\n");
+  write("Maximalni delka cisla je: ", size, "\n");
+  write("Nepouzivejte desetinna cisla!\n");
+  write("\n");
+  write("\n");
+  write("> ");
+  -- nacteme retezec
+
+  str = read("*l");
+  str = str .. " ";
+  -- a jedem
+  
+  
+  c = substr(str, i, i);
+  
+  while c ~= "" do
+    tmp = type(c);
+    -- write("-----DEBUG----\n", tmp, "\n", c, "\n");
+  
+    if c == " " then -- jde o oddelovac, pushujeme buffer
+      if(buf ~= "") then -- ale jen pokud buffer neni prazdny
+        stack = push(buf, stack, size);
+        if stack == nil then write("Err: Cislo je delsi nez ", size,"!\n"); return nil; else end; -- chyba
+        buf = "";
+      else end;
+    else
+      h = ctoi(c);
+      if h then -- je to cislo, ulozime ho do bufferu
+        buf = buf .. c;
+      else --operator
+        -- rovnez zkusime ulozit buffer
+        if buf ~= "" then -- ale jen pokud buffer neni prazdny
+          stack = push(buf, stack, size);
+          if stack == nil then write("Err: Cislo je delsi nez ", size,"!\n"); return nil; else end; -- chyba
+          buf = "";
+        else end;
+        -- a popneme a spocitame vysledek, ktery znova pushneme
+        o2 = get(stack, size); stack = pop(stack, size);
+        o1 = get(stack, size); stack = pop(stack, size);
+        if o2 == "" then write("Err: Na zasobniku chybi operand!\n"); return nil; else end; -- chyba
+        if o1 == "" then write("Err: Na zasobniku chybi operand!\n"); return nil; else end; -- chyba
+        o1 = strton(o1);
+        o2 = strton(o2);
+        ret = op(c, o1, o2);
+        if ret == nil then write("Err: Spatny operator!\n"); return nil; else end; -- chyba
+        ret = ntostr(ret);
+        -- write("[vrchol: ",o2,", vrchol-1: ",o1,"vysledek: ",ret,"]\n");
+        stack = push(ret, stack, size);
+        if stack == nil then write("Err: Vysledek je delsi nez ", size,"!\n"); return nil; else end; -- chyba
+      end;
+    end;
+    i = i + 1;
+    c = substr(str, i, i);
+  end;
+  --vypisem vysledek 
+  ret = get(stack, size);
+  ret = strton(ret);
+  write("\n\nNa vrcholku zasobniku je: ", ret, "\n \n \n");
+end;
+

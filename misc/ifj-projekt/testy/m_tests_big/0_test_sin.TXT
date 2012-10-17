@@ -1,0 +1,71 @@
+function deg_to_rad(deg)
+local rad;
+rad=3.14*deg/180; --prepocet, z wiki
+return rad;
+end
+
+function deg_trans(deg)
+while deg>=360 do
+  deg=deg-360;
+end;
+return deg;
+end
+
+function fact(num)
+local temp;
+local dec_n;
+local res;
+if num<2 then
+  res=1;
+else
+  dec_n=num-1;
+  temp=fact(dec_n);
+  res=num*temp;
+end;
+return res;
+end
+
+function sin_comp(rad,eps)
+local sin;
+local sum=0;
+local n=1;
+local factrial;
+local fact_aux;
+local neg; --vytvorenie -1
+neg=1-2;
+while n<=eps do
+  fact_aux=2*n+1;
+  factrial=fact(fact_aux);
+  sum=sum+(((neg)^n/factrial)*rad^(2*n+1));
+  n=n+1;
+end;
+return sum;
+end
+
+function main()
+local deg;
+local deg_new;
+local eps;
+local rad;
+local sin;
+write("Zadaj pocet krokov Taylorovej rady:\n");
+eps=read("*n");
+if eps<1 then
+  write("Prilis maly pocet!\n");
+  return 1;
+else
+end;
+write("Zadaj uhol v stupnoch (kladnu hodnotu):\n");
+deg=read("*n");
+if deg<0 then
+  write("Neplatna hodnota!\n");
+  return 1;
+else
+  deg_new=deg_trans(deg);
+end;
+rad=deg_to_rad(deg_new);
+sin=sin_comp(rad,eps);
+write("Sinus ",deg," je ",sin,"\n");
+return 0;
+end;
+

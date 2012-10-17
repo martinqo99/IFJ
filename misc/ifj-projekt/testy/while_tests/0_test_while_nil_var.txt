@@ -1,0 +1,7 @@
+function main()
+local a;
+while a do
+  return 0;
+end;
+write("ok");
+end;

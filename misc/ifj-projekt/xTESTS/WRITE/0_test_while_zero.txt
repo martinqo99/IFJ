@@ -1,0 +1,6 @@
+function main()
+while 0 do
+write("ok");
+return 0;
+end;
+end;

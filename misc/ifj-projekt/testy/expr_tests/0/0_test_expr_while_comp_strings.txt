@@ -1,0 +1,6 @@
+function main()
+while "abc"~="def" do
+write("ok");
+return 21;
+end;
+end;

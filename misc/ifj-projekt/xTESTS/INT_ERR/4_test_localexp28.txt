@@ -1,0 +1,5 @@
+function main()
+local b=1;
+local c="test";
+local a=b+c;
+end;

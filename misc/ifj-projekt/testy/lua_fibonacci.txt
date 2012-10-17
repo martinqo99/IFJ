@@ -1,0 +1,31 @@
+function fibonacci(n)
+ local ret;
+ local pomA;
+ local pomB;
+ local pom;
+ 
+ if n < 2 then
+  return n;
+ else
+  pom = n - 1;
+  pomA = fibonacci( pom );
+  pom = n - 2;
+  pomB = fibonacci( pom );
+  return pomA + pomB;
+ end;
+end
+ 
+function main()
+ local input = 1;
+ local ret;
+ write("Zadej cislo > 0: ");
+ -- while input > 0 do
+  input = read( "*n" );
+  if(input < 0 ) then
+    return 0;
+  else end;
+  write("Pocitam...\n");
+  ret = fibonacci( input );
+  write( "Fibonacciho cislo pre vstup ",input," je ",ret,".\n" );
+ -- end;
+end;

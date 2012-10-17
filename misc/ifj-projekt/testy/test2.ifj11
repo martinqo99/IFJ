@@ -1,0 +1,5 @@
+function main()--Hlavni telo programu
+	local a;
+	a = read("*ln");
+	write(a, "\n");
+end;

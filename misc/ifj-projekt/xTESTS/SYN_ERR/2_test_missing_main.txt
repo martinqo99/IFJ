@@ -1,0 +1,5 @@
+function fun()
+local a;
+local b;
+local c;
+end

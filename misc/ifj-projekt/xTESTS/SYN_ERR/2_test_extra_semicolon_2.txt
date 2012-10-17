@@ -1,0 +1,6 @@
+function main()
+local a;
+while a>0 do;
+end;
+local b;
+end;

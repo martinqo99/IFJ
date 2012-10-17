@@ -1,0 +1,10 @@
+function main()
+if "abc"==2 then
+else
+write("ok");
+end;
+if 1~="def" then
+write("ok");
+else
+end;
+end;

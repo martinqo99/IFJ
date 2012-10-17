@@ -1,0 +1,4 @@
+function main()
+local a;  --[[ comment
+local b;       block 
+end;

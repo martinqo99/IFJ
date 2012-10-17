@@ -1,0 +1,25 @@
+function main()
+local a=1;
+repeat
+  repeat
+    repeat
+      repeat
+        repeat
+          repeat
+            repeat
+              repeat
+                repeat
+                  repeat
+                    a=a+1;
+                  until a>"lol";
+                until a>10;
+              until a>15;
+            until a>20;
+          until a>25;
+        until a>30;
+      until a>35;
+    until a>40;
+  until a>45
+until a>50;
+write(a);
+end;

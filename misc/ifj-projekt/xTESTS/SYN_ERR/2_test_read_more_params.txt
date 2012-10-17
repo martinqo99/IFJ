@@ -1,0 +1,4 @@
+function main()
+local a;
+a=read(1,2,3);
+end;

@@ -1,0 +1,27 @@
+function fun(a)
+local b;
+if a<20 then
+  a=a+1;
+  b=fun(a);
+else
+  if 1<2 then
+    if 2<3 then
+      if 3>5 then
+        write("bad");
+      else
+        write("ok");
+      end;
+    else
+    end;
+  else
+  end;
+  write("20");
+end;
+end
+
+function main()
+local a=0;
+local b;
+b=fun(a);
+write(a);
+end;

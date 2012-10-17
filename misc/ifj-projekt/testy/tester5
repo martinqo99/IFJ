@@ -1,0 +1,115 @@
+#!/bin/sh
+if [ "$#" -eq 0 ]; then
+  echo ""
+  echo "USE: ./tester3 PROG SRC_DIR"
+  echo "PROG - testovany program(musi byt o jednu uroven vyssie nez zdrojaky)"
+  echo "SRC_DIR - priecinok s priecinkami so zdrojakmi"
+  echo "-zdrojaky musia mat format #_name, kde # je ocakavany navratovy kod"
+  echo "-kazdy zdrojak #_name musi mat vlastny subor output_#_name"
+  echo "-output_#_name obsahuje ocakavany vystup programu so zdrojakom #_name"
+  exit 0
+fi
+if [ $# -lt 2 ]; then
+  echo ""
+  echo "Ziaden zdrojovy priecinok!"
+  exit 1
+fi
+program=$1 #spustany program
+src_dir=$2 #priecinok s priecinkami so zdrojakmi
+(cd $src_dir
+for y in `ls -l | grep '^d' | awk '{print $NF}'`; do #vyber priecinky
+  (cd $y
+  for i in `ls | grep -v output`; do #vyber subory ktore nezacinaju "output"
+    expected=`echo "$i" | awk -F _ '{print $1}'` #ocakavany navratovy kod
+    echo ""
+    ../../$program $i >output 2>/dev/null #output - realny vystup programu
+    err=$?
+    if [ "$err" -eq "$expected" ]; then #ret_val match
+      diff -q output output_$i >/dev/null 
+      diff_ret=$?
+      if [ $diff_ret -eq 0 ]; then #ret_val+output match
+        valgrind --leak-check=full --leak-resolution=high --error-exitcode=7 -q ../$program $i >/dev/null 2>/dev/null
+        if [ $? -ne 7 ]; then #ret_val+output match+valgrind OK
+          echo "source: $i"
+          echo "OK!"	
+        else #ret_val+output match, valgrind ERR
+	  echo "source: $i" >&2
+	  echo "valgrind err!" >&2
+	  echo "valgrind:" >&2
+	  valgrind --leak-check=full --leak-resolution=high -q ../$program $i >&2
+        fi
+      else #ret_val match, output mismatch
+        valgrind --leak-check=full --leak-resolution=high --error-exitcode=7 -q ../$program $i >/dev/null 2>/dev/null
+        if [ $? -eq 7 ]; then #ret_val match, output mismatch, valgrind ERR
+  	  echo "source: $i" >&2
+          echo "output err!" >&2
+	  echo "valgrind err!" >&2
+	  echo "expected output:" >&2
+	  cat output_$i >&2
+	  echo "real output:" >&2
+	  cat output >&2	
+	  echo "valgrind:" >&2
+	  valgrind --leak-check=full --leak-resolution=high -q ../$program $i >&2
+        else #ret_val match, output mismatch, valgrind OK
+	  echo "source: $i" >&2
+	  echo "output err!" >&2
+	  echo "expected output:" >&2
+	  cat output_$i >&2
+	  echo "real output:" >&2
+	  cat output >&2
+        fi
+      fi
+    else #ret_val mismatch
+      diff -q output output_$i >/dev/null
+      diff_ret=$?
+      if [ $diff_ret -eq 0 ]; then #ret_val mismatch, output match
+        valgrind --leak-check=full --leak-resolution=high --error-exitcode=7 -q ../$program $i >/dev/null 2>/dev/null
+        if [ $? -eq 7 ]; then #ret_val mismatch, output match, valgrind err
+	  echo "source: $i" >&2
+	  echo "return value err!" >&2
+	  echo "valgrind err!" >&2
+	  echo "expected ret_val: $expected" >&2
+	  echo "real ret_val: $err" >&2
+	  echo "valgrind:" >&2
+	  valgrind --leak-check=full --leak-resolution=high -q ../$program $i >&2
+        else #ret_val mismatch, output match, valgrind OK
+	  echo "source: $i" >&2
+	  echo "return value err!" >&2
+	  echo "expected ret_val: $expected" >&2
+	  echo "real ret_val: $err" >&2
+        fi
+      else #ret_val mismatch, output mismatch
+        valgrind --leak-check=full --leak-resolution=high --error-exitcode=7 -q ../$program $i >/dev/null 2>/dev/null
+        if [ $? -eq 7 ]; then #ret_val mismatch, output mismatch, valgrind err
+	  echo "source: $i" >&2
+          echo "return value err!" >&2
+  	  echo "output err!" >&2
+	  echo "valgrind err!" >&2
+	  echo "expected ret_val: $expected" >&2
+	  echo "real ret_val: $err" >&2
+	  echo "expected output:" >&2
+	  cat output_$i >&2
+	  echo "real output:" >&2
+ 	  cat output >&2
+	  echo "valgrind:" >&2
+	  valgrind --leak-check=full --leak-resolution=high -q ../$program $i >&2
+        else #ret_val mismatch, output mismatch, valgrind OK
+	  echo "source: $i" >&2
+	  echo "return value err!" >&2
+	  echo "output err!" >&2
+	  echo "expected ret_val: $expected" >&2
+	  echo "real ret_val: $err" >&2
+	  echo "expected output:" >&2
+	  cat output_$i >&2
+	  echo "real output:" >&2
+	  cat output >&2
+        fi
+      fi
+    fi
+  rm output
+  rm debug.log
+  done
+  )
+done
+)
+exit 0

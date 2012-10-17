@@ -1,0 +1,13 @@
+function main()
+local a;
+local b;
+local c;
+a=5;
+b=10;
+c=a<=b;
+if c then
+write("true");
+else
+write("false");
+end;
+end;

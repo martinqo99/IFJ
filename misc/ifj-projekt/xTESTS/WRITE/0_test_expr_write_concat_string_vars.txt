@@ -1,0 +1,7 @@
+function main()
+local a="one";
+local b="two";
+local c="three";
+local d="four";
+write(a..b,c..d);
+end;

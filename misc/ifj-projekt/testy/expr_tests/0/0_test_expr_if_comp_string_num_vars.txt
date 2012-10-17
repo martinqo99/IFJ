@@ -1,0 +1,12 @@
+function main()
+local a="abc";
+local b=2;
+if a==b then
+else
+write("ok");
+end;
+if a~=b then
+write("ok");
+else
+end;
+end;

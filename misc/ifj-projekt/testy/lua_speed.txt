@@ -1,0 +1,48 @@
+function loop()
+  local a;
+	local b;
+	local fn;
+	local pomoc;
+	local fn1;
+  fn  = "Etiam congue convallis orci, vitae vestibulum ipsum lobortis ut. Donec non tellus ac quam ultricies volutpat. Suspendisse tincidunt ultrices euismod. Quisque ultrices ante vel risus sagittis egestas. In feugiat hendrerit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Vestibulum scelerisque nisi id est euismod imperdiet. Nullam purus lorem, varius quis pretium sed, hendrerit vitae quam. Proin sagittis fringilla risus, imperdiet accumsan mi pellentesque sit amet. Maecenas in lectus nunc, non suscipit magna. Nunc ut faucibus eros. Proin in est id magna porttitor ultrices ut ut metus. Aenean nisi augue, vehicula at viverra at, laoreet non mauris. Maecenas condimentum nunc mauris. Aenean congue fermentum aliquet. Praesent vitae iaculis augue. ";	
+	fn1 = "Vivamus tincidunt sollicitudin purus, ut sagittis eros auctor at. Integer non nulla quis odio varius euismod. Nulla pretium pharetra sapien, sed cursus lorem accumsan sit amet. Pellentesque quis diam quis mauris tincidunt gravida eu mollis est. In ultrices risus id tortor sollicitudin et imperdiet neque eleifend. Maecenas adipiscing purus vitae nibh malesuada facilisis. Morbi ut consequat tellus. Vestibulum lorem justo, dapibus sed tempus in, congue convallis erat. ";
+	pomoc = 25632589652356332;	
+	a = 100000;
+	while(a > 0) do
+		b = a;
+		if(a >1000) then
+			b = b + 35000;
+			if(b > 40000) then
+				if(b < 123417) then
+					b = b - 28761;
+				else
+					b = b - 125368 * 2;
+				end;
+			else
+				b = 7457;
+			end;
+		else
+			if (a == 666)then
+				write("Hell's Gate is open!!\n");
+			else end;
+			pomoc = fn;
+			fn = fn1;
+			fn = pomoc;
+		end;
+			
+		b = a * b;
+		a = a - 1;
+	end;
+end
+
+function main() --Hlavni telo programu
+  local a = 0;
+	local b;
+	
+	while(a <= 100) do
+	  write(a, ". ");
+		a=a+1;
+		b = loop();	
+	end;
+end;
+

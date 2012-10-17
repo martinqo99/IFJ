@@ -1,0 +1,5 @@
+fuction main()
+local a;
+local b;
+local c;
+end;

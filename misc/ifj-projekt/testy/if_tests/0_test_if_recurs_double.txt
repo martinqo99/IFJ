@@ -1,0 +1,27 @@
+function fun2(a)
+local b;
+if a<5 then
+  a=a+1;
+  b=fun2(a);
+else
+  write("ok");
+end;
+end;
+
+function fun(a)
+local b;
+if a<5 then
+  b=fun2(a);
+  a=a+1;
+  b=fun(a);
+else
+  write("5");
+end;
+end
+
+function main()
+local a=0;
+local b;
+b=fun(a);
+write(a);
+end;
