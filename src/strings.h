@@ -1,7 +1,7 @@
 /*
  * Predmet: IFJ / IAL
  * Projekt: Implementace interpretu imperativniho jazyka IFJ12
- * Subor:   strings.h
+ * Soubor:  strings.h
  * Datum:   17.10.2012
  * Autori:  Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>,
  *          Petr Matyas         <xmatya03@stud.fit.vutbr.cz>,
@@ -24,7 +24,7 @@ int strInit (tString *str);
 int strFree (tString *str);
 int strClear (tString *str);
 int strAdd (tString *str, char x);
-char *strCopy (tString *str); // chci upresneni
+int strCopy (tString *str, char *array);
 int strCmp (tString *strl, tString *strr);
 char *strRaw (tString *str);
 int strLen (tString *str);
