@@ -14,6 +14,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef unsigned int uint;
+
 typedef struct tstring {
   char *data;
   uint lenght;
@@ -25,6 +27,7 @@ int strFree (tString *str);
 int strClear (tString *str);
 int strAdd (tString *str, char x);
 int strCopy (tString *str, char *array);
+int strCopyString (tString *strl, tString *strr);
 int strCmp (tString *strl, tString *strr);
 char *strRaw (tString *str);
 int strLen (tString *str);

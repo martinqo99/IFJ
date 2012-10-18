@@ -52,10 +52,9 @@ int strFree (tString *str)
  */
 int strClear (tString *str)
 {
-  uint i = lenght;
+  uint i = str->lenght;
   while (--i)
-    str->data[i] = '';
-  str->data[0] = '/0';
+    str->data[i] = '\0';
   str->lenght = 0;
 
   return EXIT_SUCCESS;
@@ -71,13 +70,13 @@ int strAdd (tString *str, char x)
 {
   if (str->allocated == str->lenght - 1) {
     str->allocated += SIZE;
-    str->data = (char *) realloc(str->data, str->allocated * char);
+    str->data = (char *) realloc(str->data, str->allocated * sizeof(char));
     if (str->data == NULL)
       return EXIT_FAILURE;
   }
 
-  str->data[lenght++] = x;
-  str->data[lenght] = '\0';
+  str->data[str->lenght++] = x;
+  str->data[str->lenght] = '\0';
 
   return EXIT_SUCCESS;
 }
@@ -93,9 +92,30 @@ int strCopy (tString *str, char *array)
   if (array == NULL)
     return EXIT_FAILURE;
 
-  int i = lenght;
+  int i = str->lenght;
   while (i--)
     array[i] = str->data[i];
+
+  return EXIT_SUCCESS;
+}
+
+/**
+ * @info      Zkopiruje celou strukturu
+ * @param   tString - struktura s polem a jeho rozmery
+ * @return  EXIT_SUCCESS || EXIT_FAILURE
+ */
+int strCopyString (tString *strl, tString *strr)
+{
+  strr->lenght = strl->lenght;
+  strr->allocated = strl->allocated;
+
+  strr->data = (char *) calloc(strr->lenght, sizeof(char));
+  if (strr->data == NULL)
+    return EXIT_FAILURE;
+
+  int i = strr->lenght;
+  while (i--)
+    strr->data[i] = strl->data[i];
 
   return EXIT_SUCCESS;
 }
@@ -112,7 +132,7 @@ int strCmp (tString *strl, tString *strr)
   if (strl->lenght != strr->lenght)
     return EXIT_FAILURE;
   if (strcmp(strl->data, strr->data) != 0)
-    return EXIT_FAILURE
+    return EXIT_FAILURE;
 
   return EXIT_SUCCESS;
 }
