@@ -6,6 +6,7 @@ Vlastní struktura pro nekoněčně dlouhé řetězce
 	- strClear - vyprázdní řětězec
 	- strAdd - přídá znak (char) na konec řětězce
 	- strCopy - zkopíruje řětězec (char*)
+	- strCopyString - vytvoří kopii struktury tString
 	- strCmp - porovná dva řětězce (dva tStringy)
 	- strRaw - vrácí ukazatel na char*
 	- strLen - vrátí délku řetězce
