@@ -1,17 +1,20 @@
-/*
- * Predmet: IFJ / IAL
- * Projekt: Implementace interpretu imperativniho jazyka IFJ12
- * Soubor:  strings.c
- * Datum:   17.10.2012
- * Autori:  Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>,
- *          Petr Matyas         <xmatya03@stud.fit.vutbr.cz>,
- *          Veronika Necasova   <xnecas21@stud.fit.vutbr.cz>,
- *          Michaela Muzikarova <xmuzik04@stud.fit.vutbr.cz>,
- *          Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
+/**
+ * Predmet:   IFJ / IAL
+ * Projekt:   Implementace interpretu imperativniho jazyka IFJ12
+ * Varianta:  a/1/I
+ * Soubor:    strings.c
+ * Popis:     Diky tomuto souboru muzeme pracovat se stringy :P
+ * Datum:     17.10.2012
+ * Autori:    Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
+ *            Petr Matyas         <xmatya03@stud.fit.vutbr.cz>
+ *            Veronika Necasova   <xnecas21@stud.fit.vutbr.cz>
+ *            Michaela Muzikarova <xmuzik04@stud.fit.vutbr.cz>
+ *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
 #include "strings.h"
-#define SIZE 20 // zacatecni velikost pole, pri realokaci se zdvojnasobi
+#include "MMU.c"
+#define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
 
 /**
  * @info      Inicializace struktury pro string
@@ -23,7 +26,7 @@ int strInit (tString *str)
   str->lenght = 0;
   str->allocated = SIZE;
 
-  str->data = (char *) calloc(str->allocated, sizeof(char));
+  str->data = (char *) mmuCalloc(str->allocated, sizeof(char));
   if (str->data == NULL)
     return EXIT_FAILURE;
 
@@ -37,7 +40,7 @@ int strInit (tString *str)
  */
 int strFree (tString *str)
 {
-  free(str->data);
+  mmuFree(str->data);
   str->data = NULL;
   str->allocated = 0;
   str->lenght = 0;
@@ -53,7 +56,7 @@ int strFree (tString *str)
 int strClear (tString *str)
 {
   uint i = str->lenght;
-  while (--i)
+  while (i--)
     str->data[i] = '\0';
   str->lenght = 0;
 
@@ -68,9 +71,9 @@ int strClear (tString *str)
  */
 int strAdd (tString *str, char x)
 {
-  if (str->allocated == str->lenght - 1) {
+  if (str->allocated - 1 == str->lenght) {
     str->allocated += SIZE;
-    str->data = (char *) realloc(str->data, str->allocated * sizeof(char));
+    str->data = (char *) mmuRealloc(str->data, str->allocated * sizeof(char));
     if (str->data == NULL)
       return EXIT_FAILURE;
   }
@@ -88,13 +91,14 @@ int strAdd (tString *str, char x)
  */
 int strCopy (tString *str, char *array)
 {
-  array = (char *) calloc(str->lenght, sizeof(char));
+  array = (char *) mmuCalloc(str->lenght + 1, sizeof(char));
   if (array == NULL)
     return EXIT_FAILURE;
 
   int i = str->lenght;
-  while (i--)
+  do
     array[i] = str->data[i];
+  while (i--);
 
   return EXIT_SUCCESS;
 }
@@ -109,13 +113,14 @@ int strCopyString (tString *strl, tString *strr)
   strr->lenght = strl->lenght;
   strr->allocated = strl->allocated;
 
-  strr->data = (char *) calloc(strr->lenght, sizeof(char));
+  strr->data = (char *) mmuCalloc(strr->allocated, sizeof(char));
   if (strr->data == NULL)
     return EXIT_FAILURE;
 
   int i = strr->lenght;
-  while (i--)
+  do
     strr->data[i] = strl->data[i];
+  while (i--);
 
   return EXIT_SUCCESS;
 }
