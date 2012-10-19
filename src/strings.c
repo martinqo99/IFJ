@@ -15,43 +15,46 @@
 #include "strings.h"
 #include "MMU.c"
 #define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
+#define TRUE 0
+#define FALSE 1
 
 /**
  * @info      Inicializace struktury pro string
  * @param   tString - struktura s polem a jeho rozmery
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strInit (tString *str)
 {
   str->lenght = 0;
+
+  str->data = (char *) mmuCalloc(SIZE, sizeof(char));
+  if (str->data == NULL)
+    return FALSE;
   str->allocated = SIZE;
 
-  str->data = (char *) mmuCalloc(str->allocated, sizeof(char));
-  if (str->data == NULL)
-    return EXIT_FAILURE;
-
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
  * @info      Uvolni string
  * @param   tString - struktura s polem a jeho rozmery
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strFree (tString *str)
 {
-  mmuFree(str->data);
+  if (str->data)
+    mmuFree(str->data);
   str->data = NULL;
   str->allocated = 0;
   str->lenght = 0;
 
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
  * @info      Smaze pole znaku
  * @param   tString - struktura s polem a jeho rozmery
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strClear (tString *str)
 {
@@ -60,14 +63,14 @@ int strClear (tString *str)
     str->data[i] = '\0';
   str->lenght = 0;
 
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
  * @info      Prida znak na konec retezce
  * @param   tString - struktura s polem a jeho rozmery
  * @param   char - pridavany znak
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strAdd (tString *str, char x)
 {
@@ -75,71 +78,70 @@ int strAdd (tString *str, char x)
     str->allocated += SIZE;
     str->data = (char *) mmuRealloc(str->data, str->allocated * sizeof(char));
     if (str->data == NULL)
-      return EXIT_FAILURE;
+      return FALSE;
   }
 
   str->data[str->lenght++] = x;
   str->data[str->lenght] = '\0';
 
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
  * @info      Zkopiruje pole znaku
  * @param   tString - struktura s polem a jeho rozmery
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strCopy (tString *str, char *array)
 {
   array = (char *) mmuCalloc(str->lenght + 1, sizeof(char));
   if (array == NULL)
-    return EXIT_FAILURE;
+    return FALSE;
 
   int i = str->lenght;
   do
     array[i] = str->data[i];
   while (i--);
 
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
  * @info      Zkopiruje celou strukturu
  * @param   tString - struktura s polem a jeho rozmery
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strCopyString (tString *strl, tString *strr)
 {
+  strr->data = (char *) mmuCalloc(strl->allocated, sizeof(char));
+  if (strr->data == NULL)
+    return FALSE;
   strr->lenght = strl->lenght;
   strr->allocated = strl->allocated;
-
-  strr->data = (char *) mmuCalloc(strr->allocated, sizeof(char));
-  if (strr->data == NULL)
-    return EXIT_FAILURE;
 
   int i = strr->lenght;
   do
     strr->data[i] = strl->data[i];
   while (i--);
 
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
  * @info      Porovna dva stringy
  * @param   tString - struktura s polem a jeho rozmery
- * @return  EXIT_SUCCESS || EXIT_FAILURE
+ * @return  TRUE || FALSE
  */
 int strCmp (tString *strl, tString *strr)
 {
   if (strl->allocated != strr->allocated)
-    return EXIT_FAILURE;
+    return FALSE;
   if (strl->lenght != strr->lenght)
-    return EXIT_FAILURE;
+    return FALSE;
   if (strcmp(strl->data, strr->data) != 0)
-    return EXIT_FAILURE;
+    return FALSE;
 
-  return EXIT_SUCCESS;
+  return TRUE;
 }
 
 /**
@@ -157,7 +159,7 @@ char *strRaw (tString *str)
  * @param   tString - struktura s polem a jeho rozmery
  * @return  delka stringu
  */
-int strLen (tString *str)
+uint strLen (tString *str)
 {
   return str->lenght;
 }
@@ -167,7 +169,7 @@ int strLen (tString *str)
  * @param   tString - struktura s polem a jeho rozmery
  * @return  naalokovana velikost
  */
-int strSize (tString *str)
+uint strSize (tString *str)
 {
   return str->allocated;
 }

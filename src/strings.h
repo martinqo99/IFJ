@@ -32,5 +32,5 @@ int strCopy (tString *str, char *array);
 int strCopyString (tString *strl, tString *strr);
 int strCmp (tString *strl, tString *strr);
 char *strRaw (tString *str);
-int strLen (tString *str);
-int strSize (tString *str);
+uint strLen (tString *str);
+uint strSize (tString *str);
