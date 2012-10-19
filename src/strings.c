@@ -71,7 +71,7 @@ int strClear (tString *str)
  */
 int strAdd (tString *str, char x)
 {
-  if (str->allocated - 1 == str->lenght) {
+  if (str->allocated - 2 == str->lenght) {
     str->allocated += SIZE;
     str->data = (char *) mmuRealloc(str->data, str->allocated * sizeof(char));
     if (str->data == NULL)
