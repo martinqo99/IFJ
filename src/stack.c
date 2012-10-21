@@ -61,7 +61,7 @@ void stackPush(tStack* S, void* data){
 }
 
 void* stackTop(tStack* S){
-	return (!S || S->top)? NULL : S->top->data;	
+	return (!S || !S->top)? NULL : S->top->data;	
 }
 
 void* stackPop(tStack* S){
