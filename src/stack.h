@@ -23,19 +23,22 @@
 #include <stdbool.h>
 #include "MMU.h"
 
+#define STACK_EOK      0
+#define STACK_ERR    -10
+#define STACK_EMPTY  -11
+#define STACK_MEMORY -12
+
 typedef struct stackPtr{
-	struct stackPtr *ptr;
-	void* data;
-	
+    struct stackPtr *ptr;
+    void* data;
+
 } *tStackPtr;
 
 typedef struct{
-	unsigned int size;
-	tStackPtr top;
-	
+    unsigned int size;
+    tStackPtr top;
+
 } tStack;
-
-
 
 void stackInit(tStack*);
 void stackFree(tStack*);
@@ -45,6 +48,5 @@ void* stackPop(tStack*);
 
 bool stackEmpty(tStack*);
 unsigned int stackSize(tStack*);
-
 
 #endif

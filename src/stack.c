@@ -19,72 +19,72 @@
 #include "stack.h"
 
 void stackInit(tStack* S){
-	if(!S)
-		return;
-		
-	S->top = NULL;
-	S->size = 0;
+    if(!S)
+        return;
+
+    S->top = NULL;
+    S->size = 0;
 }
 
 void stackFree(tStack* S){
-	if(!S)
-		return;
-	
-	tStackPtr iterator = NULL;
-	
-	while((iterator = S->top)){
-		S->top = iterator->ptr;
-		
-		mmuFree(iterator);
-	}			
-	
-	S->top = NULL;
-	S->size = 0;	
+    if(!S)
+        return;
+
+    tStackPtr iterator = NULL;
+
+    while((iterator = S->top)){
+        S->top = iterator->ptr;
+
+        mmuFree(iterator);
+    }		
+
+    S->top = NULL;
+    S->size = 0;	
 }
 
 void stackPush(tStack* S, void* data){
-	if(!S)
-		return;
-		
-	tStackPtr item = mmuMalloc(sizeof(struct stackPtr));
-	
-	if(!item)
-		return;
-		
-	item->data = data;
-	item->ptr = NULL;
-	
-	if(S->top)
-		item->ptr = S->top;
-	
-	S->top = item;	
+    if(!S)
+        return;
+
+    tStackPtr item = mmuMalloc(sizeof(struct stackPtr));
+
+    if(!item)
+        return;
+
+    item->data = data;
+    item->ptr = NULL;
+
+    if(S->top)
+        item->ptr = S->top;
+
+    S->top = item;	
 }
 
 void* stackTop(tStack* S){
-	return (!S || !S->top)? NULL : S->top->data;	
+    return (!S || !S->top)? NULL : S->top->data;	
 }
 
 void* stackPop(tStack* S){
-	if(!S || !S->top)
-		return NULL;
-		
-	tStackPtr item = S->top;
-	void* data = item->data;
-	
-	S->top = item->ptr;
-	
-	mmuFree(item);
-	
-	return data;
+    if(!S || !S->top)
+        return NULL;
+
+    tStackPtr item = S->top;
+    void* data = item->data;
+
+    S->top = item->ptr;
+
+    mmuFree(item);
+
+    return data;
 }
 
 bool stackEmpty(tStack* S){
-	if(!S)
-		return false;	
-	
-	return (S->top)? true : false;
+    if(!S)
+        return false;	
+
+    return (S->top)? true : false;
 }
 
 unsigned int stackSize(tStack* S){
-	return (S)? S->size : 0;	
+    return (S)? S->size : 0;	
 }
