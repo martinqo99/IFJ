@@ -80,9 +80,9 @@ void* stackPop(tStack* S){
 
 bool stackEmpty(tStack* S){
     if(!S)
-        return false;	
+        return true;	
 
-    return (S->top)? true : false;
+    return (!S->top)? true : false;
 }
 
 unsigned int stackSize(tStack* S){
