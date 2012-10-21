@@ -15,8 +15,8 @@
 #include "strings.h"
 #include "MMU.c"
 #define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
-#define TRUE 0
-#define FALSE 1
+#define TRUE 1
+#define FALSE 0
 
 /**
  * @info      Inicializace struktury pro string
