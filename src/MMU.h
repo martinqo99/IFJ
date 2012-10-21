@@ -19,6 +19,8 @@
 #ifndef MMU_H_INCLUDED
 #define MMU_H_INCLUDED
 
+#include <stdlib.h>
+
 typedef struct MMU{
 	void* ptr;
 	
