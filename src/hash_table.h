@@ -20,11 +20,14 @@
 #ifndef HASH_TABLE_H_INCLUDED
 #define HASH_TABLE_H_INCLUDED
 
+#include "MMU.h"
+#include "strings.h"
+
 typedef struct htableItem{
     struct htableItem* ptr;
-    char* uid;    
+    tString key;  
     
-} *tHTableItemPtr, tHTable;
+} *tHTableItemPtr, tHTableItem;
 
 typedef struct{
     unsigned int size;
@@ -33,9 +36,13 @@ typedef struct{
 } tHTable;
 
 tHTable* htableCreate();
+tHTableItem* htableItemCreate(tString);
 void htableDestroy(tHTable*);
-
-void htableInit(tHTable*);
+void htableInit(tHTable*, unsigned int);
 void htableDispose(tHTable*);
+
+tHTableItemPtr htableLookup(tHTable*, tString);
+
+unsigned int hash(tString, unsigned int);
 
 #endif
