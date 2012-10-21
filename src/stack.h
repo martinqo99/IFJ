@@ -40,8 +40,11 @@ typedef struct{
 
 } tStack;
 
+tStack* stackCreate();
+void stackDestroy(tStack*);
+
 void stackInit(tStack*);
-void stackFree(tStack*);
+void stackDispose(tStack*);
 void stackPush(tStack*, void*);
 void* stackTop(tStack*);
 void* stackPop(tStack*);

@@ -18,6 +18,17 @@
 
 #include "stack.h"
 
+tStack* stackCreate(){
+    return (tStack*)mmuMalloc(sizeof(tStack));
+}
+
+void stackDestroy(tStack* S){
+    if(!S)
+        return;
+        
+    mmuFree(S);
+}
+
 void stackInit(tStack* S){
     if(!S)
         return;
@@ -26,7 +37,7 @@ void stackInit(tStack* S){
     S->size = 0;
 }
 
-void stackFree(tStack* S){
+void stackDispose(tStack* S){
     if(!S)
         return;
 
