@@ -35,6 +35,27 @@ int strInit (tString *str)
 }
 
 /**
+ * @info      Vytvori strukturu a prida do ni *char z parametru
+ * @param   char* - pole znaku, nad kterym vytvorime novou strukturu string
+ * @return  tString - Struktura s polem a jeho rozmery
+ */
+tString strCreate (const char *array)
+{
+  tString str = {NULL, 0, 0};
+  if (strInit(&str) == FALSE)
+    return str;
+
+  int i = 0;
+  while (array[i++] != '\0')
+    if (strAdd(&str, array[0]) == FALSE) {
+      strFree(&str);
+      return str;
+    }
+
+  return str;
+}
+
+/**
  * @info      Uvolni string
  * @param   tString - struktura s polem a jeho rozmery
  * @return  TRUE || FALSE
