@@ -12,9 +12,13 @@
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
+#ifndef STRINGS_H_INCLUDED
+#define STRINGS_H_INCLUDED
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "MMU.h"
 
 typedef unsigned int uint;
 
@@ -34,3 +38,5 @@ int strCmp (tString *strl, tString *strr);
 char *strRaw (tString *str);
 uint strLen (tString *str);
 uint strSize (tString *str);
+
+#endif

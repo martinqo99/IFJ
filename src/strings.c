@@ -13,7 +13,6 @@
  */
 
 #include "strings.h"
-#include "MMU.c"
 #define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
 #define TRUE 1
 #define FALSE 0
