@@ -29,7 +29,7 @@ typedef struct tstring {
 } tString;
 
 int strInit (tString *str);
-int strCmpRaw (tString *str, const char x);
+//int strCmpRaw (tString *str, const char x);
 tString strCreate (const char *str);
 int strFree (tString *str);
 int strClear (tString *str);

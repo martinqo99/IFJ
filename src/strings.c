@@ -40,12 +40,12 @@ int strInit (tString *str)
  * @param   const char - pole znaku se kterym porovnavame
  * @return  TRUE || FALSE
  */
-int strCmpRaw (tString *str, const char x)
+/*int strCmpRaw (tString *str, const char x)
 {
   if (strcmp(str->data, x) == 0)
     return TRUE;
   return FALSE;
-}
+}*/
 
 /**
  * @info      Vytvori strukturu a prida do ni *char z parametru
@@ -167,6 +167,11 @@ int strCopyString (tString *strl, tString *strr)
  */
 int strCmp (tString *strl, tString *strr)
 {
+  return strcmp(strl->data, strr->data);
+}
+/*puvodni strCmp kdybych neco podelal - Darek
+int strCmp (tString *strl, tString *strr)
+{
   if (strl->allocated != strr->allocated)
     return FALSE;
   if (strl->lenght != strr->lenght)
@@ -175,8 +180,7 @@ int strCmp (tString *strl, tString *strr)
     return FALSE;
 
   return TRUE;
-}
-
+}*/
 /**
  * @info      Vrati ukazatel na pole znaku
  * @param   tString - struktura s polem a jeho rozmery
