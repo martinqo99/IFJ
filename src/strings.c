@@ -35,6 +35,19 @@ int strInit (tString *str)
 }
 
 /**
+ * @info      Porovnani struktury s retezcem
+ * @param   tString - struktura s polem a jeho rozmery
+ * @param   const char - pole znaku se kterym porovnavame
+ * @return  TRUE || FALSE
+ */
+int strCmpRaw (tString *str, const char x)
+{
+  if (strcmp(str->data, x) == 0)
+    return TRUE;
+  return FALSE;
+}
+
+/**
  * @info      Vytvori strukturu a prida do ni *char z parametru
  * @param   char* - pole znaku, nad kterym vytvorime novou strukturu string
  * @return  tString - Struktura s polem a jeho rozmery
