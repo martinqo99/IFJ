@@ -59,8 +59,8 @@ tString strCreate (const char *array)
     return str;
 
   int i = 0;
-  while (array[i++] != '\0')
-    if (strAdd(&str, array[0]) == FALSE) {
+  while (array[i] != '\0')
+    if (strAdd(&str, array[i++]) == FALSE) {
       strFree(&str);
       return str;
     }
