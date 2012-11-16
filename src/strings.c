@@ -16,6 +16,7 @@
 #define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
 #define TRUE 1
 #define FALSE 0
+#define NEGATIVE -1
 
 /**
  * @info      Inicializace struktury pro string
@@ -163,24 +164,24 @@ int strCopyString (tString *strl, tString *strr)
 /**
  * @info      Porovna dva stringy
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  TRUE 1 prvni je delsi || FALSE 0 stejne || NEGATIVE -1 prvni je kratsi
  */
 int strCmp (tString *strl, tString *strr)
 {
-  return strcmp(strl->data, strr->data);
-}
-/*puvodni strCmp kdybych neco podelal - Darek
-int strCmp (tString *strl, tString *strr)
-{
-  if (strl->allocated != strr->allocated)
-    return FALSE;
-  if (strl->lenght != strr->lenght)
-    return FALSE;
-  if (strcmp(strl->data, strr->data) != 0)
-    return FALSE;
+  if (strl->lenght < strr->lenght)
+    return NEGATIVE;
+  else if (strl->lenght > strr->lenght)
+    return TRUE;
 
-  return TRUE;
-}*/
+  int cmp = strcmp(strl->data,strr->data);
+  if (cmp > 0)
+    return TRUE;
+  else if (cmp < 0)
+    return NEGATIVE;
+
+  return FALSE;
+}
+
 /**
  * @info      Vrati ukazatel na pole znaku
  * @param   tString - struktura s polem a jeho rozmery
