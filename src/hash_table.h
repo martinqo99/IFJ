@@ -7,7 +7,7 @@
  * Popis:    
  * 
  * 
- * Datum:    21.10.2012
+ * Datum:    22.10.2012
  * 
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
@@ -20,7 +20,7 @@
 #ifndef HASH_TABLE_H_INCLUDED
 #define HASH_TABLE_H_INCLUDED
 
-#include "MMU.h"
+#include "mmu.h"
 #include "strings.h"
 
 typedef struct htableItem{
@@ -38,6 +38,7 @@ typedef struct{
 tHTable* htableCreate();
 tHTableItem* htableItemCreate(tString);
 void htableDestroy(tHTable*);
+void htableItemDestroy(tHTableItem*);
 void htableInit(tHTable*, unsigned int);
 void htableDispose(tHTable*);
 

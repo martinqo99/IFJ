@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "MMU.h"
+#include "mmu.h"
 
 typedef unsigned int uint;
 

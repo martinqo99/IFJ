@@ -21,7 +21,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "MMU.h"
+#include "mmu.h"
 
 #define STACK_EOK      0
 #define STACK_ERR    -10

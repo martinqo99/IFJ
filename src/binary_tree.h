@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "MMU.h"
+#include "mmu.h"
 #include "strings.h"
 
 typedef struct tBTreeNode {
