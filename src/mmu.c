@@ -16,7 +16,7 @@
  *           Skacel Dalibor      <xskace11@stud.fit.vutbr.cz>
  */
 
-#include "MMU.h"
+#include "mmu.h"
 
 void* mmuMalloc(unsigned int size){
 	return malloc(size);
