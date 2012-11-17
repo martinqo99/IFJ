@@ -101,7 +101,7 @@ void crtTable (tString text, int table[])
  * @param   tString - struktura s polem a jeho rozmery
  * @return  TRUE || FALSE
  */
-int strFind (tString text, tString searched)
+int kmpSearch (tString text, tString searched)
 {
   if (text.lenght == 0)
     return text.lenght; // neni v cem hledat

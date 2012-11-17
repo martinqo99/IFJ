@@ -19,4 +19,4 @@
 #include "strings.h"
 
 void crtTable (tString text, int table[]);
-int strFind (tString text, tString searched);
+int kmpSearch (tString text, tString searched);
