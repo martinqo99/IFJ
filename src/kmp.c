@@ -2,7 +2,7 @@
  * Predmet:   IFJ / IAL
  * Projekt:   Implementace interpretu imperativniho jazyka IFJ12
  * Varianta:  a/1/I
- * Soubor:    strings.c
+ * Soubor:    kmp.c
  * Popis:     Hledani retezce v podretezci pomoci Knuth-Moris-Prattova algoritmu
  * Datum:     17.10.2012
  * Autori:    Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
