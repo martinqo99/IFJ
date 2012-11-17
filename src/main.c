@@ -21,8 +21,7 @@
 #include <signal.h>
 #include "errors.h"
 #include "mmu.h"
-
-FILE* fileHandler;
+#include "scanner.h"
 
 int main(int argc, char* argv[]){
     
@@ -33,14 +32,15 @@ int main(int argc, char* argv[]){
         return ERROR_COMPILATOR;
     }
     
-    if(!(fileHandler = fopen(argv[1], "r"))){
+    if(!(gFileHandler = fopen(argv[1], "r"))){
         fprintf(stderr, "Cannot open input file\n");
         return ERROR_COMPILATOR;
     }
+ 
+    mmuInit();   
     
     
-    
-    fclose(fileHandler);
+    fclose(gFileHandler);
     
     mmuGlobalFree();
     

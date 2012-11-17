@@ -18,6 +18,10 @@
 
 #include "mmu.h"
 
+void mmuInit(){
+    
+}
+
 void* mmuMalloc(unsigned int size){
 	return malloc(size);
 }

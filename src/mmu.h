@@ -20,12 +20,16 @@
 #define MMU_H_INCLUDED
 
 #include <stdlib.h>
+#include "strings.h"
+//#include "hash_table.h"
 
 typedef struct MMU{
 	void* ptr;
 	
 } tMMU;
 
+
+void mmuInit();
 void* mmuMalloc(unsigned int);
 void* mmuRealloc(void*, unsigned int);
 void* mmuCalloc(unsigned int, unsigned int);
