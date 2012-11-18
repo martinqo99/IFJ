@@ -92,7 +92,7 @@ tBTNode insertNode(tBTNode N,tString *key, void *data){
                 if(strCmp(key,N->left->key)<0)
                     N=singleRotateLeft(N);
                 else
-                    doubleRotateLeft(N);
+                    N=doubleRotateLeft(N);
             }
          }
          else
