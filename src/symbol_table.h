@@ -22,6 +22,7 @@
 #include "strings.h"
 
 typedef enum tdatatype{
+  DT_NIL,
   DT_BOOL,
   DT_NUMBER,
   DT_STRING  
