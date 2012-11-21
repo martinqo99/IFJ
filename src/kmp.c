@@ -3,8 +3,8 @@
  * Projekt:   Implementace interpretu imperativniho jazyka IFJ12
  * Varianta:  a/1/I
  * Soubor:    kmp.c
- * Popis:     Hledani retezce v podretezci pomoci Knuth-Moris-Prattova algoritmu
- * Datum:     17.10.2012
+ * Popis:     Hledani podretezce v retezci pomoci Knuth-Moris-Prattova algoritmu
+ * Datum:     17.11.2012
  * Autori:    Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *            Petr Matyas         <xmatya03@stud.fit.vutbr.cz>
  *            Veronika Necasova   <xnecas21@stud.fit.vutbr.cz>
@@ -45,26 +45,26 @@ might suggest)
 /**
  * @info      Vytvoreni pomocne tabulky
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  nic
  */
-void crtTable (tString text, int table[])
+void kmpCrtTable (tString text, int table[])
 {
   int position = 2, index = 0;
 
   table[0] = -1;
-  table[1] = 0;
+  table[1] = 0; // fixni hodnoty
 
   while (position < (int) text.lenght)
     if (text.data[position - 1] == text.data[index]) {
       index++;
       table[position] = index;
-      position++;
+      position++; // KMP magic
     }
     else if (index > 0)
-      index = table[index];
+      index = table[index]; // KMP magic
     else {
       table[position] = 0;
-      position++;
+      position++; // KMP magic
     }
 }
 
@@ -97,9 +97,9 @@ void crtTable (tString text, int table[])
     return the length of S
 */
 /**
- * @info      Hledani retezce v podretezci
+ * @info      Hledani podretezce v retezci
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  pozice prvniho stejneho znaku pri shode, jinak delka textu, ve kterem hledame
  */
 int kmpSearch (tString text, tString searched)
 {
@@ -107,20 +107,20 @@ int kmpSearch (tString text, tString searched)
     return text.lenght; // neni v cem hledat
 
   int match = 0, index = 0, table[text.lenght];
-  crtTable (text, &table[text.lenght]);
+  kmpCrtTable (text, &table[text.lenght]); // vytvoreni pomocne tabulky
 
   while ((match+index) < (int) text.lenght) {
     if (searched.data[index] == text.data[match + index]) {
       if (index == (int) searched.lenght - 1)
-        return match;
-      index++;
+        return match; // stejny znak a zaroven posledni hledany => uspech, konec
+      index++; // stejny znak
     }
     else {
-      match += index - table[index];
+      match += index - table[index]; // znak je jiny => posun dale
       if (table[index] > -1)
         index = table[index];
       else
-        index = 0;
+        index = 0; // KMP magic
     }
   }
 

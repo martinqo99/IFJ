@@ -18,5 +18,5 @@
 #include "mmu.h"
 #include "strings.h"
 
-void crtTable (tString text, int table[]);
+void kmpCrtTable (tString text, int table[]);
 int kmpSearch (tString text, tString searched);
