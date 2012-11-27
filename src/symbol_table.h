@@ -20,6 +20,7 @@
 #define SYMBOL_TABLE_H_INCLUDED
 
 #include "strings.h"
+#include "binary_tree.h"
 
 typedef enum tdatatype{
   DT_NIL,
@@ -43,5 +44,17 @@ typedef struct tsymbol{
   tString key;  
   tSymbolData data;  
 } tSymbol;
+
+typedef struct tfunction{
+    tBTree symbols;
+    
+    bool declared;
+    int called;
+} tFunction;
+
+typedef struct tsymboltable{
+    tBTree functions;
+    tFunction* lastFunction;    
+} tSymbolTable;
 
 #endif
