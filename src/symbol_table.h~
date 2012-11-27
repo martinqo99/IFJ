@@ -60,6 +60,7 @@ typedef struct tsymboltable{
 } tSymbolTable;
 
 
+
 void symbolTableInit(tSymbolTable*);
 void symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);

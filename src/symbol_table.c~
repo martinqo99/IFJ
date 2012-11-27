@@ -16,8 +16,6 @@
  *           Skacel Dalibor      <xskace11@stud.fit.vutbr.cz>
  */
 
-#include "symbol_table.h"
-
 void symbolTableInit(tSymbolTable* symbolTable){
     
 }
