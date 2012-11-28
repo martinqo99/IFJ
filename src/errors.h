@@ -15,7 +15,7 @@
 #ifndef ERRORS_H_INCLUDED
 #define ERRORS_H_INCLUDED
 
-enum ERRORS{
+typedef enum e_code{
     ERROR_OK                = 0,
     ERROR_LEX               = 1,
     ERROR_SYNTAX            = 2,
@@ -26,7 +26,14 @@ enum ERRORS{
     ERROR_INCOMPATIBLE_TYPE = 11,
     ERROR_NUMERIC_CONVERSION= 12,
     ERROR_RUNTIME           = 13,
-    ERROR_COMPILATOR        = 99    
+    ERROR_COMPILATOR        = 99,
+    
+    //Development errors
+} E_CODE;
+
+char* E_MESSAGES[] = {
+    [ERROR_OK] = "Preklad probehl bez chyb"
+    
 };
 
 #endif

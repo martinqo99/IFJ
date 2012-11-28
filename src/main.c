@@ -42,14 +42,24 @@ int main(int argc, char* argv[]){
     /*
       Test area
     */
-
-    htableLookup(mmuTable.table, 85922800);
-    htableLookup(mmuTable.table, 85922801);
-    htableLookup(mmuTable.table, 85922802);
-    htableLookup(mmuTable.table, 85922803);
-    htableLookup(mmuTable.table, 85922804);
-    htableLookup(mmuTable.table, 85922805);
-
+    
+    void* ptr;
+    
+    ptr = mmuMalloc(sizeof(double));
+    ptr = mmuMalloc(sizeof(double));
+    ptr = mmuMalloc(sizeof(int));
+    
+    mmuFree(ptr);
+    mmuFree(ptr);
+    
+/*
+    mmuTableLookup(mmuTable.table, 85922800);
+    mmuTableLookup(mmuTable.table, 85922801);
+    mmuTableLookup(mmuTable.table, 85922802);
+    mmuTableLookup(mmuTable.table, 85922803);
+    mmuTableLookup(mmuTable.table, 85922804);
+    mmuTableLookup(mmuTable.table, 85922805);
+*/
     //initToken(&gToken);
     //printf("Row: %d\nColumn: %d\n", gToken.row, gToken.column);
     //getToken(&gToken);

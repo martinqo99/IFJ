@@ -21,25 +21,30 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <assert.h>
 #include "strings.h"
-#define MMU_SIZE 2
+#define MMU_SIZE 32
 
-typedef struct htableitem{
-    intptr_t key;  
-    struct htableitem* next;
+typedef struct mmutableitem{
+    //Klic datoveho bloku - adresa
+    intptr_t key;
     
+    //Ukazatel na datovy blok
     void* ptr;
     unsigned long allocated;    
-} *tHTableItemPtr, tHTableItem;
+    
+    struct mmutableitem* next;
+} *tMMUTableItemPtr, tMMUTableItem;
 
-typedef struct thtable{
+typedef struct mmutable{
     unsigned int size;
-    tHTableItem** data;    
-} tHTable;
+    tMMUTableItem** data;    
+} tMMUTable;
 
 typedef struct mmu{
-    tHTable* table;
+    tMMUTable* table;
     
+    //Pocitadla
     unsigned long mallocs;
     unsigned long reallocs;
     unsigned long callocs;
@@ -50,22 +55,24 @@ typedef struct mmu{
 
 extern tMMU mmuTable;
 
+//API pro pouzivani MMU
 void mmuInit();
 void* mmuMalloc(size_t);
 void* mmuRealloc(void*, size_t);
 void* mmuCalloc(size_t, size_t);
-
 void mmuFree(void*);
 void mmuGlobalFree();
 
-tHTable* htableCreate();
-tHTableItem* htableItemCreate(intptr_t);
-void htableDestroy(tHTable*);
-void htableItemDestroy(tHTableItem*);
-void htableInit(tHTable*, size_t);
-void htableDispose(tHTable*);
+//Funkce pro praci s hashovaci tabulkou
+tMMUTable* mmuTableCreate();
+tMMUTableItem* mmuTableItemCreate(intptr_t);
+void mmuTableDestroy(tMMUTable*);
+void mmuTableItemDestroy(tMMUTableItem*);
+void mmuTableInit(tMMUTable*, size_t);
+void mmuTableDispose(tMMUTable*);
+tMMUTableItem* mmuTableLookup(tMMUTable*, intptr_t);
 
-tHTableItemPtr htableLookup(tHTable*, intptr_t);
+//Hashovaci funkce
 size_t hash(intptr_t, size_t);
 
 #endif

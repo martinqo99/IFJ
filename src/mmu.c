@@ -30,7 +30,7 @@ void mmuInit(){
     mmuTable.table = NULL;
     
     //Vytvoreni pametove tabulky
-    mmuTable.table = htableCreate();
+    mmuTable.table = mmuTableCreate();
     
     if(!mmuTable.table){
         
@@ -38,7 +38,7 @@ void mmuInit(){
     }
     
     //Inicializace pametove tabulky
-    htableInit(mmuTable.table, MMU_SIZE);
+    mmuTableInit(mmuTable.table, MMU_SIZE);
 }
 
 void* mmuMalloc(size_t size){
@@ -47,20 +47,15 @@ void* mmuMalloc(size_t size){
     
     void* newPtr = malloc(size);
     
+    assert(newPtr);
+
+    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)newPtr);
     
-    if(!newPtr){
+    assert(item);
+    
+    item->ptr = newPtr;
+    item->allocated = size;
         
-        
-    }
-    
-    //tHTableItemPtr item = htableLookup(mmuTable.table, (intptr_t)newPtr);
-    
-    //if(!item)        
-    //    return NULL;
-    
-    //item->allocated = size;
-    //item->ptr = newPtr;
-    
     return newPtr;
 }
 
@@ -69,11 +64,15 @@ void* mmuRealloc(void* ptr, size_t size){
     mmuTable.allocated += size;
     
     void* newPtr = realloc(ptr, size);
+
+    assert(newPtr);
     
-    if(!newPtr){
-        
-        
-    }
+    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)newPtr);    
+    
+    assert(item);
+    
+    item->ptr = newPtr;
+    item->allocated = size;
     
     return newPtr;
 }
@@ -84,10 +83,14 @@ void* mmuCalloc(size_t num, size_t size){
     
     void* newPtr = calloc(num, size);
     
-    if(!newPtr){
-        
-        
-    }
+    assert(newPtr);
+    
+    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)newPtr);    
+    
+    assert(item);
+    
+    item->ptr = newPtr;
+    item->allocated = size;
     
     return newPtr;
 }
@@ -95,15 +98,27 @@ void* mmuCalloc(size_t num, size_t size){
 void mmuFree(void* ptr){
     mmuTable.frees++;
     
-    free(ptr);
+    if(!ptr)
+        return;
+    
+    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)ptr);
+    
+    if(!item)
+        return;
+    
+    if(item->allocated != 0){    
+        free(ptr);        
+        item->allocated = 0;
+        item->ptr = NULL;
+    }
 }
 
 void mmuGlobalFree(){
     if(!mmuTable.table && !mmuTable.table->data)
         return;   
     
-    tHTableItemPtr head = NULL;
-    tHTableItemPtr item = NULL;
+    tMMUTableItemPtr head = NULL;
+    tMMUTableItemPtr item = NULL;
 
     //Pro kazdy mozny radek pametove tabulky
     for(unsigned int i = 0; i < mmuTable.table->size; i++){
@@ -117,17 +132,16 @@ void mmuGlobalFree(){
                 if(item->allocated != 0)
                     mmuFree(item->ptr);
                 
-                mmuFree(item);
-                
+                mmuTableItemDestroy(item);                
             }
         }        
     }
     
     //Uvolnime vnitrni pole pametove tabulky
-    htableDispose(mmuTable.table);
+    mmuTableDispose(mmuTable.table);
     
     //Uvolnime pametovou tabulku
-    htableDestroy(mmuTable.table);
+    mmuTableDestroy(mmuTable.table);
     
     mmuTable.table = NULL;
     
@@ -137,12 +151,12 @@ void mmuGlobalFree(){
     printf("-----------------------------------------------------\n"); 
 }
 
-tHTable* htableCreate(){
-    return (tHTable*)mmuMalloc(sizeof(tHTable));
+tMMUTable* mmuTableCreate(){
+    return (tMMUTable*)malloc(sizeof(tMMUTable));
 }
 
-tHTableItem* htableItemCreate(intptr_t key){
-    tHTableItem* item = (tHTableItem*)mmuMalloc(sizeof(tHTableItem));
+tMMUTableItem* mmuTableItemCreate(intptr_t key){
+    tMMUTableItem* item = (tMMUTableItem*)malloc(sizeof(tMMUTableItem));
     
     if(!item)
         return NULL;
@@ -154,25 +168,25 @@ tHTableItem* htableItemCreate(intptr_t key){
     return item;
 }
 
-void htableDestroy(tHTable* T){
+void mmuTableDestroy(tMMUTable* T){
     if(!T)
         return;
     
-    mmuFree(T);
+    free(T);
 }
 
-void htableItemDestroy(tHTableItem* item){
+void mmuTableItemDestroy(tMMUTableItem* item){
     if(!item)
         return;
 
-    mmuFree(item);
+    free(item);
 }
 
-void htableInit(tHTable* T, size_t size){
+void mmuTableInit(tMMUTable* T, size_t size){
     if(!T)
         return;
         
-    T->data = mmuCalloc(size, sizeof(tHTableItemPtr));
+    T->data = calloc(size, sizeof(tMMUTableItemPtr));
     
     if(!T->data)
         return;
@@ -180,26 +194,26 @@ void htableInit(tHTable* T, size_t size){
     T->size = size;
 }
 
-void htableDispose(tHTable* T){
+void mmuTableDispose(tMMUTable* T){
     if(!T)
         return;
     
     if(T->data)
-        mmuFree(T->data);
+        free(T->data);
     
     T->data = NULL;
 }
 
-tHTableItemPtr htableLookup(tHTable* T, intptr_t key){
+tMMUTableItem* mmuTableLookup(tMMUTable* T, intptr_t key){
     if(!T)
         return NULL;
     
     size_t index = hash(key, T->size);
     
-    tHTableItemPtr item = T->data[index];
+    tMMUTableItem* item = T->data[index];
     
     if(!item)
-        return (T->data[index] = htableItemCreate(key));
+        return (T->data[index] = mmuTableItemCreate(key));
 
     while(item){
         if(item->key == key)
@@ -211,7 +225,7 @@ tHTableItemPtr htableLookup(tHTable* T, intptr_t key){
         item = item->next;
     };
     
-    tHTableItem* newItem = htableItemCreate(key);
+    tMMUTableItem* newItem = mmuTableItemCreate(key);
 
     return (!newItem)? NULL : (item->next = newItem);
 }
