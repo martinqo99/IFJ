@@ -149,10 +149,14 @@ int strCopyString (tString *strl, tString *strr)
   strr->lenght = strl->lenght;
   strr->allocated = strl->allocated;
 
+  /*
   int i = strr->lenght;
   do
     strr->data[i] = strl->data[i];
   while (i--);
+  */
+  for(int i = 0u; i < strr->lenght; i++)
+        strr->data[i] = strl->data[i];
 
   return TRUE;
 }
