@@ -25,9 +25,16 @@
 #include "strings.h"
 #define MMU_SIZE 32
 
+typedef enum mmutableitemtype{
+    MMU_UNDEFINED,
+    MMU_MEMORY,
+    MMU_FILE
+} tMMUTableItemType;
+
 typedef struct mmutableitem{
     //Klic datoveho bloku - adresa
     intptr_t key;
+    tMMUTableItemType type;
     
     //Ukazatel na datovy blok
     void* ptr;
@@ -48,7 +55,9 @@ typedef struct mmu{
     unsigned long mallocs;
     unsigned long reallocs;
     unsigned long callocs;
+    unsigned long fopens;
     unsigned long frees;
+    unsigned long fcloses;
     
     unsigned long allocated;
 } tMMU;
@@ -60,7 +69,9 @@ void mmuInit();
 void* mmuMalloc(size_t);
 void* mmuRealloc(void*, size_t);
 void* mmuCalloc(size_t, size_t);
+void* mmuFopen(const char*, const char*);
 void mmuFree(void*);
+void mmuFclose(void*);
 void mmuGlobalFree();
 
 //Funkce pro praci s hashovaci tabulkou

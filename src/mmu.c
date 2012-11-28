@@ -25,17 +25,16 @@ void mmuInit(){
     mmuTable.mallocs = 0;
     mmuTable.reallocs = 0;
     mmuTable.callocs = 0;
+    mmuTable.fopens = 0;
     mmuTable.frees = 0;
+    mmuTable.fcloses = 0;
     mmuTable.allocated = 0;
     mmuTable.table = NULL;
     
     //Vytvoreni pametove tabulky
     mmuTable.table = mmuTableCreate();
     
-    if(!mmuTable.table){
-        
-        
-    }
+    assert(mmuTable.table);
     
     //Inicializace pametove tabulky
     mmuTableInit(mmuTable.table, MMU_SIZE);
@@ -55,6 +54,7 @@ void* mmuMalloc(size_t size){
     
     item->ptr = newPtr;
     item->allocated = size;
+    item->type = MMU_MEMORY;
         
     return newPtr;
 }
@@ -73,6 +73,7 @@ void* mmuRealloc(void* ptr, size_t size){
     
     item->ptr = newPtr;
     item->allocated = size;
+    item->type = MMU_MEMORY;
     
     return newPtr;
 }
@@ -91,8 +92,29 @@ void* mmuCalloc(size_t num, size_t size){
     
     item->ptr = newPtr;
     item->allocated = size;
+    item->type = MMU_MEMORY;
     
     return newPtr;
+}
+
+void* mmuFopen(const char* fileName, const char* mode){
+    mmuTable.fopens++;
+    mmuTable.allocated += sizeof(FILE*);
+    
+    void* newPtr = (FILE*)fopen(fileName, mode);
+
+    if(!newPtr)
+        return NULL;
+    
+    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)newPtr);    
+    
+    assert(item);
+    
+    item->ptr = newPtr;
+    item->allocated = sizeof(FILE*);
+    item->type = MMU_FILE;
+
+    return newPtr;    
 }
 
 void mmuFree(void* ptr){
@@ -113,6 +135,25 @@ void mmuFree(void* ptr){
     }
 }
 
+void mmuFclose(void* ptr){
+    mmuTable.fcloses++;
+
+    if(!ptr)
+        return;
+    
+    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)ptr);
+    
+    if(!item)
+        return;
+    
+    if(item->allocated != 0){    
+        fclose(ptr);        
+        item->allocated = 0;
+        item->ptr = NULL;
+    }
+    
+}
+
 void mmuGlobalFree(){
     if(!mmuTable.table && !mmuTable.table->data)
         return;   
@@ -129,8 +170,12 @@ void mmuGlobalFree(){
                 head = head->next;
                 //printf("GLOBAL FREE: [%d] %lu -> %lu\n", i, (intptr_t)item, (intptr_t)item->next);                
                 
-                if(item->allocated != 0)
-                    mmuFree(item->ptr);
+                if(item->allocated != 0){
+                    if(item->type == MMU_FILE)
+                        mmuFclose(item->ptr);
+                    else
+                        mmuFree(item->ptr);                    
+                }
                 
                 mmuTableItemDestroy(item);                
             }
@@ -145,10 +190,11 @@ void mmuGlobalFree(){
     
     mmuTable.table = NULL;
     
-    printf("\n\n--------------------- MMU report --------------------\n");
-    printf("Mallocs: %lu | Callocs: %lu | Reallocs: %lu | Frees: %lu\n", mmuTable.mallocs, mmuTable.reallocs, mmuTable.callocs, mmuTable.frees);
-    printf("Allocated: %lu bytes\n", mmuTable.allocated);
-    printf("-----------------------------------------------------\n"); 
+    printf("\n\n---------------------------- MMU report ---------------------------\n");
+    printf("Memmory (malloc/calloc/realloc/free): %lu/%lu/%lu/%lu\n", mmuTable.mallocs, mmuTable.reallocs, mmuTable.callocs, mmuTable.frees);
+    printf("Files (open/close): %lu/%lu\n", mmuTable.fopens, mmuTable.fcloses);
+    printf("Total allocated memory: %lu bytes\n", mmuTable.allocated);
+    printf("-------------------------------------------------------------------\n"); 
 }
 
 tMMUTable* mmuTableCreate(){
@@ -164,6 +210,7 @@ tMMUTableItem* mmuTableItemCreate(intptr_t key){
     item->ptr = NULL;
     item->next = NULL;    
     item->key = key;
+    item->type = MMU_UNDEFINED;
     
     return item;
 }

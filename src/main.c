@@ -26,18 +26,20 @@
 int main(int argc, char* argv[]){
     
     signal(SIGINT, mmuGlobalFree);
+    signal(SIGABRT, mmuGlobalFree);
+
+    mmuInit(); 
     
     if(argc != 2){
         fprintf(stderr, "Invalid arguments\n");
         return ERROR_COMPILATOR;
     }
     
-    if(!(gFileHandler = fopen(argv[1], "r"))){
+    if(!(gFileHandler = mmuFopen(argv[1], "r"))){
         fprintf(stderr, "Cannot open input file\n");
         return ERROR_COMPILATOR;
     }
- 
-    mmuInit();   
+   
     
     /*
       Test area
@@ -49,6 +51,7 @@ int main(int argc, char* argv[]){
     ptr = mmuMalloc(sizeof(double));
     ptr = mmuMalloc(sizeof(int));
     
+    assert(0);
     mmuFree(ptr);
     mmuFree(ptr);
     
@@ -64,7 +67,7 @@ int main(int argc, char* argv[]){
     //printf("Row: %d\nColumn: %d\n", gToken.row, gToken.column);
     //getToken(&gToken);
     
-    fclose(gFileHandler);
+    mmuFclose(gFileHandler);
     
     mmuGlobalFree();
     
