@@ -155,7 +155,7 @@ int strCopyString (tString *strl, tString *strr)
     strr->data[i] = strl->data[i];
   while (i--);
   */
-  for(int i = 0u; i < strr->lenght; i++)
+  for(unsigned int i = 0; i < strr->lenght; i++)
         strr->data[i] = strl->data[i];
 
   return TRUE;
