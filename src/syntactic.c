@@ -13,6 +13,42 @@
  */
 
 #include "syntactic.h"
+
+/**
+ * <program> - <body_program>
+ * <body_program> - <def_function>
+ * <body_program> - <command>
+ * <def_function> - idFunction (<params>) EOL <stat_list> EOL end EOL
+ * <stat_list> - eps
+ * <stat_list> - <command> <stat_list>
+ * <params> - id <params_n>
+ * <params> - eps
+ * <params_n> - , id <params_n>
+ * <params_n> - eps
+ * <command> - id = <assign>
+ * <command> - if expression EOL <stat_list> else EOL <stat_list> end EOL
+ * <command> - while expression EOL <stat_list> end EOL
+ * <command> - return expression EOL
+ * <assign> - expression
+ * <assign> - idFunction( <params> )
+ * <assign> - input()
+ * <assign> - numeric(id)
+ * <assign> - print( <term> )
+ * <assign> - typeof(id)
+ * <assign> - len(id)
+ * <assign> - find(string, string)
+ * <assign> - sort(string)
+ * <assign> - string[ <num>:<num> ] EOL
+ * <num> - eps
+ * <num> - num
+ * <term> - id
+ * <term> - <value>
+ * <value> - num
+ * <value> - string
+ * <value> - logic
+**/
+
+
 /** 
  * pravidla
  * <program>      -> <program_body> end EOF
