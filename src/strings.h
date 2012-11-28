@@ -18,15 +18,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "types.h"
 #include "mmu.h"
 
-typedef unsigned int uint;
-
-typedef struct tstring {
-  char *data;
-  uint lenght;
-  uint allocated;
-} tString;
+#define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
+#define TRUE 1
+#define FALSE 0
+#define NEGATIVE -1
 
 int strInit (tString *str);
 //int strCmpRaw (tString *str, const char x);

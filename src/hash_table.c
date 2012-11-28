@@ -7,7 +7,7 @@
  * Popis:    
  * 
  * 
- * Datum:    21.10.2012
+ * Datum:    22.10.2012
  * 
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
@@ -38,8 +38,15 @@ tHTableItem* htableItemCreate(tString key){
 void htableDestroy(tHTable* T){
     if(!T)
         return;
-        
+    
     free(T);
+}
+
+void htableItemDestroy(tHTableItem* item){
+    if(!item)
+        return;
+
+    free(item);
 }
 
 void htableInit(tHTable* T, unsigned int size){
@@ -48,7 +55,7 @@ void htableInit(tHTable* T, unsigned int size){
         
     T->data = mmuCalloc(size, sizeof(tHTableItemPtr));
     
-    if(T->data)
+    if(!T->data)
         return;
         
     T->size = size;
@@ -57,8 +64,9 @@ void htableInit(tHTable* T, unsigned int size){
 void htableDispose(tHTable* T){
     if(!T)
         return;
-        
-    free(T->data);
+    
+    if(T->data)
+        free(T->data);
     
     T->data = NULL;
 }
@@ -71,11 +79,9 @@ tHTableItemPtr htableLookup(tHTable* T, tString key){
     
     tHTableItemPtr item = T->data[index];
     
-    //Pokud prvek jeste neexistuje
     if(!item)
         return (T->data[index] = htableItemCreate(key));
     
-    //Pokud prvek existuje v seznamu
     do{
         if(strCmp(&(item->key), &key))
             return item;
@@ -89,8 +95,6 @@ tHTableItemPtr htableLookup(tHTable* T, tString key){
 }
 
 unsigned int hash(tString key, unsigned int size){
-    //c * sum % size
-    
     unsigned int sum = 0;
     
     char* rawKey = key.data;

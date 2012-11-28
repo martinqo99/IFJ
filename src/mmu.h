@@ -20,14 +20,28 @@
 #define MMU_H_INCLUDED
 
 #include <stdlib.h>
+#include "types.h"
 #include "strings.h"
-//#include "hash_table.h"
+#include "hash_table.h"
 
-typedef struct MMU{
-	void* ptr;
-	
+typedef struct mmuitem{
+    void* ptr;
+
+    unsigned int allocated;
+} tMMUItem;
+
+typedef struct mmu{
+    tHTable table;
+    
+    unsigned int mallocs;
+    unsigned int reallocs;
+    unsigned int callocs;
+    unsigned int frees;
+    
+    unsigned int allocated;
 } tMMU;
 
+extern tMMU mmuTable;
 
 void mmuInit();
 void* mmuMalloc(unsigned int);

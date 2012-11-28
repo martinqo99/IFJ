@@ -39,6 +39,13 @@ int main(int argc, char* argv[]){
  
     mmuInit();   
     
+    /*
+      Test area
+    */
+    
+    //initToken(&gToken);
+    //printf("Row: %d\nColumn: %d\n", gToken.row, gToken.column);
+    //getToken(&gToken);
     
     fclose(gFileHandler);
     

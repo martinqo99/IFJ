@@ -20,20 +20,9 @@
 #ifndef HASH_TABLE_H_INCLUDED
 #define HASH_TABLE_H_INCLUDED
 
-#include "mmu.h"
+#include "types.h"
 #include "strings.h"
-
-typedef struct htableItem{
-    struct htableItem* ptr;
-    tString key;  
-    
-} *tHTableItemPtr, tHTableItem;
-
-typedef struct{
-    unsigned int size;
-    tHTableItem** data;
-    
-} tHTable;
+#include "mmu.h"
 
 tHTable* htableCreate();
 tHTableItem* htableItemCreate(tString);
