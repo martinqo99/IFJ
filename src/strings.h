@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "types.h"
 #include "mmu.h"
 
 #define SIZE 20 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
