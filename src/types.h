@@ -19,23 +19,39 @@
 #ifndef TYPES_H_INCLUDED
 #define TYPES_H_INCLUDED
 
+#include <stdint.h>
+
+//Pozustatek...
 typedef unsigned int uint;
 
 typedef struct tstring {
   char *data;
-  uint lenght;
-  uint allocated;
+  unsigned int lenght;
+  unsigned int allocated;
 } tString;
 
 typedef struct htableitem{
-    struct htableitem* ptr;
-    tString key;  
+    intptr_t key;  
+    struct htableitem* next;
     
+    void* ptr;
+    unsigned long allocated;    
 } *tHTableItemPtr, tHTableItem;
 
 typedef struct thtable{
     unsigned int size;
     tHTableItem** data;    
 } tHTable;
+
+typedef struct mmu{
+    tHTable* table;
+    
+    unsigned long mallocs;
+    unsigned long reallocs;
+    unsigned long callocs;
+    unsigned long frees;
+    
+    unsigned long allocated;
+} tMMU;
 
 #endif

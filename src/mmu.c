@@ -2,7 +2,7 @@
  * Predmet:  IFJ / IAL
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
- * Soubor:   MMU.c (Memory management unit)
+ * Soubor:   mmu.c (Memory management unit)
  * 
  * Popis:    
  * 
@@ -21,28 +21,50 @@
 tMMU mmuTable;
 
 void mmuInit(){
+    //Inicializace pametovych pocitatel
     mmuTable.mallocs = 0;
     mmuTable.reallocs = 0;
     mmuTable.callocs = 0;
     mmuTable.frees = 0;
     mmuTable.allocated = 0;
+    mmuTable.table = NULL;
+    
+    //Vytvoreni pametove tabulky
+    mmuTable.table = htableCreate();
+    
+    if(!mmuTable.table){
+        
+        
+    }
+    
+    //Inicializace pametove tabulky
+    htableInit(mmuTable.table, MMU_SIZE);
 }
 
-void* mmuMalloc(unsigned int size){
+void* mmuMalloc(size_t size){
     mmuTable.mallocs++;
     mmuTable.allocated += size;
     
     void* newPtr = malloc(size);
+    
     
     if(!newPtr){
         
         
     }
     
+    //tHTableItemPtr item = htableLookup(mmuTable.table, (intptr_t)newPtr);
+    
+    //if(!item)        
+    //    return NULL;
+    
+    //item->allocated = size;
+    //item->ptr = newPtr;
+    
     return newPtr;
 }
 
-void* mmuRealloc(void* ptr, unsigned int size){
+void* mmuRealloc(void* ptr, size_t size){
     mmuTable.reallocs++;
     mmuTable.allocated += size;
     
@@ -56,7 +78,7 @@ void* mmuRealloc(void* ptr, unsigned int size){
     return newPtr;
 }
 
-void* mmuCalloc(unsigned int num, unsigned int size){
+void* mmuCalloc(size_t num, size_t size){
     mmuTable.callocs++;
     mmuTable.allocated += size;
     
@@ -77,8 +99,40 @@ void mmuFree(void* ptr){
 }
 
 void mmuGlobalFree(){
+    if(!mmuTable.table && !mmuTable.table->data)
+        return;   
+    
+    tHTableItemPtr head = NULL;
+    tHTableItemPtr item = NULL;
+
+    //Pro kazdy mozny radek pametove tabulky
+    for(unsigned int i = 0; i < mmuTable.table->size; i++){
+        if(mmuTable.table->data[i] != 0){
+            head = mmuTable.table->data[i];
+            
+            while((item = head)){
+                head = head->next;
+                //printf("GLOBAL FREE: [%d] %lu -> %lu\n", i, (intptr_t)item, (intptr_t)item->next);                
+                
+                if(item->allocated != 0)
+                    mmuFree(item->ptr);
+                
+                mmuFree(item);
+                
+            }
+        }        
+    }
+    
+    //Uvolnime vnitrni pole pametove tabulky
+    htableDispose(mmuTable.table);
+    
+    //Uvolnime pametovou tabulku
+    htableDestroy(mmuTable.table);
+    
+    mmuTable.table = NULL;
+    
     printf("\n\n--------------------- MMU report --------------------\n");
-    printf("Mallocs: %u | Callocs: %u | Reallocs: %u | Frees: %u\n", mmuTable.mallocs, mmuTable.reallocs, mmuTable.callocs, mmuTable.frees);
-    printf("Allocated: %u bytes\n", mmuTable.allocated);
-    printf("-----------------------------------------------------\n");
+    printf("Mallocs: %lu | Callocs: %lu | Reallocs: %lu | Frees: %lu\n", mmuTable.mallocs, mmuTable.reallocs, mmuTable.callocs, mmuTable.frees);
+    printf("Allocated: %lu bytes\n", mmuTable.allocated);
+    printf("-----------------------------------------------------\n"); 
 }

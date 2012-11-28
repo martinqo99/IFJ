@@ -19,19 +19,23 @@
 #include "symbol_table.h"
 
 void symbolTableInit(tSymbolTable* symbolTable){
-    
+    symbolTable = symbolTable;
 }
 
 void symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
-    
+    symbolTable = symbolTable;
+    functionName = functionName;
 }
 
 tFunction* symbolTableSearchFunction(tSymbolTable* symbolTable, tString functionName){
+    symbolTable = symbolTable;
+    functionName = functionName;
     
+    return NULL;
 }
 
 void symbolTableDispose(tSymbolTable* symbolTable){
-    
+    symbolTable = symbolTable;
 }
 
 #include "symbol_table.h"

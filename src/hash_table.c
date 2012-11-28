@@ -7,7 +7,7 @@
  * Popis:    
  * 
  * 
- * Datum:    22.10.2012
+ * Datum:    28.11.2012
  * 
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
@@ -22,15 +22,15 @@ tHTable* htableCreate(){
     return (tHTable*)mmuMalloc(sizeof(tHTable));
 }
 
-tHTableItem* htableItemCreate(tString key){
+tHTableItem* htableItemCreate(intptr_t key){
     tHTableItem* item = (tHTableItem*)mmuMalloc(sizeof(tHTableItem));
     
     if(!item)
         return NULL;
         
     item->ptr = NULL;
-    
-    strCopyString(&(item->key), &key);
+    item->next = NULL;    
+    item->key = key;
     
     return item;
 }
@@ -39,17 +39,17 @@ void htableDestroy(tHTable* T){
     if(!T)
         return;
     
-    free(T);
+    mmuFree(T);
 }
 
 void htableItemDestroy(tHTableItem* item){
     if(!item)
         return;
 
-    free(item);
+    mmuFree(item);
 }
 
-void htableInit(tHTable* T, unsigned int size){
+void htableInit(tHTable* T, size_t size){
     if(!T)
         return;
         
@@ -66,44 +66,46 @@ void htableDispose(tHTable* T){
         return;
     
     if(T->data)
-        free(T->data);
+        mmuFree(T->data);
     
     T->data = NULL;
 }
 
-tHTableItemPtr htableLookup(tHTable* T, tString key){
+tHTableItemPtr htableLookup(tHTable* T, intptr_t key){
     if(!T)
         return NULL;
     
-    unsigned int index = hash(key, T->size);
+    size_t index = hash(key, T->size);
     
     tHTableItemPtr item = T->data[index];
     
     if(!item)
         return (T->data[index] = htableItemCreate(key));
-    
-    do{
-        if(strCmp(&(item->key), &key))
-            return item;
-        
-        item = item->ptr;
-    }while(item->ptr);
 
-    tHTableItem* newItem = htableItemCreate(key);
+    while(item){
+        if(item->key == key)
+            return item;
+
+        if(!item->next)
+            break;
+        
+        item = item->next;
+    };
     
-    return (!newItem)? NULL : (item->ptr = newItem);
+    tHTableItem* newItem = htableItemCreate(key);
+
+    return (!newItem)? NULL : (item->next = newItem);
 }
 
-unsigned int hash(tString key, unsigned int size){
-    unsigned int sum = 0;
+size_t hash(intptr_t key, size_t size){
+    size_t sum = 0;
     
-    char* rawKey = key.data;
-    
-    while(*rawKey != '\0'){
-        sum += (int)*rawKey; 
-        
-        rawKey++;
+    printf("HASH %lu => ", key);
+    while(key > 9){
+        sum += key % 10;
+        key /= 10;        
     }
-    
+
+    printf("%lu\n", (97*sum)%size);
     return (97 * sum)%size;
 }
