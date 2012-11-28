@@ -21,15 +21,6 @@
 
 #include <stdint.h>
 
-//Pozustatek...
-typedef unsigned int uint;
-
-typedef struct tstring {
-  char *data;
-  unsigned int lenght;
-  unsigned int allocated;
-} tString;
-
 typedef struct htableitem{
     intptr_t key;  
     struct htableitem* next;

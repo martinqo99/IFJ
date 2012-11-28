@@ -26,6 +26,15 @@
 #define FALSE 0
 #define NEGATIVE -1
 
+//Pozustatek...
+typedef unsigned int uint;
+
+typedef struct tstring {
+  char *data;
+  unsigned int lenght;
+  unsigned int allocated;
+} tString;
+
 int strInit (tString *str);
 //int strCmpRaw (tString *str, const char x);
 tString strCreate (const char *str);
