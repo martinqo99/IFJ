@@ -18,16 +18,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <signal.h>
 #include "errors.h"
 #include "mmu.h"
 #include "scanner.h"
 
 int main(int argc, char* argv[]){
-    
-    signal(SIGINT, mmuGlobalFree);
-    signal(SIGABRT, mmuGlobalFree);
 
+    //Inicializace MMU
     mmuInit(); 
     
     if(argc != 2){
@@ -44,26 +41,8 @@ int main(int argc, char* argv[]){
     /*
       Test area
     */
-    
-    void* ptr;
-    
-    ptr = mmuMalloc(sizeof(double));
-    ptr = mmuMalloc(sizeof(double));
-    ptr = mmuMalloc(sizeof(int));
-    
-    assert(0);
-    mmuFree(ptr);
-    mmuFree(ptr);
-    
-/*
-    mmuTableLookup(mmuTable.table, 85922800);
-    mmuTableLookup(mmuTable.table, 85922801);
-    mmuTableLookup(mmuTable.table, 85922802);
-    mmuTableLookup(mmuTable.table, 85922803);
-    mmuTableLookup(mmuTable.table, 85922804);
-    mmuTableLookup(mmuTable.table, 85922805);
-*/
-    //initToken(&gToken);
+
+    initToken(&gToken);
     //printf("Row: %d\nColumn: %d\n", gToken.row, gToken.column);
     //getToken(&gToken);
     

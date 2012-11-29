@@ -21,6 +21,9 @@
 tMMU mmuTable;
 
 void mmuInit(){
+    signal(SIGINT, mmuGlobalFree);
+    signal(SIGABRT, mmuGlobalFree);
+    
     //Inicializace pametovych pocitatel
     mmuTable.mallocs = 0;
     mmuTable.reallocs = 0;
