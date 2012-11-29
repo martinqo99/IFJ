@@ -1,90 +1,94 @@
 /**
- * Projekt: Implementace interpretu jazyka Falkon
- * Autori: Frantisek Kolacek
- *         Petr Matyas
- *         Dalibor Skacel
- *         Michaela Muzikarova
- *         Veronika Necasova
-**/
+ * Predmet:  IFJ / IAL
+ * Projekt:  Implementace interpretu imperativniho jazyka
+ * Varianta: a/1/I
+ * Soubor:   scanner.h
+ * 
+ * Popis:    
+ * 
+ * 
+ * Datum:    20.11.2012
+ * 
+ * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
+ *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
+ *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
+ *           Necasova Veronika   <xnecas21@stud.fit.vutbr.cz>
+ *           Skacel Dalibor      <xskace11@stud.fit.vutbr.cz>
+ */
 
 #ifndef SCANNER_H_INCLUDED
 #define SCANNER_H_INCLUDED
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "mmu.h"
+#include <ctype.h>
+#include "errors.h"
 #include "strings.h"
+#include "mmu.h"
+
+#define RESERVED_COUNT 9
 
 extern FILE* gFileHandler;
 
-// klicova slova
-const char *klicovaSlova[9] = {
-"else\0", "end\0", "false\0", "function\0", 
-"if\0", "nil\0", "return\0", "true\0", "while\0"
-};
+typedef enum tkeyword{
+    KW_IF, KW_ELSE, KW_END,     //Podminky
+    KW_WHILE,                   //Cykly - in?
+    KW_FUNCTION, KW_RETURN,     //Funkce
+    KW_FIND, KW_SORT, KW_INPUT, KW_NUMERIC, KW_PRINT, KW_TYPEOF, KW_LEN,            //Vestavene funkce    
+    KW_NIL, KW_TRUE, KW_FALSE,    
+    
+    LEX_ID, LEX_STRING, LEX_NUMBER,
+    LEX_L_BRACKET, LEX_R_BRACKET, LEX_L_SBRACKET, LEX_R_SBRACKET,
+    LEX_ADDITION, LEX_MULTIPLICATION, LEX_POWER, LEX_DIVISION, LEX_SUBSTRACTION,
+    LEX_LESSER, LEX_GREATER, LEX_LESSER_EQUAL, LEX_GREATER_EQUAL,
+    LEX_EQUAL, LEX_UNEQUAL,LEX_ASSIGN, 
+    LEX_COMMA, LEX_COLON,
+} tKeyword;
 
-  // rezervovana slova
-const char *rezervovanaSlova[9] = {
-"as\0", "def\0", "directove\0", "export\0", "from\0", 
-"import\0", "launch\0", "load\0", "macro\0"
-};
+typedef enum tstate{
+    S_START = 0,// 0 Start
+    S_END,      // 1 End
+    S_EOF,      // 2 End of file
+    S_ERR,      // 3 Error
+    
+    S_LESSER,
+    S_GREATER,
+    S_EQUAL,
+    S_UNEQUAL,
+    
+    S_ADDITION,
+    S_SUBSTRACTION,
+    S_DIVISION,
+    S_COMMENT_ROW,
+    S_COMMENT_BLOCK,
+    S_COMMENT_END,
+    
+    S_STRING,
+    S_ID,
+    S_NUMBER,
+    
+    S_DECIMAL_POINT,
+    S_DECIMAL_END,
+} tState;
 
-/**
- * stavy automatu
- * vyctovy typ
-**/
-typedef enum tstav{
-  S_START,	//  0 -pocatecni stav
-  S_KW,		//  1 - klicove slovo
-  S_EOF,	//  2 - konec souboru
-  S_ERR,	//  3 - chyba
-  S_END,	//  4 - koncovy stav
-  S_NUM,	//  5 - numeric
-  S_STR,	//  6 - retezec
-  S_BOOL,	//  7 - boolean
-  S_PRIRAZENI,	//  8 - =
-  S_TECKA,	//  9 - .
-  S_LZ,		// 10 - (
-  S_PZ,		// 11 - )
-  S_STREDNIK, 	// 12 - ;
-  S_CARKA,	// 13 - ,
-  S_VYKRICNIK,	// 14 - !
-  S_SOUCET,	// 15 - +
-  S_ROZDIL,	// 16 - - 
-  S_SOUCIN,	// 17 - *
-  S_PODIL,	// 18 - /
-  S_MOCNINA,	// 19 - **
-  S_MENSI,	// 20 - <
-  S_VETSI,       // 21 - >
-  S_MENSIROVNO,	// 22 - <=
-  S_VETSIROVNO,	// 23 - >=
-  S_NEROVNASE,	// 24 - !=
-  S_ROVNASE	// 25 - ==
-} tStav;
-
-
-/**
- * struktura tToken
- @stav - stav konecneho automatu
-         vyctovy typ tStav
- @data - hodnota lexemu
-         char *, retezec
-**/   
 typedef struct ttoken{
-  tStav state;
-  tStav nextState;
+  tState state;
   
-  unsigned int line;
+  unsigned int row;
   unsigned int column;
   
   tString data;
 } tToken;
 
-// globalni promenna token
-extern tToken token;
+extern tToken gToken;
 
-void initToken(tToken*);
-void pushToken(tToken*, int);
-void getToken(tToken*);
+int isReserved(tString);
+
+//API pro praci s lexilanim analyzatorem
+void initToken();
+void resetToken();
+void setState(tState);
+void pushToken(int);
+tState getToken();
 
 #endif

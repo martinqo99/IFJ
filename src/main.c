@@ -43,8 +43,8 @@ int main(int argc, char* argv[]){
     */
 
     initToken(&gToken);
-    //printf("Row: %d\nColumn: %d\n", gToken.row, gToken.column);
-    //getToken(&gToken);
+    getToken();
+    //getToken();
     
     mmuFclose(gFileHandler);
     
