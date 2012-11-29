@@ -283,13 +283,13 @@ tMMUTableItem* mmuTableLookup(tMMUTable* T, intptr_t key){
 size_t hash(intptr_t key, size_t size){
     size_t sum = 0;
     
-    printf("HASH %lu => ", key);
+    //printf("HASH %lu => ", key);
     while(key > 9){
         sum += key % 10;
         key /= 10;        
     }
 
-    printf("%lu\n", (97*sum)%size);
+    //printf("%lu\n", (97*sum)%size);
     return (97 * sum)%size;
 }
 
