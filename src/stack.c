@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   stack.h
- * 
- * Popis:    
- * 
- * 
+ *
+ * Popis:
+ *
+ *
  * Datum:    21.10.2012
- * 
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -18,17 +18,31 @@
 
 #include "stack.h"
 
+/**
+ * @info      Vytvoreni zasobniku
+ * @return  tStack* - ukazatel na nove vytvoreny zasobnik
+ */
 tStack* stackCreate(){
     return (tStack*)mmuMalloc(sizeof(tStack));
 }
 
+/**
+ * @info      Smazani zasobniku
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  void
+ */
 void stackDestroy(tStack* S){
     if(!S)
         return;
-        
+
     mmuFree(S);
 }
 
+/**
+ * @info      Inicializace zasobniku
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  void
+ */
 void stackInit(tStack* S){
     if(!S)
         return;
@@ -37,6 +51,11 @@ void stackInit(tStack* S){
     S->size = 0;
 }
 
+/**
+ * @info      Smazani zasobniku
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  void
+ */
 void stackDispose(tStack* S){
     if(!S)
         return;
@@ -47,12 +66,18 @@ void stackDispose(tStack* S){
         S->top = iterator->ptr;
 
         mmuFree(iterator);
-    }		
+    }
 
     S->top = NULL;
-    S->size = 0;	
+    S->size = 0;
 }
 
+/**
+ * @info      Vlozeni hodnoty na zasobnik
+ * @param   tStack* - ukazatel na zasobnik
+ * @param   void* - ukazatel na vkladana data
+ * @return  void
+ */
 void stackPush(tStack* S, void* data){
     if(!S)
         return;
@@ -68,13 +93,23 @@ void stackPush(tStack* S, void* data){
     if(S->top)
         item->ptr = S->top;
 
-    S->top = item;	
+    S->top = item;
 }
 
+/**
+ * @info      Vrati data z vrcholu zasobniku
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  void* - ukazatel na data
+ */
 void* stackTop(tStack* S){
-    return (!S || !S->top)? NULL : S->top->data;	
+    return (!S || !S->top)? NULL : S->top->data;
 }
 
+/**
+ * @info      Vrati data z vrcholu zasobniku a zbavi se jich
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  void* - ukazatel na data na vrcholu zasobniku
+ */
 void* stackPop(tStack* S){
     if(!S || !S->top)
         return NULL;
@@ -89,13 +124,23 @@ void* stackPop(tStack* S){
     return data;
 }
 
+/**
+ * @info      Urceni, jestli je stack prazdny
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  true || false
+ */
 bool stackEmpty(tStack* S){
     if(!S)
-        return true;	
+        return true;
 
     return (!S->top)? true : false;
 }
 
+/**
+ * @info      vrati velikost zasobniku
+ * @param   tStack* - ukazatel na zasobnik
+ * @return  unsigned int - velikost zasobniku
+ */
 unsigned int stackSize(tStack* S){
-    return (S)? S->size : 0;	
+    return (S)? S->size : 0;
 }
