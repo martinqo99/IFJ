@@ -21,12 +21,12 @@
  */
 int strInit (tString *str)
 {
-  str->lenght = 0;
+  str->len = 0;
 
   str->data = (char *) mmuCalloc(SIZE, sizeof(char));
   if (str->data == NULL)
     return FALSE;
-  str->allocated = SIZE;
+  str->alloc = SIZE;
 
   return TRUE;
 }
@@ -75,8 +75,8 @@ int strFree (tString *str)
   if (str->data)
     mmuFree(str->data);
   str->data = NULL;
-  str->allocated = 0;
-  str->lenght = 0;
+  str->alloc = 0;
+  str->len = 0;
 
   return TRUE;
 }
@@ -88,10 +88,10 @@ int strFree (tString *str)
  */
 int strClear (tString *str)
 {
-  uint i = str->lenght;
+  uint i = str->len;
   while (i--)
     str->data[i] = '\0';
-  str->lenght = 0;
+  str->len = 0;
 
   return TRUE;
 }
@@ -104,15 +104,15 @@ int strClear (tString *str)
  */
 int strAdd (tString *str, char x)
 {
-  if (str->allocated - 2 == str->lenght) {
-    str->allocated += SIZE;
-    str->data = (char *) mmuRealloc(str->data, str->allocated * sizeof(char));
+  if (str->alloc - 2 == str->len) {
+    str->alloc += SIZE;
+    str->data = (char *) mmuRealloc(str->data, str->alloc * sizeof(char));
     if (str->data == NULL)
       return FALSE;
   }
 
-  str->data[str->lenght++] = x;
-  str->data[str->lenght] = '\0';
+  str->data[str->len++] = x;
+  str->data[str->len] = '\0';
 
   return TRUE;
 }
@@ -124,11 +124,11 @@ int strAdd (tString *str, char x)
  */
 int strCopy (tString *str, char *array)
 {
-  array = (char *) mmuCalloc(str->lenght + 1, sizeof(char));
+  array = (char *) mmuCalloc(str->len + 1, sizeof(char));
   if (array == NULL)
     return FALSE;
 
-  int i = str->lenght;
+  int i = str->len;
   do
     array[i] = str->data[i];
   while (i--);
@@ -143,19 +143,19 @@ int strCopy (tString *str, char *array)
  */
 int strCopyString (tString *strl, tString *strr)
 {
-  strr->data = (char *) mmuCalloc(strl->allocated, sizeof(char));
+  strr->data = (char *) mmuCalloc(strl->alloc, sizeof(char));
   if (strr->data == NULL)
     return FALSE;
-  strr->lenght = strl->lenght;
-  strr->allocated = strl->allocated;
+  strr->len = strl->len;
+  strr->alloc = strl->alloc;
 
   /*
-  int i = strr->lenght;
+  int i = strr->len;
   do
     strr->data[i] = strl->data[i];
   while (i--);
   */
-  for(unsigned int i = 0; i < strr->lenght; i++)
+  for(unsigned int i = 0; i < strr->len; i++)
         strr->data[i] = strl->data[i];
 
   return TRUE;
@@ -168,9 +168,9 @@ int strCopyString (tString *strl, tString *strr)
  */
 int strCmp (tString *strl, tString *strr)
 {
-  if (strl->lenght < strr->lenght)
+  if (strl->len < strr->len)
     return NEGATIVE;
-  else if (strl->lenght > strr->lenght)
+  else if (strl->len > strr->len)
     return TRUE;
 
   int cmp = strcmp(strl->data,strr->data);
@@ -216,7 +216,7 @@ char *strRaw (tString *str)
  */
 uint strLen (tString *str)
 {
-  return str->lenght;
+  return str->len;
 }
 
 /**
@@ -226,5 +226,5 @@ uint strLen (tString *str)
  */
 uint strSize (tString *str)
 {
-  return str->allocated;
+  return str->alloc;
 }

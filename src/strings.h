@@ -30,8 +30,8 @@ typedef unsigned int uint;
 
 typedef struct tstring {
   char *data;
-  unsigned int lenght;
-  unsigned int allocated;
+  unsigned int len;
+  unsigned int alloc;
 } tString;
 
 int strInit (tString *str);
