@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
-#include "mmu.h"
 #include "strings.h"
+#include "mmu.h"
 
 typedef struct tBTreeNode {
     struct tBTreeNode *right;

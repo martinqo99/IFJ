@@ -15,6 +15,8 @@
 #ifndef ERRORS_H_INCLUDED
 #define ERRORS_H_INCLUDED
 
+#include <stdlib.h>
+
 typedef enum e_code{
     ERROR_OK                = 0,
     ERROR_LEX               = 1,
@@ -31,9 +33,8 @@ typedef enum e_code{
     //Development errors
 } E_CODE;
 
-char* E_MESSAGES[] = {
-    [ERROR_OK] = "Preklad probehl bez chyb"
-    
-};
+extern E_CODE gErrorCode;
+
+void programAbort(E_CODE);
 
 #endif
