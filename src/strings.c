@@ -182,6 +182,23 @@ int strCmp (tString *strl, tString *strr)
   return FALSE;
 }
 
+/*
+ * @info      Porovnani struktury s retezcem
+ * @param   tString - struktura s polem a jeho rozmery
+ * @param   char - pole znaku se kterym porovnavame
+ * @return  TRUE || FALSE
+ */
+int strCmpRaw (tString *strl, const char *strr)
+{
+  int cmp = strcmp(strl->data,strr);
+  if (cmp > 0)
+    return TRUE;
+  else if (cmp < 0)
+    return NEGATIVE;
+
+  return FALSE;
+}
+
 /**
  * @info      Vrati ukazatel na pole znaku
  * @param   tString - struktura s polem a jeho rozmery

@@ -43,6 +43,7 @@ int strAdd (tString *str, char x);
 int strCopy (tString *str, char *array);
 int strCopyString (tString *strl, tString *strr);
 int strCmp (tString *strl, tString *strr);
+int strCmpRaw(tString *strl, const char* strr);
 char *strRaw (tString *str);
 uint strLen (tString *str);
 uint strSize (tString *str);
