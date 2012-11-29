@@ -12,9 +12,6 @@
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "mmu.h"
 #include "strings.h"
 
