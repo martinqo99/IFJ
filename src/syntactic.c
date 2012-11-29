@@ -30,7 +30,7 @@
  * <command> - while expression EOL <stat_list> end EOL
  * <command> - return expression EOL
  * <assign> - expression
- * <assign> - idFunction( <params> )
+ * <assign> - function idFunction( <params> )
  * <assign> - input()
  * <assign> - numeric(id)
  * <assign> - print( <term> )
