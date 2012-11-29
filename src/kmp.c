@@ -54,7 +54,7 @@ void kmpCrtTable (tString text, int* table){
   table[0] = -1;
   table[1] = 0; // fixni hodnoty
 
-  while (position < (int) text.lenght)
+  while (position < (int) text.len)
     if (text.data[position - 1] == text.data[index]) {
       index++;
       table[position] = index;
@@ -103,58 +103,58 @@ void kmpCrtTable (tString text, int* table){
  */
 
 int kmpSearch(tString text, tString searched){
-    if(text.lenght == 0)
+    if(text.len == 0)
         return 0;
-    
+
     int match = 0;
     int index = 0;
-    int table[text.lenght];
-    
+    int table[text.len];
+
     kmpCrtTable(text, table);
-    
-    //for(unsigned int i = 0; i < text.lenght; i++)
+
+    //for(unsigned int i = 0; i < text.len; i++)
     //    printf("Polozka %d: %d\n", i, table[i]);
-    
-    while((match + index) < (int) text.lenght){
+
+    while((match + index) < (int) text.len){
         if(searched.data[index] == text.data[match + index]){
-            if(index == (int)searched.lenght - 1)
+            if(index == (int)searched.len - 1)
                 return match;
-            
-            index++;            
+
+            index++;
         }
         else{
             match += index - table[index];
-            
+
             if(table[index] > -1)
                 index = table[index];
             else
-                index = 0;            
-        }        
+                index = 0;
+        }
     }
-    
-    return text.lenght;
+
+    return text.len;
 }
 
 /*
 int kmpSearch (tString text, tString searched)
 {
-  if (text.lenght == 0)
-    return text.lenght; // neni v cem hledat
-    
+  if (text.len == 0)
+    return text.len; // neni v cem hledat
 
-  int match = 0, index = 0, table[text.lenght];
-  printf("DEBUG: %u\n", text.lenght);
-  //kmpCrtTable (text, &table[text.lenght]); // vytvoreni pomocne tabulky
-  printf("DEBUG: %u\n", text.lenght);
-  printf("\ntext.lenght = %u", text.lenght);
+
+  int match = 0, index = 0, table[text.len];
+  printf("DEBUG: %u\n", text.len);
+  //kmpCrtTable (text, &table[text.len]); // vytvoreni pomocne tabulky
+  printf("DEBUG: %u\n", text.len);
+  printf("\ntext.len = %u", text.len);
   printf("\nTabulka\n");
-  for (unsigned int i = 0; i < text.lenght; i++)
+  for (unsigned int i = 0; i < text.len; i++)
     printf("Polozka %d: %d\n", i, table[i]);
   printf("Konec tabulky\n\n");
 
-  while ((match+index) < (int) text.lenght) {
+  while ((match+index) < (int) text.len) {
     if (searched.data[index] == text.data[match + index]) {
-      if (index == (int) searched.lenght - 1)
+      if (index == (int) searched.len - 1)
         return match; // stejny znak a zaroven posledni hledany => uspech, konec
       index++; // stejny znak
     }
@@ -167,6 +167,6 @@ int kmpSearch (tString text, tString searched)
     }
   }
 
-  return text.lenght; // hledany text tu neni
+  return text.len; // hledany text tu neni
 }
 */
