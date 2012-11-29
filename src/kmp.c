@@ -47,8 +47,8 @@ might suggest)
  * @param   tString - struktura s polem a jeho rozmery
  * @return  nic
  */
-void kmpCrtTable (tString text, int table[])
-{
+
+void kmpCrtTable (tString text, int* table){
   int position = 2, index = 0;
 
   table[0] = -1;
@@ -101,13 +101,51 @@ void kmpCrtTable (tString text, int table[])
  * @param   tString - struktura s polem a jeho rozmery
  * @return  pozice prvniho stejneho znaku pri shode, jinak delka textu, ve kterem hledame
  */
+
+int kmpSearch(tString text, tString searched){
+    if(text.lenght == 0)
+        return 0;
+    
+    int match = 0;
+    int index = 0;
+    int table[text.lenght];
+    
+    kmpCrtTable(text, table);
+    
+    //for(unsigned int i = 0; i < text.lenght; i++)
+    //    printf("Polozka %d: %d\n", i, table[i]);
+    
+    while((match + index) < (int) text.lenght){
+        if(searched.data[index] == text.data[match + index]){
+            if(index == (int)searched.lenght - 1)
+                return match;
+            
+            index++;            
+        }
+        else{
+            match += index - table[index];
+            
+            if(table[index] > -1)
+                index = table[index];
+            else
+                index = 0;            
+        }        
+    }
+    
+    return text.lenght;
+}
+
+/*
 int kmpSearch (tString text, tString searched)
 {
   if (text.lenght == 0)
     return text.lenght; // neni v cem hledat
+    
 
   int match = 0, index = 0, table[text.lenght];
-  kmpCrtTable (text, &table[text.lenght]); // vytvoreni pomocne tabulky
+  printf("DEBUG: %u\n", text.lenght);
+  //kmpCrtTable (text, &table[text.lenght]); // vytvoreni pomocne tabulky
+  printf("DEBUG: %u\n", text.lenght);
   printf("\ntext.lenght = %u", text.lenght);
   printf("\nTabulka\n");
   for (unsigned int i = 0; i < text.lenght; i++)
@@ -131,3 +169,4 @@ int kmpSearch (tString text, tString searched)
 
   return text.lenght; // hledany text tu neni
 }
+*/

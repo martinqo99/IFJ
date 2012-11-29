@@ -21,6 +21,8 @@ int main (int argc, char *argv[])
 
   strFree(&text);
   strFree(&search);
+  
+  mmuGlobalFree();
 
   return 0;
 }
