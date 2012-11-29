@@ -108,6 +108,11 @@ int kmpSearch (tString text, tString searched)
 
   int match = 0, index = 0, table[text.lenght];
   kmpCrtTable (text, &table[text.lenght]); // vytvoreni pomocne tabulky
+  printf("\ntext.lenght = %u", text.lenght);
+  printf("\nTabulka\n");
+  for (unsigned int i = 0; i < text.lenght; i++)
+    printf("Polozka %d: %d\n", i, table[i]);
+  printf("Konec tabulky\n\n");
 
   while ((match+index) < (int) text.lenght) {
     if (searched.data[index] == text.data[match + index]) {

@@ -12,8 +12,15 @@ int main (int argc, char *argv[])
   tString text = strCreate(argv[1]);
   tString search = strCreate(argv[2]);
 
+  printf("Text: %s\n"
+         "Text len: %u\n", text.data, text.lenght);
+  printf("Hledany string: %s\n"
+         "Hledany len: %u\n", search.data, search.lenght);
   int position = kmpSearch(text, search);
-  printf("Text: %s\nHledany string: %s\nPozice je: %d\n",text.data, search.data, position);
+  printf("Pozice je: %d\n", position);
+
+  strFree(&text);
+  strFree(&search);
 
   return 0;
 }
