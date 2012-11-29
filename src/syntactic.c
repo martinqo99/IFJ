@@ -57,7 +57,7 @@
  * <program_body> -> <stat_list> <program_body>
  * <stat_list>    -> eps
  * <stat_list>    -> <command> <stat_list>
- * <def_function> -> idFunc ( <params> ) EOL <stat_list> end
+ * <def_function> -> function idFunc ( <params> ) EOL <stat_list> end
  * <params>       -> eps
  * <params>       -> id <params_n>
  * <params_n>     -> eps
