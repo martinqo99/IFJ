@@ -201,10 +201,72 @@ E_CODE prsAssign(tSymbolTable *table)
   // <assign> - idFunction( <params> )
   // <assign> - input()
   // <assign> - numeric(id)
-  // <assign> - print( <term> )
   // <assign> - typeof(id)
   // <assign> - len(id)
+  // <assign> - print( <term> )
   // <assign> - find(string, string)
   // <assign> - sort(string)
-  // <assign> - string[ <num>:<num> ] EOL
+  // <assign> - string[ <num>:<num> ]
+    E_CODE err = ERROR_OK;
+    tKeyword kw;
+    switch(kw=getToken()){
+        case KW_INPUT:{
+            if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(getToken()!=LEX_R_BRACKET) return ERROR_SYNTAX;
+            break;
+        }
+        case KW_NUMERIC:
+        case KW_TYPEOF:
+        case KW_LEN:{ //syntaxe u tehto 3 je stejna, ale nakonec se to bude muset rozdelit kvuli generovani rozdilnych instrukci myslim
+            if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(getToken()!=LEX_ID) return ERROR_SYNTAX; //potreba check jestli ID existuje! 
+            if(getToken()!=LEX_R_BRACKET) return ERROR_SYNTAX;
+            break;       
+        }
+        case KW_PRINT:{
+            if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(err=prsTerm()!=ERROR_OK) return err;
+            if(getToken()!=LEX_R_BRACKET) return ERROR_SYNTAX;
+            break;
+        }
+        case KW_FIND:{
+            if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(getToken()!=LEX_STRING) return ERROR_SYNTAX;  //tady u tech stringu nevim jestli to musi byt LEX_STRING nebo i promenna s ulozenym stringem? 
+            if(getToken()!=LEX_COMMA) return ERROR_SYNTAX;
+            if(getToken()!=LEX_STRING) return ERROR_SYNTAX; //same string problem here 
+            if(getToken()!=LEX_R_BRACKET) return ERROR_SYNTAX;
+            break;
+        }
+        case KW_SORT:{
+            if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(getToken()!=LEX_STRING) return ERROR_SYNTAX;  //and here
+            if(getToken()!=LEX_R_BRACKET) return ERROR_SYNTAX;  
+            break;       
+        }
+        case LEX_STRING:{//and here
+            if(getToken()!=LEX_L_SBRACKET) return ERROR_SYNTAX; 
+            if(err=prsNum()!=ERROR_OK) return err;
+            if(getToken()!=LEX_COLON) return ERROR_SYNTAX;
+            if(err=prsNum()!=ERROR_OK) return err;
+            if(getToken()!=LEX_R_SBRACKET) return ERROR_SYNTAX;
+            break;       
+        }
+        case LEX_ID:{//tady to chce check jestli je to ID funkce!
+                     //jestli neni tak asi nebreakovat a pouzit to ID pro expression
+            if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(err=prsParams()!=ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
+        }
+        case default:{
+            prsExpression(kw);
+        }
+    }
+}
+
+/**
+ * @info      Analyza parametru
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsParams(tSymbolTable *table)
+{
 }
