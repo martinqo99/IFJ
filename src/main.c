@@ -56,6 +56,12 @@ int main(int argc, char* argv[]){
             break;
         }
         
+        if(keyword == EOF){
+            printf("EOF!!!\n");
+            break;
+            
+        }
+        
         printf("- TOKEN [%d]: %s\n", keyword,gToken.data.data);        
     }
     

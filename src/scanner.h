@@ -70,6 +70,7 @@ typedef enum tstate{
     S_ID,
     S_NUMBER,
     S_NUMBER_POINT,
+    S_NUMER_DECIMAL,
     S_NUMBER_EXPONENT
 } tState;
 
