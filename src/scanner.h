@@ -43,7 +43,7 @@ typedef enum tkeyword{
     LEX_LESSER, LEX_GREATER, LEX_LESSER_EQUAL, LEX_GREATER_EQUAL,
     LEX_EQUAL, LEX_UNEQUAL,LEX_ASSIGN, 
     LEX_COMMA, LEX_COLON,
-    LEX_EOL, LEX_EOF, //znaky konce radku a souboru    
+    LEX_EOL = 37, LEX_EOF, //znaky konce radku a souboru    
 
     LEX_UNKNOWN, //nepovoleny lexem
     LEX_RESERVED,

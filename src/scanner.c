@@ -71,7 +71,7 @@ tKeyword getToken(){
     int c;
 
     //Hlavni nacitaci smycka
-    while((c = getc(gFileHandler)) != EOF){
+    while((c = getc(gFileHandler))){
         //printf("[LEX] [%d:%d] Get character %c\n", gToken.row, gToken.column, c);
 
         //Posouvame cislo sloupce
@@ -86,7 +86,7 @@ tKeyword getToken(){
             case S_START:
                 if(c == ' ' || c == '\r' || c == '\t') break;
                 else if(c == '\n'){ pushToken(c); return LEX_EOL; }
-                else if(c == EOF){ printf("DEBUG\n"); return LEX_EOF; }
+                else if(c == EOF){ return LEX_EOF; }
                 else if(c == '('){ pushToken(c); return LEX_L_BRACKET; }
                 else if(c == ')'){ pushToken(c); return LEX_R_BRACKET; }
                 else if(c == '['){ pushToken(c); return LEX_L_SBRACKET; }
@@ -136,12 +136,6 @@ tKeyword getToken(){
                     }
                     else if(c == 'e'){
                         state = S_NUMBER_EXPONENT;
-                        pushToken(c);
-                        break;
-                    }
-                    else if(c == EOF)
-                        return LEX_ERROR;
-                    else if(isdigit(c)){
                         pushToken(c);
                         break;
                     }
@@ -281,11 +275,9 @@ tKeyword getToken(){
                         ungetc(c, gFileHandler);
                         return LEX_ASSIGN;
                     }
-                    return;
                 break;
             //Nasobeni nebo mocnina
             case S_STAR:
-                printf("star\n");
                 if(c == EOF)
                     return LEX_ERROR;
                 else if(c == '*'){
@@ -302,4 +294,6 @@ tKeyword getToken(){
                 break;
         }
     }
+
+    return LEX_ERROR;
 }
