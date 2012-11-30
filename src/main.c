@@ -46,6 +46,11 @@ int main(int argc, char* argv[]){
     
     tKeyword keyword;
     while((keyword = getToken()) != LEX_EOF){
+        if(keyword == LEX_UNKNOWN){
+            printf("Undefined lex\n");
+            break;            
+        }
+        
         if(keyword == LEX_ERROR){
             printf("Lex error\n");
             break;

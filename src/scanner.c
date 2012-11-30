@@ -34,7 +34,7 @@ const char* reservedWords[] = { "import", "def", "export", "from", "as", "direct
 int isReserved(tString word){
     for(int i = 0; i < RESERVED_COUNT; i++){
         if(strCmpRaw(&word, reservedWords[i]))
-            return i;        
+            return LEX_RESERVED;        
     }
     
     for(int i = 0; i < KW_FALSE; i++){
@@ -116,8 +116,8 @@ tKeyword getToken(){
                 else if(c == '='){ state = S_EQUAL; }             
                 //Chybny znak
                 else{ 
-                    printf("[LEX] Unallowed character in S_START: %c (%d)\n", c, c);
-                    programAbort(ERROR_LEX);                    
+                    pushToken(c);
+                    return LEX_UNKNOWN;                
                 }
                 
                 pushToken(c);                
@@ -151,7 +151,7 @@ tKeyword getToken(){
                         pushToken(c); 
                         break;
                     }
-                    else{ ungetc(c, gFileHandler); return LEX_ID; }
+                    else{ ungetc(c, gFileHandler); return isReserved(gToken.data); }
                 break;
             case S_SUBSTRACTION:
                     return LEX_SUBSTRACTION;

@@ -31,13 +31,12 @@
 extern FILE* gFileHandler;
 
 typedef enum tkeyword{
-    KW_IF, KW_ELSE, KW_END,     //Podminky
-    KW_WHILE,                   //Cykly - in?
-    KW_FUNCTION, KW_RETURN,     //Funkce
-    KW_FIND, KW_SORT, KW_INPUT, KW_NUMERIC, KW_PRINT, KW_TYPEOF, KW_LEN,            //Vestavene funkce    
+    KW_IF, KW_ELSE, KW_END,                                             //Podminky
+    KW_WHILE,                                                           //Cykly
+    KW_FUNCTION, KW_RETURN,                                             //Funkce
+    KW_FIND, KW_SORT, KW_INPUT, KW_NUMERIC, KW_PRINT, KW_TYPEOF, KW_LEN,//Vestavene funkce    
     KW_NIL, KW_TRUE, KW_FALSE,    
     
-    LEX_UNKNOWN, //nepovoleny lexem
     LEX_ID, LEX_STRING, LEX_NUMBER,
     LEX_L_BRACKET, LEX_R_BRACKET, LEX_L_SBRACKET, LEX_R_SBRACKET,
     LEX_ADDITION, LEX_MULTIPLICATION, LEX_POWER, LEX_DIVISION, LEX_SUBSTRACTION,
@@ -45,7 +44,9 @@ typedef enum tkeyword{
     LEX_EQUAL, LEX_UNEQUAL,LEX_ASSIGN, 
     LEX_COMMA, LEX_COLON,
     LEX_EOL, LEX_EOF, //znaky konce radku a souboru    
-    
+
+    LEX_UNKNOWN, //nepovoleny lexem
+    LEX_RESERVED,
     LEX_ERROR,
 } tKeyword;
 
