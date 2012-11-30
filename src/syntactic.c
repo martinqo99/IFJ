@@ -20,8 +20,8 @@
  * <body_program> - <command><body_program>
  * <body_program> - eps
  * <def_function> - function idFunction (<params>) EOL <stat_list> EOL end EOL
- * <stat_list> - eps                        
- * <stat_list> - <command> <stat_list>       
+ * <stat_list> - eps
+ * <stat_list> - <command> <stat_list>
  * <params> - id <params_n>
  * <params> - eps
  * <params_n> - , id <params_n>
@@ -49,8 +49,7 @@
  * <value> - logic
 **/
 
-
-/** 
+/**
  * pravidla OLD VERSION!!!
  * <program>      -> <program_body> end EOF
  * <program_body> -> eps
@@ -63,7 +62,7 @@
  * <params>       -> id <params_n>
  * <params_n>     -> eps
  * <params_n>     -> ,<params_n>
- * <command>      -> if expr EOL <stat_list> <else> end EOL 
+ * <command>      -> if expr EOL <stat_list> <else> end EOL
  * <else>         -> else EOL <stat_list>
  * <else>         -> eps
  * <command>      -> while expr EOL <stat_list> end EOL
@@ -71,89 +70,128 @@
  * <command>      -> id = stringId [<num>:<num>]EOL
  * <num>          -> eps
  * <num>          -> num
- * <command>      -> id = idFunc ( <params> ) EOL 
+ * <command>      -> id = idFunc ( <params> ) EOL
  */
-/**
- * @info      Something
- * @param   parametry
- * @return  Whatever
- */
-E_CODE parser(tSymbolTable *table){
 
-return prsBody(table);
+/**
+ * @info      Hlavni fce syntakticke analyzy
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE parser(tSymbolTable *table)
+{
+  return prsBody(table);
 }
 
-E_CODE prsBody(tSymbolTable *table){
-    E_CODE err;
+/**
+ * @info      Analyza tela programu
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsBody(tSymbolTable *table)
+{
+    E_CODE err = ERROR_OK;
     tKeyword kw;
-    while (kw=getToken()==LEX_EOL);
-    switch (kw){
-        case LEX_EOF: return ERROR_OK;
-        case KW_FUNCTION:{ 
-            if(err=prsDefFunction()!=ERROR_OK)return err;
-            else return prsBody();
+    while ((kw = getToken()) == LEX_EOL);
+    switch (kw) {
+        case LEX_EOF: return err;
+        case KW_FUNCTION:{
+            if((err = prsDefFunction(table)) != ERROR_OK) return err;
+            else return prsBody(table);
             }
         case default:{
-            if(err=prsCommand()!=ERROR_OK)return err;
-            else return prsBody();
+            if((err = prsCommand(table)) != ERROR_OK) return err;
+            else return prsBody(table);
             }
     }
 }
 
-E_CODE prsCommand(){
-    E_CODE err;
-    switch(getToken()){
+/**
+ * @info      Analyza prikazu
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsCommand(tSymbolTable *table)
+{
+    E_CODE err = ERROR_OK;
+    switch (getToken()){
         case LEX_ID:{
         //tady je treba pridat ID do tabulky, jestli tam uz neni
         //checkni =, zavolej prsAssign
-            if (getToken()!=LEX_ASSIGN) return ERROR_SYNTAX;
-            else if (err=prsAssign!=ERROR_OK) return err;
-            if(getToken()!=LEX_EOL) return ERROR_SYNTAX;
+            if (getToken() != LEX_ASSIGN) return ERROR_SYNTAX;
+            else if ((err = prsAssign(table)) != ERROR_OK) return err;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_IF:{
         //checkni if/else vetev: if expression EOL <stat_list> else EOL <stat_list> end EOL
-            if(err=prsExpression()!=ERROR_OK) return err;
-            if(getToken()!=LEX_EOL) return ERROR_SYNTAX;
-            if(err=prsStatlist()!=ERROR_OK) return err;
-            if(getToken()!=KW_ELSE) return ERROR_SYNTAX;
-            if(err=prsStatlist()!=ERROR_OK) return err;
-            if(getToken()!=KW_END) return ERROR_SYNTAX; 
-            if(getToken()!=LEX_EOL) return ERROR_SYNTAX;    
-            break;       
+            if ((err = prsExpression(table)) != ERROR_OK) return err;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            if ((err = prsStatlist(table)) != ERROR_OK) return err;
+            if (getToken() != KW_ELSE) return ERROR_SYNTAX;
+            if ((err=prsStatlist(table)) != ERROR_OK) return err;
+            if (getToken() != KW_END) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            break;
         }
         case KW_while:{
         //while loop: while expression EOL <stat_list> end EOL
-            if(err=prsExpression()!=ERROR_OK) return err;
-            if(getToken()!=LEX_EOL) return ERROR_SYNTAX;            
-            if(err=prsStatlist()!=ERROR_OK) return err;
-            if(getToken()!=KW_END) return ERROR_SYNTAX; 
-            if(getToken()!=LEX_EOL) return ERROR_SYNTAX;
+            if ((err = prsExpression(table)) != ERROR_OK) return err;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            if ((err = prsStatlist(table)) != ERROR_OK) return err;
+            if (getToken() != KW_END) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_RETURN:{
         //return function: return expression EOL
-            if(err=prsExpression()!=ERROR_OK) return err;
-            if(getToken()!=LEX_EOL) return ERROR_SYNTAX;  
-            break;          
+            if ((err = prsExpression(table)) != ERROR_OK) return err;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            break;
         }
         case default: return ERROR_SYNTAX;
     }
-    return ERROR_OK;
+    return err;
 }
 
-E_CODE prsDefFunction(){
-//function idFunction (<params>) EOL <stat_list> EOL end EOL
+/**
+ * @info      Analyza definice funkce
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsDefFunction(tSymbolTable *table)
+{
+  //function idFunction (<params>) EOL <stat_list> EOL end EOL
 
+  E_CODE err = ERROR_OK;
 }
 
-E_CODE prsStatlist(){
- /* <stat_list> - eps                        
- * <stat_list> - <command> <stat_list> */  
+/**
+ * @info      Analyza kodu
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsStatlist(tSymbolTable *table)
+{
+  // <stat_list> - eps
+  // <stat_list> - <command> <stat_list> */
 }
 
-E_CODE prsAssign(){
-
+/**
+ * @info      Analyza prirazovacich prikazu
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsAssign(tSymbolTable *table)
+{
+  // <assign> - expression
+  // <assign> - idFunction( <params> )
+  // <assign> - input()
+  // <assign> - numeric(id)
+  // <assign> - print( <term> )
+  // <assign> - typeof(id)
+  // <assign> - len(id)
+  // <assign> - find(string, string)
+  // <assign> - sort(string)
+  // <assign> - string[ <num>:<num> ] EOL
 }
-
-
