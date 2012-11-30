@@ -19,7 +19,7 @@
  * <body_program> - <def_function><body_program>
  * <body_program> - <command><body_program>
  * <body_program> - eps
- * <def_function> - function idFunction (<params>) EOL <stat_list> EOL end EOL
+ * <def_function> - function idFunction (<params>) EOL <stat_list> end EOL
  * <stat_list> - eps
  * <stat_list> - <command> <stat_list>
  * <params> - id <params_n>
@@ -80,6 +80,7 @@
  */
 E_CODE parser(tSymbolTable *table)
 {
+  //tady bude jeste prvni prubeh pro pridani ID funkci do tabulky
   return prsBody(table);
 }
 
@@ -92,7 +93,7 @@ E_CODE prsBody(tSymbolTable *table)
 {
     E_CODE err = ERROR_OK;
     tKeyword kw;
-    while ((kw = getToken()) == LEX_EOL);
+    while ((kw = getToken()) == LEX_EOL);//procykli prazdne radky
     switch (kw) {
         case LEX_EOF: return err;
         case KW_FUNCTION:{
@@ -100,7 +101,7 @@ E_CODE prsBody(tSymbolTable *table)
             else return prsBody(table);
             }
         case default:{
-            if((err = prsCommand(table)) != ERROR_OK) return err;
+            if((err = prsCommand(table,kw)) != ERROR_OK) return err;
             else return prsBody(table);
             }
     }
@@ -111,10 +112,10 @@ E_CODE prsBody(tSymbolTable *table)
  * @param   tSymbolTable* - ukazatel na tabulku znaku
  * @return  E_CODE - chybovy kod
  */
-E_CODE prsCommand(tSymbolTable *table)
+E_CODE prsCommand(tSymbolTable *table,tKeyword kw)
 {
     E_CODE err = ERROR_OK;
-    switch (getToken()){
+    switch (kw){
         case LEX_ID:{
         //tady je treba pridat ID do tabulky, jestli tam uz neni
         //checkni =, zavolej prsAssign
@@ -185,8 +186,8 @@ E_CODE prsStatlist(tSymbolTable *table)
     tKeyword kw;
     while ((kw = getToken()) == LEX_EOL); //procykli prazdne radky
     if(kw==KW_END) return ERROR_OK;
-    if(err=prsCommand(kw)!=ERROR_OK) return err;
-    else return prsStatlist();
+    if(err=prsCommand(table,kw)==ERROR_OK) return prsStatlist(); //@kw - prsCommand potrebuje znat posledni token
+    else return err;
 }
 
 /**
