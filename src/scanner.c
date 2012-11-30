@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   scanner.c
- * 
- * Popis:    
- * 
- * 
+ *
+ * Popis:
+ *
+ *
  * Datum:    21.11.2012
- * 
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -34,23 +34,23 @@ const char* reservedWords[] = { "import", "def", "export", "from", "as", "direct
 int isReserved(tString word){
     for(int i = 0; i < RESERVED_COUNT; i++){
         if(strCmpRaw(&word, reservedWords[i]))
-            return LEX_RESERVED;        
+            return LEX_RESERVED;
     }
-    
+
     for(int i = 0; i < KW_FALSE; i++){
          if(strCmpRaw(&word, keyWords[i]))
-            return i;          
+            return i;
     }
-    
+
     return S_ID;
 }
 
 void initToken(){
     gToken.row = 1;
     gToken.column = 0;
-    
+
     rewind(gFileHandler);
-    
+
     strInit(&(gToken.data));
 }
 
@@ -63,25 +63,25 @@ void pushToken(int character){
     strAdd(&(gToken.data), (char)character);
 }
 
-tKeyword getToken(){  
+tKeyword getToken(){
     //Reset tokenu do pocatecniho stavu
     resetToken();
 
     tState state = S_START;
     int c;
-    
+
     //Hlavni nacitaci smycka
     while((c = getc(gFileHandler)) != EOF){
         //printf("[LEX] [%d:%d] Get character %c\n", gToken.row, gToken.column, c);
 
         //Posouvame cislo sloupce
         gToken.column++;
-        
+
         if(c == '\n'){
             gToken.row++;
-            gToken.column = 0;            
+            gToken.column = 0;
         }
-        
+
         switch(state){
             case S_START:
                 if(c == ' ' || c == '\r' || c == '\t') break;
@@ -114,59 +114,59 @@ tKeyword getToken(){
                 //Retezec
                 else if(c == '"'){ state = S_STRING; break; }
                 //Prirazeni, porovnani
-                else if(c == '='){ state = S_EQUAL; }             
+                else if(c == '='){ state = S_EQUAL; }
                 //Chybny znak
-                else{ 
+                else{
                     pushToken(c);
-                    return LEX_UNKNOWN;                
+                    return LEX_UNKNOWN;
                 }
-                
-                pushToken(c);                
+
+                pushToken(c);
                 break;
             //Cislo - cela cast
             case S_NUMBER:
                     if(isdigit(c)){
                         pushToken(c);
-                        break;                        
+                        break;
                     }
-                    else if(c == ','){
+                    else if(c == '.'){
                         state = S_NUMBER_POINT;
                         pushToken(c);
-                        break;                        
+                        break;
                     }
                     else if(c == 'e'){
                         state = S_NUMBER_EXPONENT;
                         pushToken(c);
-                        break;                        
+                        break;
                     }
                     if(c == EOF)
                         return LEX_ERROR;
                     else if(c == '.'){
                         state = S_NUMBER_POINT;
-                        pushToken(c);                        
-                        break;                        
+                        pushToken(c);
+                        break;
                     }
                     else if(isdigit(c)){
                         pushToken(c);
-                        break;                        
+                        break;
                     }
                     else
                         return LEX_NUMBER;
                 break;
-            //Cislo - desetina cast   
+            //Cislo - desetina cast
             case S_NUMBER_POINT:
                 if(isdigit(c)){
                     pushToken(c);
-                    break;                    
+                    break;
                 }
                 else if(c == 'e'){
                     state = S_NUMBER_EXPONENT;
                     pushToken(c);
-                    break;                    
+                    break;
                 }
                 else if(isspace(c)){
                     ungetc(c, gFileHandler);
-                    return LEX_NUMBER;                    
+                    return LEX_NUMBER;
                 }
                 else
                     return LEX_ERROR;
@@ -179,27 +179,27 @@ tKeyword getToken(){
                 }
                 else if(isdigit(c)){
                     pushToken(c);
-                    break;                    
+                    break;
                 }
                 else if(isspace(c)){
                     ungetc(c, gFileHandler);
-                    return LEX_NUMBER;                    
+                    return LEX_NUMBER;
                 }
                 else
                     return LEX_ERROR;
                 break;
             //Identifikator
             case S_ID:
-                if(isdigit(c) || isalpha(c) || c == '_'){ 
-                    pushToken(c); 
+                if(isdigit(c) || isalpha(c) || c == '_'){
+                    pushToken(c);
                     break;
                 }
                 else if(c == EOF)
                     return LEX_ERROR;
                 else{
                     ungetc(c, gFileHandler);
-                    return isReserved(gToken.data);                    
-                }                 
+                    return isReserved(gToken.data);
+                }
                 break;
             //Minus
             case S_SUBSTRACTION:
@@ -209,14 +209,14 @@ tKeyword getToken(){
             case S_SLASH:
                 if(c == EOF)
                     return LEX_ERROR;
-                else if(c == '/') 
+                else if(c == '/')
                     state = S_COMMENT_ROW;
-                else if(c == '*') 
+                else if(c == '*')
                     state = S_COMMENT_BLOCK;
-                else{ 
-                    ungetc(c, gFileHandler); 
-                    return LEX_DIVISION; 
-                } 
+                else{
+                    ungetc(c, gFileHandler);
+                    return LEX_DIVISION;
+                }
                 break;
             //Radkovy komentar
             case S_COMMENT_ROW:
@@ -229,14 +229,14 @@ tKeyword getToken(){
                 break;
             //Blokovy komentar
             case S_COMMENT_BLOCK:
-                if(c == EOF) 
+                if(c == EOF)
                     return LEX_ERROR;
                 else if(c == '*')
                     state = S_COMMENT_END;
                 break;
             //Konec blokoveho komentare
             case S_COMMENT_END:
-                if(c == EOF) 
+                if(c == EOF)
                     return LEX_ERROR;
                 else if(c == '/'){
                     state = S_START;
@@ -247,25 +247,25 @@ tKeyword getToken(){
                 break;
             //Mensi nez nebo mensi nebo rovno
             case S_LESSER:
-                if(c == EOF) 
+                if(c == EOF)
                     return LEX_ERROR;
-                else if(c == '=') 
+                else if(c == '=')
                     return LEX_LESSER_EQUAL;
-                else{ 
-                    ungetc(c, gFileHandler); 
+                else{
+                    ungetc(c, gFileHandler);
                     return LEX_LESSER;
                 }
                 break;
             //Vetsi nez nebo vetsi nebo rovno
             case S_GREATER:
-                if(c == EOF) 
+                if(c == EOF)
                     return LEX_ERROR;
-                else if(c == '=') 
+                else if(c == '=')
                     return LEX_GREATER_EQUAL;
-                else{ 
-                    ungetc(c, gFileHandler); 
-                    return LEX_GREATER; 
-                }               
+                else{
+                    ungetc(c, gFileHandler);
+                    return LEX_GREATER;
+                }
                 break;
             //Retezec
             case S_STRING:
@@ -278,12 +278,12 @@ tKeyword getToken(){
                 break;
             //Prirazeni nebo porovnani
             case S_EQUAL:
-                    if(c == EOF) 
+                    if(c == EOF)
                         return LEX_ERROR;
-                    else if(c == '=') 
+                    else if(c == '=')
                         return LEX_EQUAL;
-                    else{ 
-                        ungetc(c, gFileHandler); 
+                    else{
+                        ungetc(c, gFileHandler);
                         return LEX_ASSIGN;
                     }
                     return;
@@ -295,12 +295,12 @@ tKeyword getToken(){
                     return LEX_ERROR;
                 else if(c == '*'){
                     pushToken(c);
-                    return LEX_POWER;                    
+                    return LEX_POWER;
                 }
                 else{
                     ungetc(c, gFileHandler);
                     return LEX_MULTIPLICATION;
-                }                    
+                }
                 break;
             default:
                 return LEX_ERROR;
