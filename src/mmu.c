@@ -78,14 +78,26 @@ void* mmuMalloc(size_t size){
  * @return  void* - ukazatel na novy kus pameti
  */
 void* mmuRealloc(void* ptr, size_t size){
+
     mmuTable.reallocs++;
     mmuTable.allocated += size;
 
     void* newPtr = realloc(ptr, size);
-
+    
     assert(newPtr);
 
-    tMMUTableItem* item = mmuTableLookup(mmuTable.table, (intptr_t)newPtr);
+    tMMUTableItem* item = NULL;
+    
+    if(newPtr != ptr){
+        item = mmuTableLookup(mmuTable.table, (intptr_t)ptr);
+        
+        assert(item);
+        
+        item->allocated = 0;
+        item->ptr = NULL;        
+    }
+
+    item = mmuTableLookup(mmuTable.table, (intptr_t)newPtr);
 
     assert(item);
 
@@ -234,10 +246,34 @@ void mmuGlobalFree(){
     mmuTable.table = NULL;
 
     printf("\n\n---------------------------- MMU report ---------------------------\n");
-    printf("Memmory (malloc/calloc/realloc/free): %lu/%lu/%lu/%lu\n", mmuTable.mallocs, mmuTable.reallocs, mmuTable.callocs, mmuTable.frees);
+    printf("Memmory (malloc/calloc/realloc/free): %lu/%lu/%lu/%lu\n", mmuTable.mallocs, mmuTable.callocs, mmuTable.reallocs, mmuTable.frees);
     printf("Files (open/close): %lu/%lu\n", mmuTable.fopens, mmuTable.fcloses);
     printf("Total allocated memory: %lu bytes\n", mmuTable.allocated);
     printf("-------------------------------------------------------------------\n");
+}
+
+void mmuDump(){
+    if(!mmuTable.table && !mmuTable.table->data)
+        return;
+
+    tMMUTableItemPtr item = NULL;
+
+    printf("\n\n----------------------------- MMU dump ----------------------------\n");
+    
+    //Pro kazdy mozny radek pametove tabulky
+    for(unsigned int i = 0; i < mmuTable.table->size; i++){
+        if(mmuTable.table->data[i] != 0){
+            printf("Row index: %u\n", i);
+            item = mmuTable.table->data[i];
+
+            while((item)){
+                printf(" - Item %lu: type: %d | allocated: %lu | ptr: %lu | next: %lu\n", (intptr_t)item, item->type, item->allocated, (intptr_t)item->ptr, (intptr_t)item->next);
+                
+                item = item->next;
+            }
+        }
+    }
+    printf("-------------------------------------------------------------------\n");    
 }
 
 /**
@@ -338,8 +374,11 @@ tMMUTableItem* mmuTableLookup(tMMUTable* T, intptr_t key){
 
     tMMUTableItem* item = T->data[index];
 
-    if(!item)
-        return (T->data[index] = mmuTableItemCreate(key));
+    if(!item){
+        T->data[index] = mmuTableItemCreate(key);
+        
+        return (T->data[index]);
+    }
 
     while(item){
         if(item->key == key)
@@ -374,4 +413,3 @@ size_t hash(intptr_t key, size_t size){
     //printf("%lu\n", (97*sum)%size);
     return (97 * sum)%size;
 }
-

@@ -74,6 +74,7 @@ void* mmuFopen(const char*, const char*);
 void mmuFree(void*);
 void mmuFclose(void*);
 void mmuGlobalFree();
+void mmuDump();
 
 //Funkce pro praci s hashovaci tabulkou
 tMMUTable* mmuTableCreate();
@@ -86,5 +87,6 @@ tMMUTableItem* mmuTableLookup(tMMUTable*, intptr_t);
 
 //Hashovaci funkce
 size_t hash(intptr_t, size_t);
+
 
 #endif
