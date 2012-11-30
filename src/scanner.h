@@ -43,6 +43,9 @@ typedef enum tkeyword{
     LEX_LESSER, LEX_GREATER, LEX_LESSER_EQUAL, LEX_GREATER_EQUAL,
     LEX_EQUAL, LEX_UNEQUAL,LEX_ASSIGN, 
     LEX_COMMA, LEX_COLON,
+    
+    
+    LEX_ERROR,
 } tKeyword;
 
 typedef enum tstate{
@@ -72,7 +75,7 @@ typedef enum tstate{
 } tState;
 
 typedef struct ttoken{
-  tState state;
+  tKeyword keyword;
   
   unsigned int row;
   unsigned int column;
@@ -87,8 +90,7 @@ int isReserved(tString);
 //API pro praci s lexilanim analyzatorem
 void initToken();
 void resetToken();
-void setState(tState);
 void pushToken(int);
-tState getToken();
+tKeyword getToken();
 
 #endif

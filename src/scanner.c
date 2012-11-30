@@ -46,40 +46,32 @@ int isReserved(tString word){
 }
 
 void initToken(){
-    gToken.state = S_START;
     gToken.row = 1;
     gToken.column = 0;    
     strInit(&(gToken.data));
 }
 
 void resetToken(){
-    gToken.state = S_START;
     strFree(&(gToken.data));
     strInit(&(gToken.data));
-}
-
-void setState(tState state){
-    gToken.state = state;
 }
 
 void pushToken(int character){
     strAdd(&(gToken.data), (char)character);
 }
 
-tState getToken(){  
+tKeyword getToken(){  
     if(!gFileHandler)
         programAbort(ERROR_COMPILATOR);
-    
-    if(gToken.state == S_EOF)
-        programAbort(ERROR_LEX);
     
     //Reset tokenu do pocatecniho stavu
     resetToken();
 
+    tState state = S_START;
     int c;
     //Hlavni nacitaci smycka
     while((c = getc(gFileHandler)) != EOF){
-        printf("[LEX] [%d:%d] Get character %c\n", gToken.row, gToken.column, c);
+        //printf("[LEX] [%d:%d] Get character %c\n", gToken.row, gToken.column, c);
 
         //Posouvame cislo sloupce
         gToken.column++;
@@ -89,7 +81,7 @@ tState getToken(){
             gToken.column = 0;            
         }
         
-        switch(gToken.state){
+        switch(state){
             case S_START:
                 //Bile znaky
                 if(isspace(c)){ 
@@ -97,38 +89,34 @@ tState getToken(){
                 }
 
                 //else if(c == EOF){ return EOF; }
-                else if(c == '('){ return LEX_L_BRACKET; }
-                else if(c == ')'){ return LEX_R_BRACKET; }
-                else if(c == '['){ return LEX_L_SBRACKET; }
-                else if(c == ']'){ return LEX_R_SBRACKET; }
-                else if(c == '+'){ return LEX_ADDITION; }
-                else if(c == ','){ return LEX_COMMA; }
-                else if(c == ':'){ return LEX_COLON; }
+                else if(c == '('){ pushToken(c); return LEX_L_BRACKET; }
+                else if(c == ')'){ pushToken(c); return LEX_R_BRACKET; }
+                else if(c == '['){ pushToken(c); return LEX_L_SBRACKET; }
+                else if(c == ']'){ pushToken(c); return LEX_R_SBRACKET; }
+                else if(c == '+'){ pushToken(c); return LEX_ADDITION; }
+                else if(c == ','){ pushToken(c); return LEX_COMMA; }
+                else if(c == ':'){ pushToken(c); return LEX_COLON; }
 
                 //Cislo
-                else if(isdigit(c)){ setState(S_NUMBER); }
+                else if(isdigit(c)){ state = S_NUMBER; }
                 //Identifikator
-                else if(isalpha(c)){ setState(S_ID); }
-                else if(c == '_'){ setState(S_ID); }
-                
+                else if(isalpha(c) || c == '_'){ state = S_ID; }
                 //Unarni nebo binarni minus
-                else if(c == '-'){ setState(S_SUBSTRACTION); }
+                else if(c == '-'){ state = S_SUBSTRACTION; }
                 //Deleni nebo komentar
-                else if(c == '/'){ setState(S_DIVISION); }
+                else if(c == '/'){ state = S_DIVISION; }
                 //Nasobeni nebo mocnina
-                else if(c == '*'){ setState(S_ADDITION); }
+                else if(c == '*'){ state = S_ADDITION; }
                 //Nerovna se
-                else if(c == '!'){ setState(S_UNEQUAL); }
+                else if(c == '!'){ state = S_UNEQUAL; }
                 //Mensi nez, nebo mensi nebo rovno
-                else if(c == '<'){ setState(S_LESSER); }
+                else if(c == '<'){ state = S_LESSER; }
                 //Vetsi nez, nebo vetsi nebo rovno
-                else if(c == '>'){ setState(S_GREATER); }
-                //Literal
-                else if(c == '\''){ setState(S_STRING); }
+                else if(c == '>'){ state = S_GREATER; }
                 //Retezec
-                else if(c == '"'){ setState(S_STRING); }
+                else if(c == '"'){ state = S_STRING; }
                 //Prirazeni, porovnani
-                else if(c == '='){ setState(S_EQUAL); }             
+                else if(c == '='){ state = S_EQUAL; }             
                 //Chybny znak
                 else{ 
                     printf("[LEX] Unallowed character in S_START: %c\n", c);
@@ -142,8 +130,8 @@ tState getToken(){
                     return;
                 break;
             case S_ID:
-                    printf("[LEX] ID\n");
-                    return;
+                    if(isdigit(c) || isalpha(c) || c == '_'){ pushToken(c); break; }
+                    else{ ungetc(c, gFileHandler); return LEX_ID; }
                 break;
             case S_SUBSTRACTION:
                     printf("[LEX] Substraction\n");
@@ -151,27 +139,26 @@ tState getToken(){
                 break;
             //Deleni, nebo komentare
             case S_DIVISION:
-                if(isdigit(c)){ ungetc(c, gFileHandler); return LEX_DIVISION; }                
-                else if(c == '/') setState(S_COMMENT_ROW);
-                else if(c == '*') setState(S_COMMENT_BLOCK);
-                else programAbort(ERROR_LEX);
+                if(c == '/') state = S_COMMENT_ROW;
+                else if(c == '*') state = S_COMMENT_BLOCK;
+                else{ ungetc(c, gFileHandler); return LEX_DIVISION; } 
                 break;
             //Radkovy komentar
             case S_COMMENT_ROW:
                 if(c == '\n')
-                    setState(S_START);
+                    state = S_START;
                 break;
             //Blokovy komentar
             case S_COMMENT_BLOCK:
                 if(c == '*')
-                    setState(S_COMMENT_END);
+                    state = S_COMMENT_END;
                 break;
             //Konec blokoveho komentare
             case S_COMMENT_END:
                 if(c == '/')
-                    setState(S_START);
+                    state = S_START;
                 else
-                    setState(S_COMMENT_BLOCK);
+                    state = S_COMMENT_BLOCK;
                 break;
             //Mensi nez nebo mensi nebo rovno
             case S_LESSER:
@@ -188,7 +175,8 @@ tState getToken(){
                     return;
                 break;
             case S_EQUAL:
-                    printf("[LEX] Equal\n");
+                    if(c == '='){ return LEX_EQUAL; }
+                    else{ ungetc(c, gFileHandler); return LEX_ASSIGN; }
                     return;
                 break;
             default:
@@ -197,74 +185,3 @@ tState getToken(){
         }
     }
 }
-    
-    /*
-    int i = 0;		// pocitadlo prectenych znaku
-
-    //spusteni konecneho automatu
-    while ((c = getc(gFileHandler))){
-        switch (stav){
-            case S_START:		// 0 - pocatecni stav
-                //DOPSAT BOOL a NUMERIC - funkce isdigit??
-                if(c == '=')       stav = S_PRIRAZENI;
-                else if(c == '.')  stav = S_TECKA;
-                else if(c == '(')  stav = S_LZ;
-                else if(c == ')')  stav = S_PZ;
-                else if(c == ';')  stav = S_STREDNIK;
-                else if(c == ',')  stav = S_CARKA;
-                else if(c == '!')  stav = S_VYKRICNIK;
-                else if(c == '+')  stav = S_SOUCET;
-                else if(c == '-')  stav = S_ROZDIL;
-                else if(c == '*')  stav = S_SOUCIN;
-                else if(c == '/')  stav = S_PODIL;
-                // Nutne predelat - v int c nemuzou byt dva znaky! Zavisle na predchozim znaku
-                else if (c == '**') stav = S_MOCNINA;
-                else if (c == '<')  stav = S_MENSI;
-                else if (c == '>')  stav = S_VETSI;
-                else if (c == '<=') stav = S_MENSIROVNO;
-                else if (c == '>=') stav = S_VETSIROVNO;
-                else if (c == '!=') stav = S_NEROVNASE;
-                else if (c == '==') stav = S_ROVNASE;
-                //
-                else if (c == '"') stav = S_STR;
-                else if (c == ' '){
-                    stav = S_START;
-                    break;
-                }
-                
-                rozsirToken(c, &i);	//vlozeni znaku do token.data
-                break;
-                //SEM JE POTREBA DOPSAT CHYBU PRO PRIPAD, ZE ZNAK NEODPOVIDA ANI JEDNOMU
-            case S_SOUCET:
-            case S_ROZDIL:
-            case S_SOUCIN:
-            case S_PODIL:
-                token.stav = stav;
-                stav = S_END;
-                break;
-            case S_MENSI:
-                if (c == '=') {
-                    stav = S_MENSIROVNO;
-                    rozsirToken(c, &i);
-                }
-                else {
-                    naplnToken(stav);
-                    stav = S_END;
-                }
-                break;
-            case S_VETSI:
-                if (c == '=') {
-                    stav = S_VETSIROVNO;
-                    rozsirToken(c, &i);
-                }
-                else {
-                    naplnToken(stav);
-                    stav = S_END;
-                }
-                break;
-            //Chybi dopsat zbyvajici stavy! 
-            default:
-                break;
-        } //konec while
-    }
-    */
