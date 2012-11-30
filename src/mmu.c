@@ -271,7 +271,7 @@ void mmuDump(){
             item = mmuTable.table->data[i];
 
             while((item)){
-                printf(" - Item 0x%X: type: %d | allocated: %lu | ptr: 0x%X | next: 0x%X\n", (intptr_t)item, item->type, item->allocated, (intptr_t)item->ptr, (intptr_t)item->next);
+                printf(" - Item %lu: type: %d | allocated: %lu | ptr: %lu | next: %lu\n", (intptr_t)item, item->type, item->allocated, (intptr_t)item->ptr, (intptr_t)item->next);
                 
                 item = item->next;
             }
