@@ -161,14 +161,12 @@ E_CODE prsCommand(tSymbolTable *table)
  */
 E_CODE prsDefFunction(tSymbolTable *table)
 {
-//function idFunction (<params>) EOL <stat_list> EOL end EOL
+//function idFunction (<params>) EOL <stat_list> end EOL
     E_CODE err = ERROR_OK;
     if(getToken()!=LEX_L_BRACKET) return ERROR_SYNTAX;
     if(err=prsParams()!=ERROR_OK) return err;//prava zavorka se nacte uvnitr params
     if(getToken()!=LEX_EOL) return ERROR_SYNTAX;
-    if(err=prsStatlist()!=ERROR_OK) return err;
-    if(getToken()!=LEX_EOL) return ERROR_SYNTAX;//tohle tu mozna nebude, jestli se EOL checkne uz ve statlistu
-    if(getToken()!=KW_END) return ERROR_SYNTAX;
+    if(err=prsStatlist()!=ERROR_OK) return err;//posledni nacteny kw je end
     if(getToken()!=LEX_EOL) return ERROR_SYNTAX;
     return err;
 }
@@ -182,6 +180,13 @@ E_CODE prsStatlist(tSymbolTable *table)
 {
   // <stat_list> - eps
   // <stat_list> - <command> <stat_list> */
+  //posledni nacteny token byl EOL
+    E_CODE err = ERROR_OK;
+    tKeyword kw;
+    while ((kw = getToken()) == LEX_EOL); //procykli prazdne radky
+    if(kw==KW_END) return ERROR_OK;
+    if(err=prsCommand(kw)!=ERROR_OK) return err;
+    else return prsStatlist();
 }
 
 /**
