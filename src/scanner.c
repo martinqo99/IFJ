@@ -139,13 +139,8 @@ tKeyword getToken(){
                         pushToken(c);
                         break;
                     }
-                    if(c == EOF)
+                    else if(c == EOF)
                         return LEX_ERROR;
-                    else if(c == '.'){
-                        state = S_NUMBER_POINT;
-                        pushToken(c);
-                        break;
-                    }
                     else if(isdigit(c)){
                         pushToken(c);
                         break;
