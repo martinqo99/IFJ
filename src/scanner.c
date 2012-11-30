@@ -32,17 +32,15 @@ const char* keyWords[] = {
 const char* reservedWords[] = { "import", "def", "export", "from", "as", "directive", "launch", "load", "macro" };
 
 int isReserved(tString word){
-    for(int i = 0; i < RESERVED_COUNT; i++){
-        if(strCmpRaw(&word, reservedWords[i]))
+    for(int i = 0; i < RESERVED_COUNT; i++)
+        if(strcmp((char*)word.data, (char*)reservedWords[i]) == 0)
             return LEX_RESERVED;
-    }
 
-    for(int i = 0; i < KW_FALSE; i++){
-         if(strCmpRaw(&word, keyWords[i]))
+    for(int i = 0; i < KW_FALSE; i++)
+         if(strcmp(word.data, keyWords[i]) == 0)
             return i;
-    }
 
-    return S_ID;
+    return LEX_ID;
 }
 
 void initToken(){
@@ -158,7 +156,7 @@ tKeyword getToken(){
                     return LEX_NUMBER;
                 }
                 else
-                    return LEX_ERROR;
+                    return LEX_NUMBER;
                 break;
             //Cislo - exponent
             case S_NUMBER_EXPONENT:
@@ -260,10 +258,18 @@ tKeyword getToken(){
             case S_STRING:
                     if(c == EOF)
                         return LEX_ERROR;
+                    else if(c == '\\'){
+                        state = S_STRING_ESCAPED;
+                        pushToken(c);
+                    }
                     else if(c == '"')
                         return LEX_STRING;
                     else
                         pushToken(c);
+                break;
+            case S_STRING_ESCAPED:
+                state = S_STRING;
+                pushToken(c);
                 break;
             //Prirazeni nebo porovnani
             case S_EQUAL:
@@ -275,6 +281,14 @@ tKeyword getToken(){
                         ungetc(c, gFileHandler);
                         return LEX_ASSIGN;
                     }
+                break;
+            case S_UNEQUAL:
+                if(c == '='){
+                    pushToken(c);
+                    return LEX_UNEQUAL;
+                }
+                else
+                    return LEX_ERROR;
                 break;
             //Nasobeni nebo mocnina
             case S_STAR:
