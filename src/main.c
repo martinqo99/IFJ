@@ -43,10 +43,17 @@ int main(int argc, char* argv[]){
     */
 
     initToken(&gToken);
-    getToken();
-    //getToken();
+    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
+    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
+    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
+    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
+    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
+    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
+
     
     mmuFclose(gFileHandler);
+    
+    mmuDump();
     
     mmuGlobalFree();
     

@@ -52,7 +52,7 @@ void initToken(){
 }
 
 void resetToken(){
-    strFree(&(gToken.data));
+    //strFree(&(gToken.data));
     strInit(&(gToken.data));
 }
 
@@ -69,6 +69,7 @@ tKeyword getToken(){
 
     tState state = S_START;
     int c;
+    
     //Hlavni nacitaci smycka
     while((c = getc(gFileHandler)) != EOF){
         //printf("[LEX] [%d:%d] Get character %c\n", gToken.row, gToken.column, c);
@@ -88,7 +89,7 @@ tKeyword getToken(){
                     break;
                 }
 
-                //else if(c == EOF){ return EOF; }
+                else if(c == EOF){ return LEX_EOF; }
                 else if(c == '('){ pushToken(c); return LEX_L_BRACKET; }
                 else if(c == ')'){ pushToken(c); return LEX_R_BRACKET; }
                 else if(c == '['){ pushToken(c); return LEX_L_SBRACKET; }
@@ -114,7 +115,7 @@ tKeyword getToken(){
                 //Vetsi nez, nebo vetsi nebo rovno
                 else if(c == '>'){ state = S_GREATER; }
                 //Retezec
-                else if(c == '"'){ state = S_STRING; }
+                else if(c == '"'){ state = S_STRING; break; }
                 //Prirazeni, porovnani
                 else if(c == '='){ state = S_EQUAL; }             
                 //Chybny znak
@@ -139,44 +140,80 @@ tKeyword getToken(){
                 break;
             //Deleni, nebo komentare
             case S_DIVISION:
-                if(c == '/') state = S_COMMENT_ROW;
-                else if(c == '*') state = S_COMMENT_BLOCK;
-                else{ ungetc(c, gFileHandler); return LEX_DIVISION; } 
+                if(c == EOF)
+                    return LEX_ERROR;
+                else if(c == '/') 
+                    state = S_COMMENT_ROW;
+                else if(c == '*') 
+                    state = S_COMMENT_BLOCK;
+                else{ 
+                    ungetc(c, gFileHandler); 
+                    return LEX_DIVISION; 
+                } 
                 break;
             //Radkovy komentar
             case S_COMMENT_ROW:
-                if(c == '\n')
+                if(c == EOF)
+                    return LEX_EOF;
+                else if(c == '\n')
                     state = S_START;
                 break;
             //Blokovy komentar
             case S_COMMENT_BLOCK:
-                if(c == '*')
+                if(c == EOF) 
+                    return LEX_ERROR;
+                else if(c == '*')
                     state = S_COMMENT_END;
                 break;
             //Konec blokoveho komentare
             case S_COMMENT_END:
-                if(c == '/')
+                if(c == EOF) 
+                    return LEX_ERROR;
+                else if(c == '/')
                     state = S_START;
                 else
                     state = S_COMMENT_BLOCK;
                 break;
             //Mensi nez nebo mensi nebo rovno
             case S_LESSER:
-                if(c == '=') return LEX_LESSER_EQUAL;
-                else{ ungetc(c, gFileHandler); return LEX_LESSER; }
+                if(c == EOF) 
+                    return LEX_ERROR;
+                else if(c == '=') 
+                    return LEX_LESSER_EQUAL;
+                else{ 
+                    ungetc(c, gFileHandler); 
+                    return LEX_LESSER;
+                }
                 break;
             //Vetsi nez nebo vetsi nebo rovno
             case S_GREATER:
-                if(c == '=') return LEX_GREATER_EQUAL;
-                else{ ungetc(c, gFileHandler); return LEX_GREATER; }               
+                if(c == EOF) 
+                    return LEX_ERROR;
+                else if(c == '=') 
+                    return LEX_GREATER_EQUAL;
+                else{ 
+                    ungetc(c, gFileHandler); 
+                    return LEX_GREATER; 
+                }               
                 break;
             case S_STRING:
-                    printf("[LEX] String\n");
-                    return;
+                    if(c == EOF)
+                        return LEX_ERROR;
+                    else if(c == '"')
+                        return LEX_STRING;
+                    else
+                        pushToken(c);
                 break;
+            //Prirazeni nebo porovnani
             case S_EQUAL:
-                    if(c == '='){ return LEX_EQUAL; }
-                    else{ ungetc(c, gFileHandler); return LEX_ASSIGN; }
+                    if(c == EOF) 
+                        return LEX_ERROR;
+                    else if(c == '=') 
+                        return LEX_EQUAL;
+                    else{ 
+                        ungetc(c, gFileHandler); 
+                        return LEX_ASSIGN;
+                    }
                     return;
                 break;
             default:
