@@ -43,13 +43,16 @@ int main(int argc, char* argv[]){
     */
 
     initToken(&gToken);
-    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
-    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
-    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
-    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
-    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
-    printf("- TOKEN [%d]: %s\n", getToken(), gToken.data.data);
-
+    
+    tKeyword keyword;
+    while((keyword = getToken()) != LEX_EOF){
+        if(keyword == LEX_ERROR){
+            printf("Lex error\n");
+            break;
+        }
+        
+        printf("- TOKEN [%d]: %s\n", keyword,gToken.data.data);        
+    }
     
     mmuFclose(gFileHandler);
     

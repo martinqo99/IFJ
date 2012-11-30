@@ -51,18 +51,16 @@ typedef enum tkeyword{
 
 typedef enum tstate{
     S_START = 0,// 0 Start
-    S_END,      // 1 End
-    S_EOF,      // 2 End of file
-    S_ERR,      // 3 Error
     
     S_LESSER,
     S_GREATER,
     S_EQUAL,
     S_UNEQUAL,
     
-    S_ADDITION,
+    S_STAR,
     S_SUBSTRACTION,
-    S_DIVISION,
+    
+    S_SLASH,
     S_COMMENT_ROW,
     S_COMMENT_BLOCK,
     S_COMMENT_END,
@@ -70,14 +68,11 @@ typedef enum tstate{
     S_STRING,
     S_ID,
     S_NUMBER,
-    
-    S_DECIMAL_POINT,
-    S_DECIMAL_END,
+    S_NUMBER_POINT,
+    S_NUMBER_EXPONENT
 } tState;
 
 typedef struct ttoken{
-  tKeyword keyword;
-  
   unsigned int row;
   unsigned int column;
   
