@@ -35,20 +35,17 @@ typedef union tdata{
   tString sData;
 } tData;
 
+/** Darek: toto je podle me zbytecny 
 typedef struct tsymboldata{
   tDataType type;
   tData data;
-} tSymbolData;
+} tSymbolData; */
 
 typedef struct tsymbol{
   tString key;
-  tSymbolData data;
+  tData data;
+  tDataType type;
 } tSymbol;
-
-typedef struct tlistinstruction {
-  // kdovi co
-  tListInstruction *next;
-} tListInstruction;
 
 typedef struct tfunction{
     tString name;
@@ -58,11 +55,19 @@ typedef struct tfunction{
     bool declared;
     int called;
 
-    tListInstruction *instruction;
+    tList instructions;
 } tFunction;
+
+typedef struct {
+   int type;//bude ENUM
+   void *dest;
+   void *src1;
+   void *src2;
+} tInstr;
 
 typedef struct tsymboltable{
     tBTree functions;
+    tFunction currentFunc;
 } tSymbolTable;
 
 
