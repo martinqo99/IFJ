@@ -13,6 +13,7 @@
  */
 
 #include "scanner.h"
+#include "expression.h"
 
 E_CODE parser (tSymbolTable *table);
 E_CODE prsBody (tSymbolTable *table);
@@ -20,7 +21,6 @@ E_CODE prsCommand (tSymbolTable *table,tKeyword kw);
 E_CODE prsDefFunction (tSymbolTable *table);
 E_CODE prsStatlist (tSymbolTable *table);
 E_CODE prsAssign (tSymbolTable *table);
-E_CODE prsExpression (tSymbolTable *table, tKeyword kw);
 E_CODE prsParams (tSymbolTable *table);
 E_CODE prsParamsN (tSymbolTable *table);
 E_CODE prsNum (tSymbolTable *table, tKeyword kw);
