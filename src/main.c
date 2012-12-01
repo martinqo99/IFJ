@@ -42,22 +42,6 @@ int main(int argc, char* argv[]){
       Test area
     */
 
-    initToken(&gToken);
-    
-    tKeyword keyword;
-    while((keyword = getToken()) != LEX_EOF){
-        if(keyword == LEX_UNKNOWN){
-            printf("Undefined lex\n");
-            break;            
-        }
-        
-        if(keyword == LEX_ERROR){
-            printf("Lex error\n");
-            break;
-        }
-        
-        printf("- TOKEN [%d]: %s\n", keyword,gToken.data.data);        
-    }
     
     mmuFclose(gFileHandler);
     
