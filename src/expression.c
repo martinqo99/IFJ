@@ -22,5 +22,9 @@
  */
 E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
 {
-  // shit
+  if (kw == KW_IF || KW == KW_WHILE || kw == KW_RETURN)
+    getToken();
+
+  // me se nechce, dobrou noc
+  return ERROR_OK;
 }
