@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   symbol_table.h
- * 
- * Popis:    
- * 
- * 
+ *
+ * Popis:
+ *
+ *
  * Datum:    20.11.2012
- * 
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -26,7 +26,7 @@ typedef enum tdatatype{
   DT_NIL,
   DT_BOOL,
   DT_NUMBER,
-  DT_STRING  
+  DT_STRING
 } tDataType;
 
 typedef union tdata{
@@ -35,28 +35,34 @@ typedef union tdata{
   tString sData;
 } tData;
 
-typedef struct tsymboldata{  
+typedef struct tsymboldata{
   tDataType type;
-  tData data;  
+  tData data;
 } tSymbolData;
 
 typedef struct tsymbol{
-  tString key;  
-  tSymbolData data;  
+  tString key;
+  tSymbolData data;
 } tSymbol;
+
+typedef struct tlistinstruction {
+  // kdovi co
+  tListInstruction *next;
+} tListInstruction;
 
 typedef struct tfunction{
     tString name;
-    
+
     tBTree symbols;
-    
+
     bool declared;
     int called;
+
+    tListInstruction *instruction;
 } tFunction;
 
 typedef struct tsymboltable{
     tBTree functions;
-    tFunction* lastFunction;    
 } tSymbolTable;
 
 

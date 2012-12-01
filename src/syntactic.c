@@ -126,7 +126,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         }
         case KW_IF:{
         //checkni if/else vetev: if expression EOL <stat_list> else EOL <stat_list> end EOL
-            if ((err = prsExpression(table)) != ERROR_OK) return err;
+            if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             if ((err = prsStatlist(table)) != ERROR_OK) return err;
             if (getToken() != KW_ELSE) return ERROR_SYNTAX;
@@ -137,7 +137,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         }
         case KW_while:{
         //while loop: while expression EOL <stat_list> end EOL
-            if ((err = prsExpression(table)) != ERROR_OK) return err;
+            if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             if ((err = prsStatlist(table)) != ERROR_OK) return err;
             if (getToken() != KW_END) return ERROR_SYNTAX;
@@ -146,7 +146,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         }
         case KW_RETURN:{
         //return function: return expression EOL
-            if ((err = prsExpression(table)) != ERROR_OK) return err;
+            if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
@@ -282,9 +282,87 @@ E_CODE prsAssign (tSymbolTable *table)
             if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
         }
         case default:{
-            prsExpression(kw);
+            prsExpression(table, kw);
         }
     }
+}
+
+/**
+ * @info      Analyza vyrazu
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @param   tKeyword - uz nactene klicove slovo
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
+{
+  if (kw == KW_IF || kw == KW_WHILE || kw == KW_RETURN) {
+    if ((kw = getToken()) == LEX_NUMBER)
+      // tak s tim cislem asi neco udelame
+    else if (kw == LEX_STRING)
+      // tak s tim stringem neco udelame
+    else return ERROR_SYNTAX;
+
+    if ((kw = getToken()) == LEX_EQUAL)
+      // budeme porovnavat
+    else if (kw == LEX_UNEQUAL)
+      // stejny jako predchozi, jen vysledek bude opacny
+    else if (kw == LEX_LESSER)
+      // porovnani, <
+    else if (kw == LEX_GREATER)
+      // porovnani, >
+    else if (kw == LEX_LESSER_EQUAL)
+      // porovnani, <=
+    else if (kw == LEX_GREATER_EQUAL)
+      // porovnani, >=
+    else return ERROR_SYNTAX;
+
+    if ((kw = getToken()) == LEX_NUMBER)
+      // neco s tim cislem udelame
+    else if (kw == LEX_STRING)
+      //tak s tim stringem neco udelame
+    else return ERROR_SYNTAX;
+
+    return ERROR_OK;
+  }
+  else { // vyraz se bude prirazovat
+    if ((kw = getToken()) == LEX_NUMBER)
+      // tak s tim cislem asi neco udelame
+    else if (kw == LEX_STRING)
+      // tak s tim stringem neco udelame
+    else return ERROR_SYNTAX;
+
+    if ((kw = getToken()) == LEX_EQUAL)
+      // budeme porovnavat
+    else if (kw == LEX_UNEQUAL)
+      // stejny jako predchozi, jen vysledek bude opacny
+    else if (kw == LEX_LESSER)
+      // porovnani, <
+    else if (kw == LEX_GREATER)
+      // porovnani, >
+    else if (kw == LEX_LESSER_EQUAL)
+      // porovnani, <=
+    else if (kw == LEX_GREATER_EQUAL)
+      // porovnani, >=
+    else if (kw == LEX_ADDITION)
+      // budeme scitat nebo konkatenovat
+    else if (kw == LEX_SUBSTRACTION)
+      // budeme odcitat
+    else if (kw == LEX_MULTIPLICATION)
+      // budeme nasobit nebo mocnit retezec
+    else if (kw == LEX_DIVISION)
+      // budeme delit
+    else if (kw == LEX_POWER)
+      // pojdte pane, budeme si hrat :) (mocnina)
+    else return ERROR_SYNTAX;
+
+    if ((kw = getToken()) == LEX_NUMBER)
+      // neco s tim cislem udelame
+    else if (kw == LEX_STRING)
+      //tak s tim stringem neco udelame
+    else return ERROR_SYNTAX;
+
+    return ERROR_OK;
+  }
 }
 
 /**
@@ -339,6 +417,7 @@ E_CODE prsNum (tSymbolTable *table, tKeyword kw)
   else {
     if ((kw = getToken()) == LEX_NUMBER)
       //doplneni do tabulky
+      return ERROR_OK;
     else if (kw == KW_END) return ERROR_OK;
     else return ERROR_SYNTAX;
   }
@@ -353,27 +432,15 @@ E_CODE prsTerm (tSymbolTable *table)
 {
   // <term> - id
   // <term> - <value>
+  // <value> - num
+  // <value> - string
+  // <value> - logic
   tKeyword kw;
   if ((kw = getToken()) == LEX_ID)
     // neco
     return ERROR_OK;
-  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw == KW_TRUE || kw == KW_FALSE)
-    return psrValue(table, kw);
-  else return ERROR_SYNTAX;
-}
-
-/**
- * @info      Analyza hodnoty termu
- * @param   tSymbolTable* - ukazatel na tabulku znaku
- * @return  E_CODE - chybovy kod
- */
-E_CODE prsValue (tSymbolTable *table, tKeyword kw)
-{
-  // <value> - num
-  // <value> - string
-  // <value> - logic
-  if (kw == LEX_NUMBER)
-    return prsNum(table, kw);
+  else if (kw == LEX_NUMBER)
+    return psrNum(table, kw);
   else if (kw = LEX_STRING)
     // tady se bude neco dit :D
     return ERROR_OK;
