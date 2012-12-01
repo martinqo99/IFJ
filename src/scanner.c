@@ -260,7 +260,7 @@ tKeyword getToken(){
                         return LEX_ERROR;
                     else if(c == '\\'){
                         state = S_STRING_ESCAPED;
-                        pushToken(c);
+                        //pushToken(c);
                     }
                     else if(c == '"')
                         return LEX_STRING;
@@ -268,8 +268,27 @@ tKeyword getToken(){
                         pushToken(c);
                 break;
             case S_STRING_ESCAPED:
-                state = S_STRING;
-                pushToken(c);
+                if(c == 'n'){
+                    state = S_STRING;
+                    pushToken('\n');                    
+                }
+                else if(c == '\t'){
+                    state = S_STRING;
+                    pushToken('\t');                       
+                    
+                }
+                else if(c == '\\'){
+                    state = S_STRING;
+                    pushToken('\\');                       
+                    
+                }
+                else if(c == '\"'){
+                    state = S_STRING;
+                    pushToken('\"');                       
+                    
+                }
+                else
+                    return LEX_ERROR;
                 break;
             //Prirazeni nebo porovnani
             case S_EQUAL:
