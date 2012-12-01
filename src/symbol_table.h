@@ -67,7 +67,8 @@ typedef struct {
 
 typedef struct tsymboltable{
     tBTree functions;
-    tFunction currentFunc;
+    tFunction mainFunc;
+    tFunction *currentFunc;
 } tSymbolTable;
 
 
