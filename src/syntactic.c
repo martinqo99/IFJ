@@ -298,9 +298,8 @@ E_CODE prsParams (tSymbolTable *table)
   // <params> - eps
 
   tKeyword kw;
-  while ((kw = getToken()) == LEX_EOL); //procykli prazdne radky
-  if (kw == LEX_R_BRACKET) return ERROR_OK;
-  if (getToken() == LEX_ID) return prsParamsN(table);
+  if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
+  if (kw == LEX_ID) return prsParamsN(table);
   else return ERROR_SYNTAX;
 }
 
