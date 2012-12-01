@@ -299,7 +299,7 @@ E_CODE prsParams (tSymbolTable *table)
 
   tKeyword kw;
   while ((kw = getToken()) == LEX_EOL); //procykli prazdne radky
-  if (kw == KW_END) return ERROR_OK; // TADY TOTO JE PICOVINA, spravite to nekdo?
+  if (kw == LEX_R_BRACKET) return ERROR_OK;
   if (getToken() == LEX_ID) return prsParamsN(table);
   else return ERROR_SYNTAX;
 }
@@ -315,7 +315,7 @@ E_CODE prsParamsN (tSymbolTable *table)
   // <params_n> - eps
 
   tKeyword kw;
-  if ((kw = getToken()) == KW_END) return ERROR_OK; // TADY TOTO JE PICOVINA, spravite to nekdo?
+  if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
   if (kw != LEX_COMMA) return ERROR_SYNTAX;
   if (getToken() == LEX_ID) return prsParamsN(table);
   else return ERROR_SYNTAX;
