@@ -287,12 +287,13 @@ E_CODE prsAssign (tSymbolTable *table)
     }
 }
 
+///////// THIS IS SHIT ////////////////////////////////////
 /**
  * @info      Analyza vyrazu
  * @param   tSymbolTable* - ukazatel na tabulku znaku
  * @param   tKeyword - uz nactene klicove slovo
  * @return  E_CODE - chybovy kod
- */
+ *//*
 E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
 {
   if (kw == KW_IF || kw == KW_WHILE || kw == KW_RETURN) {
@@ -325,7 +326,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
     return ERROR_OK;
   }
   else { // vyraz se bude prirazovat
-    if ((kw = getToken()) == LEX_NUMBER)
+    if (kw == LEX_NUMBER)
       // tak s tim cislem asi neco udelame
     else if (kw == LEX_STRING)
       // tak s tim stringem neco udelame
@@ -363,7 +364,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
 
     return ERROR_OK;
   }
-}
+}*/ /////////////////// THIS WAS SHIT //////////////////////
 
 /**
  * @info      Analyza parametru
