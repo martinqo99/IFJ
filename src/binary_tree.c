@@ -11,6 +11,7 @@ int Height(tBTNode N){
 }
 void btInit(tBTree *T){
     T->root=NULL;
+    T->lastAdded=NULL;
 }
 
 void btFree(tBTree *T){

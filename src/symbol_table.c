@@ -34,7 +34,7 @@ E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName
 
 tFunction* symbolTableSearchFunction(tSymbolTable* symbolTable, tString functionName){
     tBTNode tmp=btFind(&(symbolTable->functions),&functionName);
-    return (tFunction *)(tmp->data);
+    return (tmp==NULL) ? NULL:(tFunction *)(tmp->data);
 }
 
 void symbolTableDispose(tSymbolTable* symbolTable){//je treba tyhle veci delat kdyz mame mmu?
@@ -48,7 +48,7 @@ void symbolTableDispose(tSymbolTable* symbolTable){//je treba tyhle veci delat k
 
 tSymbol* functionSearchSymbol(tFunction *function, tString symbolname){
     tBTNode tmp=btFind(&(function->symbols),&symbolname);
-    return (tSymbol *)(tmp->data);
+    return (tmp==NULL) ? NULL:(tSymbol *)(tmp->data);
 }
 
 E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
