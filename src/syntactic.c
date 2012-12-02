@@ -93,7 +93,7 @@ E_CODE parser (tSymbolTable *table)
  */
 E_CODE findDefFunctions(tSymbolTable *table)
 {
-    E_CODE err;
+    E_CODE err=ERROR_OK;
     tKeyword kw;
     while(kw=getToken()!=LEX_EOF){
         if(kw==LEX_UNKNOWN || kw==LEX_ERROR || kw==LEX_RESERVED)
