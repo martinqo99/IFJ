@@ -23,13 +23,13 @@ void symbolTableInit(tSymbolTable* symbolTable){
     symbolTable->currentFunc=&(symbolTable->mainFunc);
 }
 
-void symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
+E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
     tFunction *func=mmuMalloc(sizeof tFunction);
     strCopyString(&functionName,&(func->name));
     btInit(&(func->symbols));
     initList(&(func->instructions));
     func->called=0;
-    BTInsert(&(symbolTable->functions),&(func->name),func);
+    return BTInsert(&(symbolTable->functions),&(func->name),func);
 }
 
 tFunction* symbolTableSearchFunction(tSymbolTable* symbolTable, tString functionName){
@@ -51,10 +51,10 @@ tSymbol* functionSearchSymbol(tFunction *function, tString symbolname){
     return (tSymbol *)(tmp->data);
 }
 
-tSymbol* functionInsertSymbol(tFunction* function,tString symbolname){
+E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
+    E_CODE err;
     tSymbol *symb=mmuMalloc(sizeof tSymbol);
     strCopyString(&symbolname,&(symb->key));
     symb->type=DT_UNKNOWN;
-    BTInsert(&(functions->symbols),&(symb->key),symb); 
-    return symb;   
+    return BTInsert(&(function->symbols),&(symb->key),symb);    
 }

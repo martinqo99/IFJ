@@ -74,8 +74,10 @@ typedef struct tsymboltable{
 
 
 void symbolTableInit(tSymbolTable*);
-void symbolTableInsertFunction(tSymbolTable*, tString);
+E_CODE symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);
 void symbolTableDispose(tSymbolTable*);
+tSymbol* functionSearchSymbol(tFunction*, tString);
+E_CODE functionInsertSymbol(tFunction*,tString);
 
 #endif
