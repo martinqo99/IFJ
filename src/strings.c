@@ -169,17 +169,17 @@ int strCopyString (tString *strl, tString *strr)
 int strCmp (tString *strl, tString *strr)
 {
   if (strl->len < strr->len)
-    return NEGATIVE;
+    return -1;
   else if (strl->len > strr->len)
-    return TRUE;
+    return 1;
 
   int cmp = strcmp(strl->data,strr->data);
   if (cmp > 0)
-    return TRUE;
+    return 1;
   else if (cmp < 0)
-    return NEGATIVE;
+    return -1;
 
-  return FALSE;
+  return 0;
 }
 
 /*
