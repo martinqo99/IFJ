@@ -17,18 +17,18 @@
 /**
  * @info      Inicializace struktury pro string
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  E_CODE - chybovy kod
  */
-int strInit (tString *str)
+E_CODE strInit (tString *str)
 {
   str->len = 0;
 
   str->data = (char *) mmuCalloc(SIZE, sizeof(char));
   if (str->data == NULL)
-    return FALSE;
+    return ERROR_COMPILATOR;
   str->alloc = SIZE;
 
-  return TRUE;
+  return ERROR_OK;
 }
 
 /**
@@ -68,9 +68,9 @@ tString strCreate (const char *array)
 /**
  * @info      Uvolni string
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  E_CODE - chybovy kod
  */
-int strFree (tString *str)
+E_CODE strFree (tString *str)
 {
   if (str->data)
     mmuFree(str->data);
@@ -78,74 +78,74 @@ int strFree (tString *str)
   str->alloc = 0;
   str->len = 0;
 
-  return TRUE;
+  return ERROR_OK;
 }
 
 /**
  * @info      Smaze pole znaku
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  E_CODE - chybovy kod
  */
-int strClear (tString *str)
+E_CODE strClear (tString *str)
 {
   uint i = str->len;
   while (i--)
     str->data[i] = '\0';
   str->len = 0;
 
-  return TRUE;
+  return ERROR_OK;
 }
 
 /**
  * @info      Prida znak na konec retezce
  * @param   tString - struktura s polem a jeho rozmery
  * @param   char - pridavany znak
- * @return  TRUE || FALSE
+ * @return  E_CODE - chybovy kod
  */
-int strAdd (tString *str, char x)
+E_CODE strAdd (tString *str, char x)
 {
   if (str->alloc - 2 == str->len) {
     str->alloc += SIZE;
     str->data = (char *) mmuRealloc(str->data, str->alloc * sizeof(char));
     if (str->data == NULL)
-      return FALSE;
+      return ERROR_COMPILATOR;
   }
 
   str->data[str->len++] = x;
   str->data[str->len] = '\0';
 
-  return TRUE;
+  return ERROR_OK;
 }
 
 /**
  * @info      Zkopiruje pole znaku
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  E_CODE - chybovy kod
  */
-int strCopy (tString *str, char *array)
+E_CODE strCopy (tString *str, char *array)
 {
   array = (char *) mmuCalloc(str->len + 1, sizeof(char));
   if (array == NULL)
-    return FALSE;
+    return ERROR_COMPILATOR;
 
   int i = str->len;
   do
     array[i] = str->data[i];
   while (i--);
 
-  return TRUE;
+  return ERROR_OK;
 }
 
 /**
  * @info      Zkopiruje celou strukturu
  * @param   tString - struktura s polem a jeho rozmery
- * @return  TRUE || FALSE
+ * @return  E_CODE - chybovy kod
  */
-int strCopyString (tString *strl, tString *strr)
+E_CODE strCopyString (tString *strl, tString *strr)
 {
   strr->data = (char *) mmuCalloc(strl->alloc, sizeof(char));
   if (strr->data == NULL)
-    return FALSE;
+    return ERROR_COMPILATOR;
   strr->len = strl->len;
   strr->alloc = strl->alloc;
 
@@ -158,7 +158,7 @@ int strCopyString (tString *strl, tString *strr)
   for(unsigned int i = 0; i < strr->len; i++)
         strr->data[i] = strl->data[i];
 
-  return TRUE;
+  return ERROR_OK;
 }
 
 /**
@@ -169,9 +169,9 @@ int strCopyString (tString *strl, tString *strr)
 int strCmp (tString *strl, tString *strr)
 {
   if (strl->len < strr->len)
-    return -1;
+    return -1; // prvni je kratsi
   else if (strl->len > strr->len)
-    return 1;
+    return 1; // prvni je delsi
 
   return strcmp(strl->data,strr->data);
 }
@@ -184,13 +184,7 @@ int strCmp (tString *strl, tString *strr)
  */
 int strCmpRaw (tString *strl, const char *strr)
 {
-  int cmp = strcmp(strl->data,strr);
-  if (cmp > 0)
-    return TRUE;
-  else if (cmp < 0)
-    return NEGATIVE;
-
-  return FALSE;
+  return strcmp(strl->data,strr);
 }
 
 /**

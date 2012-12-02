@@ -19,11 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include "mmu.h"
+#include "errors.h"
 
 #define SIZE 8 // zacatecni velikost pole, pri realokaci se alokuje +SIZE
-#define TRUE 1
-#define FALSE 0
-#define NEGATIVE -1
 
 //Pozustatek...
 typedef unsigned int uint;
@@ -34,14 +32,14 @@ typedef struct tstring {
   unsigned int alloc;
 } tString;
 
-int strInit (tString *str);
+E_CODE strInit (tString *str);
 //int strCmpRaw (tString *str, const char x);
 tString strCreate (const char *str);
-int strFree (tString *str);
-int strClear (tString *str);
-int strAdd (tString *str, char x);
-int strCopy (tString *str, char *array);
-int strCopyString (tString *strl, tString *strr);
+E_CODE strFree (tString *str);
+E_CODE strClear (tString *str);
+E_CODE strAdd (tString *str, char x);
+E_CODE strCopy (tString *str, char *array);
+E_CODE strCopyString (tString *strl, tString *strr);
 int strCmp (tString *strl, tString *strr);
 int strCmpRaw(tString *strl, const char* strr);
 char *strRaw (tString *str);
