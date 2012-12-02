@@ -81,7 +81,34 @@
 E_CODE parser (tSymbolTable *table)
 {
   //tady bude jeste prvni prubeh pro pridani ID funkci do tabulky
-  return prsBody(table);
+    E_CODE err;
+    if(err=findDefFunctions(table)!=ERROR_OK)return err;
+    return prsBody(table);
+}
+
+/**
+ * @info      Vyhledání všech definic funkcí
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE findDefFunctions(tSymbolTable *table)
+{
+    E_CODE err;
+    tKeyword kw;
+    while(kw=getToken()!=LEX_EOF){
+        if(kw==LEX_UNKNOWN || kw==LEX_ERROR || kw==LEX_RESERVED)
+            return ERROR_LEX;
+        if(kw==KW_FUNCTION){
+            if(getToken()==LEX_ID){
+                err=symbolTableInsertFunction(table,gToken->data);
+                if (err==ERROR_INS_EXIST) return ERROR_SEMANTIC; //dvojita definice fce
+            }
+            else return ERROR_SYNTAX;
+        }
+    }
+    resetToken();
+    initToken();
+    return err;    
 }
 
 /**
