@@ -52,12 +52,12 @@ E_CODE strInit (tString *str)
 tString strCreate (const char *array)
 {
   tString str = {NULL, 0, 0};
-  if (strInit(&str) == FALSE)
+  if (strInit(&str) == ERROR_COMPILATOR)
     return str;
 
   int i = 0;
   while (array[i] != '\0')
-    if (strAdd(&str, array[i++]) == FALSE) {
+    if (strAdd(&str, array[i++]) == ERROR_COMPILATOR) {
       strFree(&str);
       return str;
     }
