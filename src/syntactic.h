@@ -15,13 +15,14 @@
 #include "scanner.h"
 #include "expression.h"
 
-E_CODE parser (tSymbolTable *table);
-E_CODE prsBody (tSymbolTable *table);
-E_CODE prsCommand (tSymbolTable *table,tKeyword kw);
-E_CODE prsDefFunction (tSymbolTable *table);
-E_CODE prsStatlist (tSymbolTable *table);
-E_CODE prsAssign (tSymbolTable *table);
-E_CODE prsParams (tSymbolTable *table);
-E_CODE prsParamsN (tSymbolTable *table);
-E_CODE prsNum (tSymbolTable *table, tKeyword kw);
-E_CODE prsTerm (tSymbolTable *table);
+E_CODE parser (tSymbolTable*);
+E_CODE prsBody (tSymbolTable*);
+E_CODE findDefFunctions(tSymbolTable*);
+E_CODE prsCommand (tSymbolTable*,tKeyword);
+E_CODE prsDefFunction (tSymbolTable*);
+E_CODE prsStatlist (tSymbolTable*);
+E_CODE prsAssign (tSymbolTable*);
+E_CODE prsParams (tSymbolTable*);
+E_CODE prsParamsN (tSymbolTable*);
+E_CODE prsNum (tSymbolTable*, tKeyword);
+E_CODE prsTerm (tSymbolTable*);
