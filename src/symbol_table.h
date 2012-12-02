@@ -81,5 +81,6 @@ tFunction* symbolTableSearchFunction(tSymbolTable*, tString);
 void symbolTableDispose(tSymbolTable*);
 tSymbol* functionSearchSymbol(tFunction*, tString);
 E_CODE functionInsertSymbol(tFunction*,tString);
+tSymbol* getLastSymbol(tFunction*);
 
 #endif

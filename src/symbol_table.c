@@ -57,3 +57,7 @@ E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
     symb->type=DT_UNKNOWN;
     return BTInsert(&(function->symbols),&(symb->key),symb);    
 }
+
+tSymbol* getLastSymbol(tFunction* F){
+    return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
+}

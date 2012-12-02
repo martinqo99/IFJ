@@ -17,6 +17,7 @@ if(S==NULL)printf("chyba:nic se nenaslo"); else printf("OK:nalezena promenna: %s
 if(F->symbols.lastAdded->data==S) printf("OK:posledni pridana promenna je rozpoznana\n");
     else printf("chyba: posledni pridana promenna se nerovna\n");
 printf("OK: pristup k posledni pridane promenne:%s\n",((tSymbol*)(F->symbols.lastAdded->data))->key.data);
+if(S==getLastSymbol(F))printf("OK:test fce getLastSymbol");else printf("chyba:fce getLastSymbol\n");
 S=functionSearchSymbol(F,str);
 if(S==NULL)printf("OK:nic se nenaslo"); else printf("chyba:nalezena promenna: %s\n",S->key.data);
 mmuGlobalFree();
