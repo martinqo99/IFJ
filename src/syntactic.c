@@ -127,7 +127,6 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         case KW_IF:{
         //checkni if/else vetev: if expression EOL <stat_list> else EOL <stat_list> end EOL
             if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             if ((err = prsStatlist(table)) != ERROR_OK) return err;
             if (getToken() != KW_ELSE) return ERROR_SYNTAX;
             if ((err=prsStatlist(table)) != ERROR_OK) return err;
@@ -138,7 +137,6 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         case KW_while:{
         //while loop: while expression EOL <stat_list> end EOL
             if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             if ((err = prsStatlist(table)) != ERROR_OK) return err;
             if (getToken() != KW_END) return ERROR_SYNTAX;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
@@ -147,7 +145,6 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         case KW_RETURN:{
         //return function: return expression EOL
             if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case default: return ERROR_SYNTAX;
@@ -246,7 +243,7 @@ E_CODE prsAssign (tSymbolTable *table)
             if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
             break;
         }
-        case LEX_STRING:{
+        case LEX_STRING:{ // a co kdyz pujde o expression?
             if (getToken() != LEX_L_SBRACKET) return ERROR_SYNTAX;
             if ((help = getToken()) == LEX_NUMBER) {
               // prvni parametr stringu je cislo
@@ -278,6 +275,7 @@ E_CODE prsAssign (tSymbolTable *table)
         }
         case LEX_ID:{//tady to chce check jestli je to ID funkce!
                      //jestli neni tak asi nebreakovat a pouzit to ID pro expression
+                     // Kwisatz: jako by ses k tomu expression mohl dostat
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
             if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
         }
