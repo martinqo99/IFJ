@@ -173,13 +173,7 @@ int strCmp (tString *strl, tString *strr)
   else if (strl->len > strr->len)
     return 1;
 
-  int cmp = strcmp(strl->data,strr->data);
-  if (cmp > 0)
-    return 1;
-  else if (cmp < 0)
-    return -1;
-
-  return 0;
+  return strcmp(strl->data,strr->data);
 }
 
 /*
