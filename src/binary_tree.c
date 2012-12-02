@@ -31,7 +31,7 @@ tBTNode btFind(tBTree *T,tString *key){
 tBTNode searchNodes(tBTNode N, tString *key){
     if(N==NULL) return NULL;
     else {
-         int cmp=strCmp(N->key,key);
+         int cmp=strCmp(key,N->key);
          if(cmp!=0){
              if(cmp<0)return searchNodes(N->left,key);
              else return searchNodes(N->right,key);
@@ -110,9 +110,6 @@ tBTNode AVLinsertNode(tBTNode N,tString *key, void *data){
              return N;
 }
 
-void BTInsert (tBTree *T, tString *key,void *data){
-     T->root=AVLinsertNode(T->root,key,data);
-}
 
 E_CODE BTInsert (tBTree *T,tString *key, void *data) {
 /*   --------
@@ -129,6 +126,7 @@ E_CODE BTInsert (tBTree *T,tString *key, void *data) {
             T->root->key=key;
             T->root->data=data;
             T->root->left=T->root->right=NULL;
+            T->root->height=0;
             T->lastAdded=T->root;
             return ERROR_OK;
 	}	
@@ -143,6 +141,7 @@ E_CODE BTInsert (tBTree *T,tString *key, void *data) {
                 tmp->left->key=key;
                 tmp->left->data=data;
                 tmp->left->left=tmp->left->right=NULL;
+                tmp->left->height=(tmp->height)+1;
                 T->lastAdded=tmp->left;
                 return ERROR_OK;
                 }
@@ -155,6 +154,7 @@ E_CODE BTInsert (tBTree *T,tString *key, void *data) {
                 tmp->right->key=key;
                 tmp->right->data=data;
                 tmp->right->left=tmp->right->right=NULL;
+                tmp->right->height=(tmp->height)+1;
                 T->lastAdded=tmp->right;
                 return ERROR_OK;
                 }
@@ -162,5 +162,5 @@ E_CODE BTInsert (tBTree *T,tString *key, void *data) {
             }
             else{ T->lastAdded=tmp;return ERROR_INS_EXIST; }
         }
-
+    return ERROR_OK;
 }
