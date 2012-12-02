@@ -16,10 +16,11 @@
 #define STRINGS_H_INCLUDED
 
 #include "scanner.h"
+#include "stack.h"
 #define MAXTABLE 16
 
 const char precedentTable [MAXTABLE][MAXTABLE] =
-{
+{ // tabulka nemusi byt dobre, chce se to nekomu kontrolovat?
   // tokeny                         id  (   )   +   -   *   /   **  ==  !=  <   <=  >   >=
   [LEX_ID]              ={[LEX_ID]= 0 , 0 ,'>','>','>','>','>','>','>','>','>','>','>','>',[LEX_EOL]='>'},
   [LEX_L_BRACKET]       ={[LEX_ID]='<','<','=','<','<','<','<','<','<','<','<','<','<','<',[LEX_EOL]= 0 },
