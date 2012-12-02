@@ -21,7 +21,7 @@ void btFree(tBTree *T){
 void deleteNodes(tBTNode N){
     if(N->left!=NULL)deleteNodes(N->left);
     if(N->right!=NULL)deleteNodes(N->right);
-    free(N);
+    mmuFree(N);
 }
 
 tBTNode btFind(tBTree *T,tString *key){

@@ -24,7 +24,7 @@ void symbolTableInit(tSymbolTable* symbolTable){
 }
 
 E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
-    tFunction *func=mmuMalloc(sizeof tFunction);
+    tFunction *func=mmuMalloc(sizeof(tFunction));
     strCopyString(&functionName,&(func->name));
     btInit(&(func->symbols));
     initList(&(func->instructions));
@@ -52,8 +52,7 @@ tSymbol* functionSearchSymbol(tFunction *function, tString symbolname){
 }
 
 E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
-    E_CODE err;
-    tSymbol *symb=mmuMalloc(sizeof tSymbol);
+    tSymbol *symb=mmuMalloc(sizeof(tSymbol));
     strCopyString(&symbolname,&(symb->key));
     symb->type=DT_UNKNOWN;
     return BTInsert(&(function->symbols),&(symb->key),symb);    

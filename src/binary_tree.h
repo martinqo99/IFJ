@@ -33,5 +33,6 @@ tBTNode singleRotateRight(tBTNode);
 tBTNode doubleRotateLeft(tBTNode);
 tBTNode doubleRotateRight(tBTNode);
 E_CODE BTInsert (tBTree*, tString*,void*);
-tBTNode insertNode(tBTNode,tString*, void*);
+tBTNode AVLinsertNode(tBTNode,tString*, void*);
+void AVLBTInsert(tBTree*, tString*,void*);
 #endif

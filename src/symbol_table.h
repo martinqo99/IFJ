@@ -21,6 +21,8 @@
 
 #include "strings.h"
 #include "binary_tree.h"
+#include "list.h"
+#include "strings.h"
 
 typedef enum tdatatype{
   DT_NIL,
