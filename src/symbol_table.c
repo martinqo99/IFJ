@@ -19,21 +19,42 @@
 #include "symbol_table.h"
 
 void symbolTableInit(tSymbolTable* symbolTable){
-    symbolTable = symbolTable;
+    btInit(&(symbolTable->functions));
+    symbolTable->currentFunc=&(symbolTable->mainFunc);
 }
 
 void symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
-    symbolTable = symbolTable;
-    functionName = functionName;
+    tFunction *func=mmuMalloc(sizeof tFunction);
+    strCopyString(&functionName,&(func->name));
+    btInit(&(func->symbols));
+    initList(&(func->instructions));
+    func->called=0;
+    BTInsert(&(symbolTable->functions),&(func->name),func);
 }
 
 tFunction* symbolTableSearchFunction(tSymbolTable* symbolTable, tString functionName){
-    symbolTable = symbolTable;
-    functionName = functionName;
-
-    return NULL;
+    tBTNode tmp=btFind(&(symbolTable->functions),&functionName);
+    return (tFunction *)(tmp->data);
 }
 
-void symbolTableDispose(tSymbolTable* symbolTable){
-    symbolTable = symbolTable;
+void symbolTableDispose(tSymbolTable* symbolTable){//je treba tyhle veci delat kdyz mame mmu?
+    if (symbolTable==NULL) return;
+    //projit stromem a zavolat functionDispose - zatim je tu memory leak
+    btFree(&(symbolTable->functions));
+    mmuFree(symbolTable);
+    symbolTable=NULL;
+
+}
+
+tSymbol* functionSearchSymbol(tFunction *function, tString symbolname){
+    tBTNode tmp=btFind(&(function->symbols),&symbolname);
+    return (tSymbol *)(tmp->data);
+}
+
+tSymbol* functionInsertSymbol(tFunction* function,tString symbolname){
+    tSymbol *symb=mmuMalloc(sizeof tSymbol);
+    strCopyString(&symbolname,&(symb->key));
+    symb->type=DT_UNKNOWN;
+    BTInsert(&(functions->symbols),&(symb->key),symb); 
+    return symb;   
 }
