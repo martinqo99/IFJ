@@ -31,6 +31,7 @@ typedef enum e_code{
     ERROR_COMPILATOR        = 99,
     
     //Development errors
+    ERROR_INS_EXIST
 } E_CODE;
 
 extern E_CODE gErrorCode;

@@ -73,11 +73,11 @@ tBTNode doubleRotateRight(tBTNode N){
     return singleRotateRight(N);
 }
 
-void BTInsert (tBTree *T, tString *key,void *data){
-     T->root=insertNode(T->root,key,data);
+void AVLBTInsert (tBTree *T, tString *key,void *data){
+     T->root=AVLinsertNode(T->root,key,data);
 }
 
-tBTNode insertNode(tBTNode N,tString *key, void *data){
+tBTNode AVLinsertNode(tBTNode N,tString *key, void *data){
     if (N==NULL){
         N=mmuMalloc(sizeof(struct tBTreeNode));
         N->key=key;
@@ -87,7 +87,7 @@ tBTNode insertNode(tBTNode N,tString *key, void *data){
     }
     else
         if(strCmp(key,N->key)<0){
-            N->left=insertNode(N->left,key,data);
+            N->left=AVLinsertNode(N->left,key,data);
             if((Height(N->left) - Height(N->right)) ==2){
                 if(strCmp(key,N->left->key)<0)
                     N=singleRotateLeft(N);
@@ -97,7 +97,7 @@ tBTNode insertNode(tBTNode N,tString *key, void *data){
          }
          else
              if(strCmp(key,N->key)>0){
-                 N->right=insertNode(N->right,key,data);
+                 N->right=AVLinsertNode(N->right,key,data);
                  if((Height(N->right) - Height(N->left)) ==2){
                      if(strCmp(key,N->right->key)>0)
                          N=singleRotateRight(N);
@@ -108,4 +108,59 @@ tBTNode insertNode(tBTNode N,tString *key, void *data){
 
              N->height=Max(Height(N->left),Height(N->right))+1;
              return N;
+}
+
+void BTInsert (tBTree *T, tString *key,void *data){
+     T->root=AVLinsertNode(T->root,key,data);
+}
+
+E_CODE BTInsert (tBTree *T,tString *key, void *data) {
+/*   --------
+** Vloží do stromu nový uzel s hodnotou Content.
+**
+** Z pohledu vkládání chápejte vytvářený strom jako binární vyhledávací strom,
+** kde uzly s hodnotou menší než má otec leží v levém podstromu a uzly větší
+** leží vpravo. Pokud vkládaný uzel již existuje, neprovádí se nic (daná hodnota
+** se ve stromu může vyskytnout nejvýše jednou). Pokud se vytváří nový uzel,
+** vzniká vždy jako list stromu. Funkci implementujte nerekurzivně.
+**/
+	if (T->root==NULL){ //prázdný strom
+	        T->root=mmuMalloc(sizeof(struct tBTreeNode));
+            T->root->key=key;
+            T->root->data=data;
+            T->root->left=T->root->right=NULL;
+            T->lastAdded=T->root;
+            return ERROR_OK;
+	}	
+    tBTNode tmp = T->root;
+    int cmpResult;
+	while(tmp!=NULL){
+            cmpResult=strCmp(key,tmp->key);
+            if (cmpResult<0){
+                if(tmp->left==NULL){
+                //vlož levý
+                tmp->left=mmuMalloc(sizeof(struct tBTreeNode));
+                tmp->left->key=key;
+                tmp->left->data=data;
+                tmp->left->left=tmp->left->right=NULL;
+                T->lastAdded=tmp->left;
+                return ERROR_OK;
+                }
+                else tmp=tmp->left;//hledej dál vlevo
+            }
+            else if (cmpResult>0){
+                if (tmp->right==NULL){
+                //vlož pravý
+                tmp->right=mmuMalloc(sizeof(struct tBTreeNode));
+                tmp->right->key=key;
+                tmp->right->data=data;
+                tmp->right->left=tmp->right->right=NULL;
+                T->lastAdded=tmp->right;
+                return ERROR_OK;
+                }
+                else tmp=tmp->right;//hledej dál vpravo
+            }
+            else{ T->lastAdded=tmp;return ERROR_INS_EXIST; }
+        }
+
 }

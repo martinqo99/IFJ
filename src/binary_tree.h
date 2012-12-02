@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "strings.h"
 #include "mmu.h"
+#include "errors.h"
 
 typedef struct tBTreeNode {
     struct tBTreeNode *right;
@@ -17,6 +18,7 @@ typedef struct tBTreeNode {
 
 typedef struct{
     tBTNode root;
+    tBTNode lastAdded;
     //nevim co jeste sem dat
 }tBTree;
 
@@ -30,6 +32,6 @@ tBTNode singleRotateLeft(tBTNode);
 tBTNode singleRotateRight(tBTNode);
 tBTNode doubleRotateLeft(tBTNode);
 tBTNode doubleRotateRight(tBTNode);
-void BTInsert (tBTree*, tString*,void*);
+E_CODE BTInsert (tBTree*, tString*,void*);
 tBTNode insertNode(tBTNode,tString*, void*);
 #endif
