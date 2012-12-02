@@ -17,13 +17,14 @@
  */
 
 #include "stack.h"
+#include "errors.h"
 
 /**
  * @info      Vytvoreni zasobniku
  * @return  tStack* - ukazatel na nove vytvoreny zasobnik
  */
 tStack* stackCreate(){
-    return (tStack*)mmuMalloc(sizeof(tStack));
+    return (tStack*) mmuMalloc(sizeof(tStack));
 }
 
 /**
@@ -41,24 +42,26 @@ void stackDestroy(tStack* S){
 /**
  * @info      Inicializace zasobniku
  * @param   tStack* - ukazatel na zasobnik
- * @return  void
+ * @return  E_CODE - chybovy kod
  */
-void stackInit(tStack* S){
+E_CODE stackInit(tStack* S){
     if(!S)
-        return;
+        return ERROR_COMPILATOR;
 
     S->top = NULL;
     S->size = 0;
+
+    return ERROR_OK;
 }
 
 /**
  * @info      Smazani zasobniku
  * @param   tStack* - ukazatel na zasobnik
- * @return  void
+ * @return  E_CODE - chybovy kod
  */
-void stackDispose(tStack* S){
+E_CODE stackDispose(tStack* S){
     if(!S)
-        return;
+        return ERROR_COMPILATOR;
 
     tStackPtr iterator = NULL;
 
@@ -70,30 +73,34 @@ void stackDispose(tStack* S){
 
     S->top = NULL;
     S->size = 0;
+
+    return ERROR_OK;
 }
 
 /**
  * @info      Vlozeni hodnoty na zasobnik
  * @param   tStack* - ukazatel na zasobnik
  * @param   void* - ukazatel na vkladana data
- * @return  void
+ * @return  E_CODE - chybovy kod
  */
-void stackPush(tStack* S, void* data){
+E_CODE stackPush(tStack* S, void* data){
     if(!S)
-        return;
+        return ERROR_COMPILATOR;
 
     tStackPtr item = mmuMalloc(sizeof(struct stackPtr));
 
     if(!item)
-        return;
+        return ERROR_COMPILATOR;
 
     item->data = data;
-    item->ptr = NULL;
+    item->ptr = S->top;
 
-    if(S->top)
-        item->ptr = S->top;
+    //if(S->top)
+        //item->ptr = S->top;
 
     S->top = item;
+
+    return ERROR_OK;
 }
 
 /**

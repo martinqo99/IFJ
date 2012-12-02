@@ -22,9 +22,36 @@
  */
 E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
 {
-  if (kw == KW_IF || KW == KW_WHILE || kw == KW_RETURN)
-    getToken();
+  if (kw == KW_IF || kw == KW_WHILE || kw == KW_RETURN)
+    kw = getToken();
 
-  // me se nechce, dobrou noc
-  return ERROR_OK;
+  E_CODE err = ERROR_OK;
+  tKeyword a = -1, b = -1;
+  char x; // vysledek hledani v tabulce
+  tStack S;
+  stackInit(&S);
+
+  stackPush(&S, kw);
+
+  while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
+    a = getToken();
+    b = stackTop(&S);
+    x = precedentTable[b][a];
+
+    if (x == 0) return ERROR_SYNTAX;
+    else if (x == '=' || x == '<') {
+      stackPush(&S, a);
+    }
+    else if (x == '>') {
+      // tady to bude chtit vymyslet co presne je treba udelat
+    }
+    else if (x == '$') {
+      // tady je konec vyrazu
+    }
+    else return ERROR_SYNTAX;
+  } // konec while cyklu
+  stackDispose(&S);
+  stackDestroy(&S);
+
+  return err;
 }

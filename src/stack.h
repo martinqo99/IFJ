@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   stack.h
- * 
- * Popis:    
- * 
- * 
+ *
+ * Popis:
+ *
+ *
  * Datum:    21.10.2012
- * 
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -43,9 +43,9 @@ typedef struct{
 tStack* stackCreate();
 void stackDestroy(tStack*);
 
-void stackInit(tStack*);
-void stackDispose(tStack*);
-void stackPush(tStack*, void*);
+E_CODE stackInit(tStack*);
+E_CODE stackDispose(tStack*);
+E_CODE stackPush(tStack*, void*);
 void* stackTop(tStack*);
 void* stackPop(tStack*);
 
