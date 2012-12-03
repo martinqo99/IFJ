@@ -290,7 +290,9 @@ E_CODE prsAssign (tSymbolTable *table)
             }
         }
         case LEX_STRING:{ // a co kdyz pujde o expression?
-            if (getToken() != LEX_L_SBRACKET) return ERROR_SYNTAX;
+            err = functionInsertSymbol(table->currentFunc, gToken->data);
+            if (getToken() != LEX_L_SBRACKET) return prsExpression(table, kw);
+            err = functionInsertSymbol(table->currentFunc, gToken->data);
             if ((help = getToken()) == LEX_NUMBER) {
               // prvni parametr stringu je cislo
               if ((err = prsNum(table, help)) != ERROR_OK) return err;
@@ -344,7 +346,7 @@ E_CODE prsDefParams (tSymbolTable *table)
     if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
     if (kw == LEX_ID){
         functionInsertSymbol(table->currentFunc,gToken->data);
-        if (symbolTableSearchFunction(table,gToken->data)!=NULL) 
+        if (symbolTableSearchFunction(table,gToken->data)!=NULL)
             return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
         return prsDefParamsN(table);
     }
@@ -366,7 +368,7 @@ E_CODE prsDefParamsN (tSymbolTable *table)
     if (kw != LEX_COMMA) return ERROR_SYNTAX;
     if (getToken() == LEX_ID){
         functionInsertSymbol(table->currentFunc,gToken->data);
-        if (symbolTableSearchFunction(table,gToken->data)!=NULL) 
+        if (symbolTableSearchFunction(table,gToken->data)!=NULL)
             return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
         return prsParamsN(table);
     }
