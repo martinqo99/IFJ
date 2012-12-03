@@ -333,18 +333,17 @@ tKeyword getToken(){
 
 tKeyword getTokenAhead()
 {
+  unsigned int position = ftell(gFileHandler);
   tToken token = gToken;
-  strCopyString(gToken.data, token.data);
+  tString data;
+  strCopyString(gToken.data, data);
 
   tKeyword kw = getToken();
-
-  unsigned int position = ftell(gFileHandler);
+  strFree(gToken.data);
+  
+  token.data=data;
+  gToken = token;
 
   fseek (gFileHandler, position, SEEK_SET);
-
-  gToken = token;
-  strCopyString(token.data, gToken.data);
-  strFree(token.data);
-
   return kw;
 }
