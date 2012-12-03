@@ -92,5 +92,6 @@ void initToken();
 void resetToken();
 void pushToken(int);
 tKeyword getToken();
+tKeyword getTokenAhead();
 
 #endif
