@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 
     initToken(&gToken);
     
-    tKeyword keyword;
+    tKeyword keyword,kwNext;
     while((keyword = getToken()) != LEX_EOF){
         if(keyword == LEX_UNKNOWN){
             printf("Undefined lex\n");
@@ -32,8 +32,9 @@ int main(int argc, char* argv[]){
             printf("Lex error\n");
             break;
         }
-        
-        printf("- TOKEN [%d]: %s\n", keyword,gToken.data.data);        
+
+        printf("- TOKEN [%d]: %s\n", keyword,gToken.data.data);   
+        if(((kwNext=getTokenAhead())!=LEX_UNKNOWN) && (kwNext!=LEX_ERROR)) printf("pristi token je: %d\n",kwNext);     
     }
     
     mmuFclose(gFileHandler);

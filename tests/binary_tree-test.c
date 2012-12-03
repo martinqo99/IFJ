@@ -33,6 +33,7 @@ int main()
     if(T->root->left==NULL && T->root->right==NULL) printf("chyba\n");
     int cmp=strCmp(&str1,&str);
     printf("%d\n",cmp);
-    btFree(T);
+    //btFree(T);
+    mmuGlobalFree();
     return 0;
 }

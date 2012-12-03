@@ -1,4 +1,4 @@
-PRJ=symbol_table
+PRJ=scanner
 #
 PROGS=$(PRJ)-test
 CC=gcc
