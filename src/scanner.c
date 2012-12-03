@@ -336,10 +336,10 @@ tKeyword getTokenAhead()
   unsigned int position = ftell(gFileHandler);
   tToken token = gToken;
   tString data;
-  strCopyString(gToken.data, data);
+  strCopyString(&gToken.data, &data);
 
   tKeyword kw = getToken();
-  strFree(gToken.data);
+  strFree(&gToken.data);
   
   token.data=data;
   gToken = token;
