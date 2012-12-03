@@ -12,11 +12,12 @@
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
-#ifndef STRINGS_H_INCLUDED
-#define STRINGS_H_INCLUDED
+#ifndef EXPRESSION_H_INCLUDED
+#define EXPRESSION_H_INCLUDED
 
 #include "scanner.h"
 #include "stack.h"
+#include "symbol_table.h"
 #define MAXTABLE 16
 
 const char precedentTable [MAXTABLE][MAXTABLE] =
