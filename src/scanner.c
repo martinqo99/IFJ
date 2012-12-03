@@ -270,22 +270,22 @@ tKeyword getToken(){
             case S_STRING_ESCAPED:
                 if(c == 'n'){
                     state = S_STRING;
-                    pushToken('\n');                    
+                    pushToken('\n');
                 }
                 else if(c == '\t'){
                     state = S_STRING;
-                    pushToken('\t');                       
-                    
+                    pushToken('\t');
+
                 }
                 else if(c == '\\'){
                     state = S_STRING;
-                    pushToken('\\');                       
-                    
+                    pushToken('\\');
+
                 }
                 else if(c == '\"'){
                     state = S_STRING;
-                    pushToken('\"');                       
-                    
+                    pushToken('\"');
+
                 }
                 else
                     return LEX_ERROR;
@@ -329,4 +329,21 @@ tKeyword getToken(){
     }
 
     return LEX_ERROR;
+}
+
+tKeyword getTokenAhead()
+{
+  tToken token = gToken;
+
+  tKeyword kw = getToken();
+
+  unsigned int offset = gToken.row-token.row;
+  if (offset == 0)
+    offset = gToken.column-token.column;
+
+  fseek (gFileHandler, -offset, SEEK_CUR);
+
+  gToken = token;
+
+  return kw;
 }
