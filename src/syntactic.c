@@ -120,6 +120,7 @@ E_CODE prsBody (tSymbolTable *table)
 {
     E_CODE err = ERROR_OK;
     tKeyword kw;
+    table->currentFunc=&(table->mainFunc);
     while ((kw = getToken()) == LEX_EOL);//procykli prazdne radky
     switch (kw) {
         case LEX_EOF: return err;
@@ -146,6 +147,11 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         case LEX_ID:{
         //tady je treba pridat ID do tabulky, jestli tam uz neni
         //checkni =, zavolej prsAssign
+            if(functionInsertSymbol(table->currentFunc,gToken->data)!=ERROR_INS_EXIST){
+                //toto je prvni definice promenne
+                if(symbolTableSearchFunction(table,gToken->data)!=NULL)
+                    return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
+            }
             if (getToken() != LEX_ASSIGN) return ERROR_SYNTAX;
             else if ((err = prsAssign(table)) != ERROR_OK) return err;
             break;
@@ -155,16 +161,14 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
             if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
             if ((err = prsStatlist(table)) != ERROR_OK) return err;
             if (getToken() != KW_ELSE) return ERROR_SYNTAX;
-            if ((err=prsStatlist(table)) != ERROR_OK) return err;
-            if (getToken() != KW_END) return ERROR_SYNTAX;
+            if ((err=prsStatlist(table)) != ERROR_OK) return err; //end se nacte v prsStatlist
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_while:{
         //while loop: while expression EOL <stat_list> end EOL
             if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
-            if ((err = prsStatlist(table)) != ERROR_OK) return err;
-            if (getToken() != KW_END) return ERROR_SYNTAX;
+            if ((err = prsStatlist(table)) != ERROR_OK) return err;//end se nacte v prsStatlist
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
@@ -187,10 +191,13 @@ E_CODE prsDefFunction (tSymbolTable *table)
 {
 //function idFunction (<params>) EOL <stat_list> end EOL
     E_CODE err = ERROR_OK;
+    if (getToken() != LEX_ID) return ERROR_SYNTAX;
+    table->currentFunc=symbolTableSearchFunction(table,gToken->data);
+    if (table->currentFunc==NULL)return ERROR_COMPILATOR;
     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-    if ((err = prsParams()) != ERROR_OK) return err;//prava zavorka se nacte uvnitr params
+    if ((err = prsParams(table)) != ERROR_OK) return err;//prava zavorka se nacte uvnitr params
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-    if ((err = prsStatlist()) != ERROR_OK) return err;//posledni nacteny kw je end
+    if ((err = prsStatlist(table)) != ERROR_OK) return err;//posledni nacteny kw je end
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
     return err;
 }
@@ -209,7 +216,7 @@ E_CODE prsStatlist (tSymbolTable *table)
     tKeyword kw;
     while ((kw = getToken()) == LEX_EOL); //procykli prazdne radky
     if (kw == KW_END) return ERROR_OK;
-    if ((err = prsCommand(table,kw)) == ERROR_OK) return prsStatlist(); //@kw - prsCommand potrebuje znat posledni token
+    if ((err = prsCommand(table,kw)) == ERROR_OK) return prsStatlist(table); //@kw - prsCommand potrebuje znat posledni token
     else return err;
 }
 
