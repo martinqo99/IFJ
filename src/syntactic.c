@@ -195,7 +195,7 @@ E_CODE prsDefFunction (tSymbolTable *table)
     table->currentFunc=symbolTableSearchFunction(table,gToken->data);
     if (table->currentFunc==NULL)return ERROR_COMPILATOR;
     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-    if ((err = prsParams(table)) != ERROR_OK) return err;//prava zavorka se nacte uvnitr params
+    if ((err = prsDefParams(table)) != ERROR_OK) return err;//prava zavorka se nacte uvnitr params
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
     if ((err = prsStatlist(table)) != ERROR_OK) return err;//posledni nacteny kw je end
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
@@ -329,36 +329,46 @@ E_CODE prsAssign (tSymbolTable *table)
 }
 
 /**
- * @info      Analyza parametru
+ * @info      Analyza parametru definice fce
  * @param   tSymbolTable* - ukazatel na tabulku znaku
  * @return  E_CODE - chybovy kod
  */
-E_CODE prsParams (tSymbolTable *table)
+E_CODE prsDefParams (tSymbolTable *table)
 {
   // <params> - id <params_n>
   // <params> - eps
 
-  tKeyword kw;
-  if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
-  if (kw == LEX_ID) return prsParamsN(table);
+    tKeyword kw;
+    if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
+    if (kw == LEX_ID){
+        functionInsertSymbol(table->currentFunc,gToken->data);
+        if (symbolTableSearchFunction(table,gToken->data)!=NULL) 
+            return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
+        return prsDefParamsN(table);
+    }
   else return ERROR_SYNTAX;
 }
 
 /**
- * @info      Analyza dalsich parametru
+ * @info      Analyza dalsich parametru definice
  * @param   tSymbolTable* - ukazatel na tabulku znaku
  * @return  E_CODE - chybovy kod
  */
-E_CODE prsParamsN (tSymbolTable *table)
+E_CODE prsDefParamsN (tSymbolTable *table)
 {
   // <params_n> - , id <params_n>
   // <params_n> - eps
 
   tKeyword kw;
-  if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
-  if (kw != LEX_COMMA) return ERROR_SYNTAX;
-  if (getToken() == LEX_ID) return prsParamsN(table);
-  else return ERROR_SYNTAX;
+    if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
+    if (kw != LEX_COMMA) return ERROR_SYNTAX;
+    if (getToken() == LEX_ID){
+        functionInsertSymbol(table->currentFunc,gToken->data);
+        if (symbolTableSearchFunction(table,gToken->data)!=NULL) 
+            return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
+        return prsParamsN(table);
+    }
+    else return ERROR_SYNTAX;
 }
 
 /**
