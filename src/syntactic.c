@@ -239,6 +239,7 @@ E_CODE prsAssign (tSymbolTable *table)
   // <assign> - string[ <num>:<num> ]
     E_CODE err = ERROR_OK;
     tKeyword kw, help;
+    tSymbol *tmpSymb;
     switch (kw = getToken()){
         case KW_INPUT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
@@ -282,15 +283,54 @@ E_CODE prsAssign (tSymbolTable *table)
             break;
         }
         case LEX_ID:{
-            if(symbolTableSearchFunction(table,gToken->data)!=NULL){
-                if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-                if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
-                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-                break;
+        //ID -> expression (napr. x+5)
+        //ID-> funkce (napr. funkce(x))
+        //ID-> string (string[1.0:6.4])
+            switch(getTokenAhead()){
+                case LEX_L_BRACKET:{//funkce
+                    if(symbolTableSearchFunction(table,gToken->data)==NULL)
+                        return ERROR_SEMANTIC_FUNCTION;//nedefinovana fce
+                    if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
+                    if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
+                    if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+                    break;
+                  
+                }
+                case LEX_L_SBRACKET:{//fce string
+
+                    if(tmpSymb=functionSearchSymbol(table->currentFunc,gToken->data)==NULL)
+                        return ERROR_SEMANTIC_VARIABLE;
+                    prsStringselect(table,tmpSymb);
+                }
+                case default:{//expression
+                    prsExpression();
+                }
             }
+            break;
         }
-        case LEX_STRING:{ // a co kdyz pujde o expression?
-            err = functionInsertSymbol(table->currentFunc, gToken->data);
+        case LEX_STRING:{
+        //STRING -> string[ : ]
+        //STRING -> expression
+
+            if(getTokenAhead()==LEX_L_SBRACKET){
+                //hodim string do tabulky konstant  
+                err=prsStringselect(table,tmpSymb);
+                break;            
+            }
+            
+        }
+
+        case default:{
+            prsExpression(table, kw);
+        }
+    }
+    return err;
+}
+
+E_CODE prsStringselect(tSymbolTable *table,tSymbol *stringSymb)
+{
+
+           /* err = functionInsertSymbol(table->currentFunc, gToken->data);
             if (getToken() != LEX_L_SBRACKET) return prsExpression(table, kw);
             err = functionInsertSymbol(table->currentFunc, gToken->data);
             if ((help = getToken()) == LEX_NUMBER) {
@@ -323,15 +363,9 @@ E_CODE prsAssign (tSymbolTable *table)
             }
             else return ERROR_SYNTAX;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-            break;
-        }
+            break;*/
 
-        case default:{
-            prsExpression(table, kw);
-        }
-    }
 }
-
 /**
  * @info      Analyza parametru definice fce
  * @param   tSymbolTable* - ukazatel na tabulku znaku
