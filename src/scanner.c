@@ -334,6 +334,7 @@ tKeyword getToken(){
 tKeyword getTokenAhead()
 {
   tToken token = gToken;
+  strCopyString(gToken.data, token.data);
 
   tKeyword kw = getToken();
 
@@ -342,6 +343,8 @@ tKeyword getTokenAhead()
   fseek (gFileHandler, position, SEEK_SET);
 
   gToken = token;
+  strCopyString(token.data, gToken.data);
+  strFree(token.data);
 
   return kw;
 }
