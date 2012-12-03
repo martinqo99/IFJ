@@ -108,7 +108,7 @@ E_CODE findDefFunctions(tSymbolTable *table)
     }
     resetToken();
     initToken();
-    return err;    
+    return err;
 }
 
 /**
@@ -148,7 +148,6 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         //checkni =, zavolej prsAssign
             if (getToken() != LEX_ASSIGN) return ERROR_SYNTAX;
             else if ((err = prsAssign(table)) != ERROR_OK) return err;
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_IF:{
@@ -237,6 +236,7 @@ E_CODE prsAssign (tSymbolTable *table)
         case KW_INPUT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
             if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_NUMERIC:
@@ -245,12 +245,14 @@ E_CODE prsAssign (tSymbolTable *table)
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
             if (getToken() != LEX_ID) return ERROR_SYNTAX; //potreba check jestli ID existuje!
             if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_PRINT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
             if (err=prsTerm() != ERROR_OK) return err;
             if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_FIND:{
@@ -261,6 +263,7 @@ E_CODE prsAssign (tSymbolTable *table)
             if ((help = getToken()) != LEX_STRING || help != LEX_ID)
               return ERROR_SYNTAX;
             if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case KW_SORT:{
@@ -268,6 +271,7 @@ E_CODE prsAssign (tSymbolTable *table)
             if ((help = getToken()) != LEX_STRING || help != LEX_ID)
               return ERROR_SYNTAX;
             if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
         case LEX_STRING:{ // a co kdyz pujde o expression?
@@ -280,10 +284,12 @@ E_CODE prsAssign (tSymbolTable *table)
                 // druhy taky
                 if ((err = prsNum(table, help)) != ERROR_OK) return err;
                 if (getToken() != LEX_R_SBRACKET) return ERROR_SYNTAX;
+                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
               }
               else if (help == LEX_R_SBRACKET);
               //druhy neni cislo
               else return ERROR_SYNTAX;
+              if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             }
             else if (help == LEX_COLON) {
               // prvni parametru stringu neni cislo
@@ -291,10 +297,12 @@ E_CODE prsAssign (tSymbolTable *table)
                 // druhy je cislo
                 if ((err = prsNum(table, help)) != ERROR_OK) return err;
                 if (getToken() != LEX_R_SBRACKET) return ERROR_SYNTAX;
+                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
               }
               else if (help == LEX_R_SBRACKET);
               // druhy neni cislo, to nevim jestli jde
               else return ERROR_SYNTAX;
+              if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             }
             else return ERROR_SYNTAX;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
