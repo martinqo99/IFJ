@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   scanner.h
- * 
- * Popis:    
- * 
- * 
+ *
+ * Popis:
+ *
+ *
  * Datum:    20.11.2012
- * 
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -34,16 +34,16 @@ typedef enum tkeyword{
     KW_IF, KW_ELSE, KW_END,                                             //Podminky
     KW_WHILE,                                                           //Cykly
     KW_FUNCTION, KW_RETURN,                                             //Funkce
-    KW_FIND, KW_SORT, KW_INPUT, KW_NUMERIC, KW_PRINT, KW_TYPEOF, KW_LEN,//Vestavene funkce    
-    KW_NIL, KW_TRUE, KW_FALSE,    
-    
+    KW_FIND, KW_SORT, KW_INPUT, KW_NUMERIC, KW_PRINT, KW_TYPEOF, KW_LEN,//Vestavene funkce
+    KW_NIL, KW_TRUE, KW_FALSE,
+
     LEX_ID, LEX_STRING, LEX_NUMBER,
-    LEX_L_BRACKET, LEX_R_BRACKET, LEX_L_SBRACKET, LEX_R_SBRACKET,
+    LEX_L_SBRACKET, LEX_R_SBRACKET, LEX_L_BRACKET, LEX_R_BRACKET,
     LEX_ADDITION, LEX_MULTIPLICATION, LEX_POWER, LEX_DIVISION, LEX_SUBSTRACTION,
     LEX_LESSER, LEX_GREATER, LEX_LESSER_EQUAL, LEX_GREATER_EQUAL,
     LEX_EQUAL, LEX_UNEQUAL,LEX_ASSIGN,
     LEX_COMMA, LEX_COLON,
-    LEX_EOL = 37, LEX_EOF, //znaky konce radku a souboru    
+    LEX_EOL = 37, LEX_EOF, //znaky konce radku a souboru
 
     LEX_UNKNOWN, //nepovoleny lexem
     LEX_RESERVED,
@@ -52,15 +52,15 @@ typedef enum tkeyword{
 
 typedef enum tstate{
     S_START = 0,// 0 Start
-    
+
     S_LESSER,
     S_GREATER,
     S_EQUAL,
     S_UNEQUAL,
-    
+
     S_STAR,
     S_SUBSTRACTION,
-    
+
     S_SLASH,
     S_COMMENT_ROW,
     S_COMMENT_BLOCK,
@@ -68,7 +68,7 @@ typedef enum tstate{
 
     S_STRING,
     S_STRING_ESCAPED,
-    
+
     S_ID,
     S_NUMBER,
     S_NUMBER_POINT,
@@ -79,7 +79,7 @@ typedef enum tstate{
 typedef struct ttoken{
   unsigned int row;
   unsigned int column;
-  
+
   tString data;
 } tToken;
 
