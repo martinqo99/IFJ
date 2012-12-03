@@ -337,11 +337,9 @@ tKeyword getTokenAhead()
 
   tKeyword kw = getToken();
 
-  unsigned int offset = gToken.row-token.row;
-  if (offset == 0)
-    offset = gToken.column-token.column;
+  unsigned int position = ftell(gFileHandler);
 
-  fseek (gFileHandler, -offset, SEEK_CUR);
+  fseek (gFileHandler, position, SEEK_SET);
 
   gToken = token;
 
