@@ -281,6 +281,14 @@ E_CODE prsAssign (tSymbolTable *table)
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
+        case LEX_ID:{
+            if(symbolTableSearchFunction(table,gToken->data)!=NULL){
+                if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
+                if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
+                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+                break;
+            }
+        }
         case LEX_STRING:{ // a co kdyz pujde o expression?
             if (getToken() != LEX_L_SBRACKET) return ERROR_SYNTAX;
             if ((help = getToken()) == LEX_NUMBER) {
@@ -315,13 +323,7 @@ E_CODE prsAssign (tSymbolTable *table)
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
         }
-        case LEX_ID:{// Dalibor: tady to chce check jestli je to ID funkce!
-                      // jestli neni tak asi nebreakovat a pouzit to ID pro expression
-                      // Kwisatz: jako by ses k tomu expression mohl dostat
-            if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-        }
+
         case default:{
             prsExpression(table, kw);
         }
