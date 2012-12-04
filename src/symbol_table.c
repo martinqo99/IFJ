@@ -63,7 +63,7 @@ tSymbol* getLastSymbol(tFunction* F){
 }
 
 E_CODE *genInstr(tSymbolTable* table,tItype type, void *d, void *s1, void *s2) {
-   TInstr *i = mmuMalloc(sizeof(TInstr));
+   TInstr *i = mmuMalloc(sizeof(tInstr));
    i->type = type;
    i->dest = d;
    i->src1 = s1;
