@@ -28,30 +28,39 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
   E_CODE err = ERROR_OK;
   tKeyword a = -1, b = -1;
   char x; // vysledek hledani v tabulce
-  tStack S;
-  stackInit(&S);
+  tStack *S = stackCreate();
+  err = stackInit(S);
 
-  stackPush(&S, kw);
+  err = stackPush(S, &kw);
 
   while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
+    b = stackTop(S);
     a = getToken();
-    b = stackTop(&S);
+    if (a == LEX_ID)
+      if (functionSearchSymbol(table->currentFunc, gToken->data) == NULL)
+        return ERROR_SYNTAX;
+    else if (a == LEX_NUMBER || a == LEX_STRING)
+      // pridani do stromu/listu konstant
+    else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL)
+      // pridani nekam jinam
     x = precedentTable[b][a];
 
     if (x == 0) return ERROR_SYNTAX;
     else if (x == '=' || x == '<') {
-      stackPush(&S, a);
+      err = stackPush(S, &a);
     }
     else if (x == '>') {
       // tady to bude chtit vymyslet co presne je treba udelat
     }
     else if (x == '$') {
-      // tady je konec vyrazu
+      // tady je konec vyrazu, ale vlastne k tomu nemuze dojit...fuck
     }
     else return ERROR_SYNTAX;
-  } // konec while cyklu
-  stackDispose(&S);
-  stackDestroy(&S);
+
+  } // konec while cyklu /////////////////////////////////
+
+  err = stackDispose(S);
+  err = stackDestroy(S);
 
   return err;
 }
