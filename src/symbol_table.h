@@ -118,14 +118,14 @@ typedef enum {
 
 /*
  * generuje instrukci
- * @param   kam instrukci ulozit
+ * @param   tabulka symbolu
  * @param   typ instrukce
  * @param   dst
  * @param   src1
  * @param   src2
  * @return  ukazatel na instrukci
  */
-E_CODE *genInstr(tFunction*,tItype, void*, void*, void*);
+E_CODE *genInstr(tSymbolTable*,tItype, void*, void*, void*);
 void symbolTableInit(tSymbolTable*);
 E_CODE symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);
