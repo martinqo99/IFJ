@@ -62,7 +62,7 @@ typedef struct tfunction{
 } tFunction;
 
 typedef struct {
-   int type;//bude ENUM
+   tItype type;//bude ENUM
    void *dest;
    void *src1;
    void *src2;
@@ -74,7 +74,58 @@ typedef struct tsymboltable{
     tFunction *currentFunc;
 } tSymbolTable;
 
+typedef enum {
+    I_RETURN,
+//stack
+    I_POP,
+    I_PUSH,
+    I_SEMPTY,
+//presun
+    I_MOV,
+    I_SET,
+//aritmetika
+    I_ADD,
+    I_SUB,
+    I_MUL,
+    I_DIV,
+    I_POW,
+    I_CON,
+//logika
+    I_EQUAL,		// ==
+    I_NEQUAL,	// !=
+    I_ELESS,		// <=
+    I_LESS,		// <
+    I_MORE,		// >
+    I_EMORE,		// >=
+//skoky - snad nebudou potreba vsechny
+    I_LABEL,		// jenom labeldsfds
+    I_TJUMP,		//true jump
+    I_FJUMP,		//false jump
+    I_JUMP,		//nepodmineny jump
+    I_GOTO,
+    I_FCEJUMP,
 
+//vestavene fce
+    I_INPUT,
+    I_NUMERIC,
+    I_PRINT,
+    I_TYPEOF,
+    I_LEN,
+    I_FIND,
+    I_SORT,
+    
+}tItype;
+
+/*
+ * generuje instrukci
+ * @param   kam instrukci ulozit
+ * @param   typ instrukce
+ * @param   dst
+ * @param   src1
+ * @param   src2
+ * @return  ukazatel na instrukci
+ */
+TInstr *genInstr(tFunction*,EItype, void*, void*, void*);
 void symbolTableInit(tSymbolTable*);
 E_CODE symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);
