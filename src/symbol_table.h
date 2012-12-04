@@ -125,7 +125,7 @@ typedef enum {
  * @param   src2
  * @return  ukazatel na instrukci
  */
-TInstr *genInstr(tFunction*,EItype, void*, void*, void*);
+E_CODE *genInstr(tFunction*,tItype, void*, void*, void*);
 void symbolTableInit(tSymbolTable*);
 E_CODE symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);

@@ -61,3 +61,13 @@ E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
 tSymbol* getLastSymbol(tFunction* F){
     return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
 }
+
+E_CODE *genInstr(tFunction *F,tItype t, void *d, void *s1, void *s2) {
+   TInstr *i = mmuMalloc(sizeof(TInstr));
+   i->type = t;
+   i->dest = d;
+   i->src1 = s1;
+   i->src2 = s2;
+   return listInsertLast(F->currentFunc->instructions,i);
+
+}
