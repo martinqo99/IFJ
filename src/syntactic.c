@@ -294,7 +294,7 @@ E_CODE prsAssign (tSymbolTable *table)
                     if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
                     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
                     break;
-                  
+
                 }
                 case LEX_L_SBRACKET:{//fce string
 
@@ -313,11 +313,11 @@ E_CODE prsAssign (tSymbolTable *table)
         //STRING -> expression
 
             if(getTokenAhead()==LEX_L_SBRACKET){
-                //hodim string do tabulky konstant  
+                //hodim string do tabulky konstant
                 err=prsStringselect(table,tmpSymb);
-                break;            
+                break;
             }
-            
+
         }
 
         case default:{
@@ -327,45 +327,52 @@ E_CODE prsAssign (tSymbolTable *table)
     return err;
 }
 
-E_CODE prsStringselect(tSymbolTable *table,tSymbol *stringSymb)
+E_CODE prsStringselect(tSymbolTable *table, tSymbol *stringSymb)
 {
+  E_CODE err;
+  //err = functionInsertSymbol(table->currentFunc, gToken->data);
+  //if (err != ERROR_OK) return err;
 
-           /* err = functionInsertSymbol(table->currentFunc, gToken->data);
-            if (getToken() != LEX_L_SBRACKET) return prsExpression(table, kw);
-            err = functionInsertSymbol(table->currentFunc, gToken->data);
-            if ((help = getToken()) == LEX_NUMBER) {
-              // prvni parametr stringu je cislo
-              if ((err = prsNum(table, help)) != ERROR_OK) return err;
-              if (getToken() != LEX_COLON) return ERROR_SYNTAX;
-              if ((help = getToken()) == LEX_NUMBER) {
-                // druhy taky
-                if ((err = prsNum(table, help)) != ERROR_OK) return err;
-                if (getToken() != LEX_R_SBRACKET) return ERROR_SYNTAX;
-                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-              }
-              else if (help == LEX_R_SBRACKET);
-              //druhy neni cislo
-              else return ERROR_SYNTAX;
-              if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-            }
-            else if (help == LEX_COLON) {
-              // prvni parametru stringu neni cislo
-              if ((help = getToken()) == LEX_NUMBER) {
-                // druhy je cislo
-                if ((err = prsNum(table, help)) != ERROR_OK) return err;
-                if (getToken() != LEX_R_SBRACKET) return ERROR_SYNTAX;
-                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-              }
-              else if (help == LEX_R_SBRACKET);
-              // druhy neni cislo, to nevim jestli jde
-              else return ERROR_SYNTAX;
-              if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-            }
-            else return ERROR_SYNTAX;
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-            break;*/
+  if (getToken() != LEX_L_SBRACKET) return ERROR_SYNTAX;
 
+  //err = functionInsertSymbol(table->currentFunc, gToken->data);
+  //if (err != ERROR_OK) return err;
+
+  tKeyword help;
+  if ((help = getToken()) == LEX_NUMBER) {
+    // prvni parametr stringu je cislo
+    if ((err = prsNum(table, help)) != ERROR_OK) return err;
+    if (getToken() != LEX_COLON) return ERROR_SYNTAX;
+    if ((help = getToken()) == LEX_NUMBER) {
+      // druhy taky
+      if ((err = prsNum(table, help)) != ERROR_OK) return err;
+      if (getToken() != LEX_R_SBRACKET) return ERROR_SYNTAX;
+      if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+    }
+    else if (help == LEX_R_SBRACKET);
+    //druhy neni cislo
+    else return ERROR_SYNTAX;
+    if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+  }
+  else if (help == LEX_COLON) {
+    // prvni parametru stringu neni cislo
+    if ((help = getToken()) == LEX_NUMBER) {
+      // druhy je cislo
+      if ((err = prsNum(table, help)) != ERROR_OK) return err;
+      if (getToken() != LEX_R_SBRACKET) return ERROR_SYNTAX;
+      if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+    }
+    else if (help == LEX_R_SBRACKET);
+    // druhy neni cislo, to nevim jestli jde
+    else return ERROR_SYNTAX;
+    if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+  }
+  else return ERROR_SYNTAX;
+  if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+
+  return ERROR_OK;
 }
+
 /**
  * @info      Analyza parametru definice fce
  * @param   tSymbolTable* - ukazatel na tabulku znaku

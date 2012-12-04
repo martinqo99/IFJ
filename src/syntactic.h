@@ -23,6 +23,7 @@ E_CODE prsCommand (tSymbolTable*,tKeyword);
 E_CODE prsDefFunction (tSymbolTable*);
 E_CODE prsStatlist (tSymbolTable*);
 E_CODE prsAssign (tSymbolTable*);
+E_CODE prsStringselect(tSymbolTable*, tSymbol*);
 E_CODE prsDefParams (tSymbolTable*);
 E_CODE prsDefParamsN (tSymbolTable*);
 E_CODE prsNum (tSymbolTable*, tKeyword);
