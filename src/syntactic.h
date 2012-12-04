@@ -14,6 +14,7 @@
 
 #include "scanner.h"
 #include "expression.h"
+#include "library.h"
 
 E_CODE parser (tSymbolTable*);
 E_CODE prsBody (tSymbolTable*);

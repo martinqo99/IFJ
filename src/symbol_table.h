@@ -38,11 +38,10 @@ typedef union tdata{
   tString sData;
 } tData;
 
-/** Darek: toto je podle me zbytecny 
-typedef struct tsymboldata{
+typedef struct tlibrarydata{
   tDataType type;
   tData data;
-} tSymbolData; */
+} tLibraryData; // hodil sem to sem a prejmenoval, bylo to zakomentovany, takze to nikdo asi nepouzival :P
 
 typedef struct tsymbol{
   tString key;
@@ -113,7 +112,7 @@ typedef enum {
     I_LEN,
     I_FIND,
     I_SORT,
-    
+
 }tItype;
 
 /*

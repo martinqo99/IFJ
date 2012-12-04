@@ -16,75 +16,150 @@
 
 /**
  * @info      Fce ziska vstup od uzivatele
- * @return  tString - nacteny retezec
+ * @param   E_CODE - odkaz na chybovy kod
+ * @return  tLibraryData - nacteny retezec
  */
-tString input ()
+tLibraryData input (E_CODE *err)
 {
   int c;
   tString save;
-  E_CODE err = strInit(&save);
-  while ((c = fgetc(stdin)) != EOL && c != '\n' && err == ERROR_OK)
-    err = strAdd(&save, (char) c);
+  *err = strInit(&save);
+  while ((c = fgetc(stdin)) != EOL && c != '\n' && *err == ERROR_OK)
+    *err = strAdd(&save, (char) c);
 
-  return save;
+  tLibraryData tmp;
+  tmp.type = DT_STRING;
+  tmp.data.sData = save;
+  return tmp;
 }
 
 /**
  * @info      Fce prevede string nebo cislo na cislo
  * @param   tLibraryData - string, cislo nebo bool
- * @return  double - vrati prevedene cislo
+ * @param   E_CODE - odkaz a chybovy kod
+ * @return  tLibraryData - vrati prevedene cislo
  */
-double numeric (tLibraryData id)
+tLibraryData numeric (tLibraryData id, E_CODE *err)
 {
-  // nejaka black magic
+  tLibraryData tmp;
+  if (id.type == DT_BOOL || id.type == DT_NIL || id.type == DT_UNKNOWN) {
+    *err = ERROR_NUMERIC_CONVERSION;
+    tmp.type = DT_NIL;
+    return tmp;
+  }
+
+  if (id.type == DT_NUMBER) {
+    tmp.type = DT_NUMBER;
+    tmp.data.dData = id.data.dData;
+    return tmp;
+  }
+
+  char *endptr = NULL;
+  tmp.type = DT_NUMBER;
+  tmp.data.dData = strtod(id.data.sData.data, &endptr);
+
+  if (*endptr != '\0' || strcmp(endptr,argv) == 0) {
+    *err = ERROR_NUMERIC_CONVERSION;
+    tmp.type = DT_NIL;
+    return tmp;
+  }
+
+  return tmp;
 }
 
 /**
  * @info      Fce vytiskne vsechno co prislo na vstup
  * @param   tLibraryData - string, cislo nebo bool; nahodny pocet
- * @return  tKeyword - vrati nil
+ * @return  tLibraryData - vrati DT_NIL
  */
-tKeyword print (tLibraryData id1, ...)
+tLibraryData print (tLibraryData id1, ...)
 {
-  return KW_NIL;
+  va_list ap;
+  tLibraryData i;
+
+  va_start(ap, id1);
+  for (i = id1; ; i = va_arg(ap, tLibraryData))
+    if (i.type == DT_NIL)
+      printf("Nil");
+    else if (i.type == DT_BOOL)
+      if (i.data.iData == 0)
+        printf("false");
+      else printf("true");
+    else if (i.type == DT_NUMBER)
+      printf("%g", i.data.dData);
+    else if (i.type == DT_STRING)
+      printf ("%s", i.data.sData.data);
+    else if (i.type == DT_UNKNOWN)
+      break;
+  va_end(ap);
+
+  tLibraryData tmp;
+  tmp.type = DT_NIL;
+  return tmp;
 }
 
 /**
  * @info      Fce vrati ciselny identifikator datoveho typu promenne
  * @param   tLibraryData - string, cislo nebo bool
- * @return  double - vrati identifikator promenne
+ * @return  tLibraryData - vrati identifikator promenne
  */
-double typeOf (tLibraryData id)
+tLibraryData typeOf (tLibraryData id)
 {
+  tLibraryData tmp;
+  tmp.type = DT_NUMBER;
 
+  if (id.type == DT_NIL)
+    tmp.data.dData = 0.0;
+  else if (id.type == DT_BOOL)
+    tmp.data.dData = 1.0;
+  else if (id.type == DT_NUMBER)
+    tmp.data.dData = 3.0;
+  else if (id.type == DT_UNKNOWN)
+    tmp.data.dData = 6.0;
+  else
+    tmp.data.dData = 8.0;
+
+  return tmp;
 }
 
 /**
  * @info      Fce vrati delku retezce, jinak vrati 0.0
  * @param   tLibraryData - string, cislo nebo bool
- * @return  double - vrati delku retezce
+ * @return  tLibraryData - vrati delku retezce
  */
-double len (tLibraryData id)
+tLibraryData len (tLibraryData id)
 {
+  tLibraryData tmp;
+  if (id.type == DT_STRING) {
+    tmp.type = DT_NUMBER
+    tmp.data.dData = (double) strlen(id.data.sData.data);
+  else {
+    tmp.type = DT_NUMBER;
+    tmp.data.dData = 0.0;
+  }
 
+  return tmp;
 }
 
 /**
  * @info      Fce hleda podretezec v retezci
- * @param   tString - retezce, v prvnim se hleda, druhy se hleda v prvnim
- * @return  double - vrati pozici v prvnim stringu, na ktere nasel druhy string
+ * @param   tLibraryData - retezce, v prvnim se hleda, druhy se hleda v prvnim
+ * @return  tLibraryData - vrati pozici v prvnim stringu, na ktere nasel druhy string
  */
-double find (tString text, tString searched)
+tLibraryData find (tLibraryData text, tLibraryData searched)
 {
-  return (double) kmpSearch(text, searched);
+  tLibraryData tmp;
+  tmp.type = DT_NUMBER;
+  tmp.data.dData = (double) kmpSearch(text.data.sData, searched.data.sData)
+  return tmp;
 }
 
 /**
  * @info      Fce seradi hodnoty ve stringu
- * @param   tString - retezec k serazeni
- * @return  tString - vrati serazeny string
+ * @param   tLibraryData - retezec k serazeni
+ * @return  tLibraryData - vrati serazeny string
  */
-tString sort (tString nonsorted)
+tLibraryData sort (tLibraryData nonsorted)
 {
   // return to_co_dela_verca;
 }

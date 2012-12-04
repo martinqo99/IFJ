@@ -15,34 +15,15 @@
 #ifndef LIBRARY_H_INCLUDED
 #define LIBRARY_H_INCLUDED
 
-#include <strarg.h>
+#include <stdarg.h>
 #include "kmp.h"
 
-typedef enum tdatatype{
-  DT_NIL,
-  DT_BOOL,
-  DT_NUMBER,
-  DT_STRING,
-  DT_UNKNOWN
-} tDataType;
-
-typedef union tdata{
-  int iData;
-  double dData;
-  tString sData;
-} tData;
-
-typedef struct tlibrarydata {
-  tDataType type;
-  tData data;
-} tLibraryData;
-
-tString input();
-double numeric (tLibraryData id);
-tKeyword print (tLibraryData id1, ...);
-double typeOf (tLibraryData id);
-double len (tLibraryData id);
-double find (tString text, tString searched);
-tString sort (tString nonsorted);
+tLibraryData input (E_CODE *err);
+tLibraryData numeric (tLibraryData id, E_CODE *err);
+tLibraryData print (tLibraryData id1, ...);
+tLibraryData typeOf (tLibraryData id);
+tLibraryData len (tLibraryData id);
+tLibraryData find (tLibraryData text, tLibraryData searched);
+tLibraryData sort (tLibraryData nonsorted);
 
 #endif
