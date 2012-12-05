@@ -26,5 +26,7 @@ E_CODE prsAssign (tSymbolTable*);
 E_CODE prsStringselect(tSymbolTable*, tSymbol*);
 E_CODE prsDefParams (tSymbolTable*);
 E_CODE prsDefParamsN (tSymbolTable*);
-E_CODE prsNum (tSymbolTable*, tKeyword);
+E_CODE prsCallParams(tSymbolTable *table);
+E_CODE prsCallParamsN(tSymbolTable *table);
+//E_CODE prsNum (tSymbolTable*, tKeyword);
 E_CODE prsTerm (tSymbolTable*);
