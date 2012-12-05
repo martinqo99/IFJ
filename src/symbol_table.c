@@ -58,9 +58,9 @@ E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
     strCopyString(&symbolname,&(symb->key));
     //symb->type=DT_UNKNOWN;
     symb->data=NULL;
-    E_CODE err=BTInsert(&(function->symbols),&(symb->key),symb); 
+    E_CODE err=BTInsert(&(function->symbols),&(symb->key),symb);
     if (err!=ERROR_OK){strFree(&(symb->key));mmuFree(symb);}
-    return err;   
+    return err;
 }
 
 tSymbol* getLastSymbol(tFunction* F){
@@ -81,8 +81,14 @@ tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type)
         }
         break;
         case LEX_NUMBER:{
+            char *endptr = NULL;
             symb->data->type = DT_NUMBER;
-            symb->data->data.dData=atof(data.data);
+            symb->data->data.dData=strtod(data.data, &endptr); // ATOF SE NEPOUZIVA, je to HNUSNA fce
+            if (*endptr != '\0' || strcmp(endptr, data.data) == 0) {
+              //*err = ERROR_SYNTAX; // toto je nejspis neco jinyho, ty tu kua nemas err...a ani ho nemas jak vratit
+              mmuFree(symb);
+              return NULL;
+            }
         }
         break;
         case KW_NIL:{

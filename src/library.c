@@ -58,7 +58,7 @@ tLibraryData numeric (tLibraryData id, E_CODE *err)
   tmp.type = DT_NUMBER;
   tmp.data.dData = strtod(id.data.sData.data, &endptr);
 
-  if (*endptr != '\0' || strcmp(endptr,argv) == 0) {
+  if (*endptr != '\0' || strcmp(endptr, id.data.sData.data) == 0) {
     *err = ERROR_NUMERIC_CONVERSION;
     tmp.type = DT_NIL;
     return tmp;
