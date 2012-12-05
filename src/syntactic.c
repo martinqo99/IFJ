@@ -395,7 +395,7 @@ E_CODE prsDefParams (tSymbolTable *table)
   // <params> - eps
 
     tKeyword kw;
-    if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
+    if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK; //no params
     if (kw == LEX_ID){
         functionInsertSymbol(table->currentFunc,gToken.data);
         if (symbolTableSearchFunction(table,gToken.data)!=NULL)
@@ -435,19 +435,21 @@ E_CODE prsDefParamsN (tSymbolTable *table)
  */
 E_CODE prsCallParams(tSymbolTable *table)
 {
-  tKeyword kw;
-  if ((kw = getToken()) == LEX_ID) {
-    if (functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
-      return ERROR_SEMANTIC_VARIABLE;
+  tKeyword kw=getToken();
+  tSymbol *symb;
+  if (kw==LEX_R_BRACKET) return ERROR_OK; //no params
+  Last(&(table->currentFunc->instructions));//aktivita na posledni instrukci
+  if ((kw == LEX_ID) {
+    if (symb=functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
+      return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
   }
-  else if (kw == LEX_NUMBER || kw == LEX_STRING)
-    if (functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
-      return ERROR_COMPILATOR; // timto error codem si nejsu jistej
-  else if (kw == LEX_R_BRACKET)
-    return ERROR_OK;
+  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL)
+    if (symb=functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
+      return ERROR_COMPILATOR; // chyba mallocu - nenastane
   else return ERROR_SYNTAX;
-
-  return ERROR_OK;
+  tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
+  listPostInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
+  return prsCallParamsN(table);
 }
 
 /**
@@ -458,21 +460,23 @@ E_CODE prsCallParams(tSymbolTable *table)
 E_CODE prsCallParamsN(tSymbolTable *table)
 {
   tKeyword kw;
+  tSymbol *symb;
   if ((kw = getToken()) == LEX_R_BRACKET)
-    return ERROR_OK;
+    return ERROR_OK; //zadne dalsi parametry
   else if (kw != LEX_COMMA)
     return ERROR_SYNTAX;
 
   if ((kw = getToken()) == LEX_ID) {
-    if (functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
-      return ERROR_SEMANTIC_VARIABLE;
+    if (symb=functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
+      return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
   }
-  else if (kw == LEX_NUMBER || kw == LEX_STRING)
-    if (functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
-      return ERROR_COMPILATOR; // timto error codem si nejsu jistej
+  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL)
+    if (symb=functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
+      return ERROR_COMPILATOR; // error mallocu - nenastane
   else return ERROR_SYNTAX;
-
-  return ERROR_OK;
+  tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
+  listPostInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
+  return prsCallParamsN(table);
 }
 
 /**
