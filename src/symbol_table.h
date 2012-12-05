@@ -104,6 +104,7 @@ typedef enum {
     I_LEN,
     I_FIND,
     I_SORT,
+    I_STRING // dest od do, string je na stacku
 
 }tItype;
 
@@ -132,7 +133,7 @@ typedef struct tsymboltable{
  * @return  ukazatel na instrukci
  */
 tInstr* genInstr(tItype, void*, void*, void*);
-E_CODE functionInsertConstant(tFunction*,tString,tKeyword);
+tSymbol* functionInsertConstant(tFunction*,tString,tKeyword);
 void symbolTableInit(tSymbolTable*);
 E_CODE symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);
@@ -140,5 +141,6 @@ void symbolTableDispose(tSymbolTable*);
 tSymbol* functionSearchSymbol(tFunction*, tString);
 E_CODE functionInsertSymbol(tFunction*,tString);
 tSymbol* getLastSymbol(tFunction*);
+tSymbol* getLastConstant(tFunction*);
 
 #endif

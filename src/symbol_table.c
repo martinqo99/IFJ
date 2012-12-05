@@ -67,7 +67,11 @@ tSymbol* getLastSymbol(tFunction* F){
     return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
 }
 
-E_CODE functionInsertConstant(tFunction *function,tString data,tKeyword type){
+tSymbol* getLastConstant(tFunction* F){
+    return (F==NULL || F->constants.last==NULL) ? NULL:(tSymbol*)(F->constants.last->data);
+}
+
+tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type){
     tSymbol *symb=mmuMalloc(sizeof(tSymbol));
     symb->data=mmuMalloc(sizeof(tSymbolData));
     switch(type){
@@ -98,7 +102,8 @@ E_CODE functionInsertConstant(tFunction *function,tString data,tKeyword type){
         default: return ERROR_COMPILATOR;
     }
     symb->key.data=NULL;
-    return listInsertLast(&(function->constants),symb);
+    listInsertLast(&(function->constants),symb);
+    return symb;
 }
 
 tInstr* genInstr(tItype type, void *dest, void *src1, void *src2) {
