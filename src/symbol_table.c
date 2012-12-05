@@ -29,7 +29,9 @@ E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName
     btInit(&(func->symbols));
     initList(&(func->instructions));
     func->called=0;
-    return BTInsert(&(symbolTable->functions),&(func->name),func);
+    E_CODE err=BTInsert(&(symbolTable->functions),&(func->name),func);
+    if (err!=ERROR_OK){strFree(&(func->name));mmuFree(func);}
+    return err;
 }
 
 tFunction* symbolTableSearchFunction(tSymbolTable* symbolTable, tString functionName){
@@ -54,20 +56,56 @@ tSymbol* functionSearchSymbol(tFunction *function, tString symbolname){
 E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
     tSymbol *symb=mmuMalloc(sizeof(tSymbol));
     strCopyString(&symbolname,&(symb->key));
-    symb->type=DT_UNKNOWN;
-    return BTInsert(&(function->symbols),&(symb->key),symb);    
+    //symb->type=DT_UNKNOWN;
+    symb->data=NULL;
+    E_CODE err=BTInsert(&(function->symbols),&(symb->key),symb); 
+    if (err!=ERROR_OK){strFree(&(symb->key));mmuFree(symb);}
+    return err;   
 }
 
 tSymbol* getLastSymbol(tFunction* F){
     return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
 }
 
-E_CODE *genInstr(tSymbolTable* table,tItype type, void *d, void *s1, void *s2) {
-   TInstr *i = mmuMalloc(sizeof(tInstr));
-   i->type = type;
-   i->dest = d;
-   i->src1 = s1;
-   i->src2 = s2;
-   return listInsertLast(&(table->currentFunc->instructions),i);
+E_CODE functionInsertConstant(tFunction *function,tString data,tDataType type){
+    tSymbol *symb=mmuMalloc(sizeof(tSymbol));
+    symb->data=mmuMalloc(sizeof(tSymbolData));
+    switch(type){
+        case LEX_STRING:{
+            symb->data->type = DT_STRING;
+            strCopyString(&data,&(sym->data->sData));
+        }
+        break;
+        case LEX_NUMBER:{
+            symb->data->type = DT_NUMBER;
+            symb->data->dData=atof(data.data);
+        }
+        break;
+        case KW_NIL:{
+            symb->data->type = DT_NIL;
+        }
+        break;
+        case KW_TRUE:{
+            symb->data->type = DT_BOOL;
+            symb->data->bData = TRUE;
+        }
+        break;
+        case KW_FALSE:{
+            symb->data->type = DT_BOOL;
+            symb->data->bData = FALSE;
+        }
+        break;
+        case default return ERROR_COMPILATOR;
+    }
+    symb->key.data=NULL;
+    return lisInsertLast(&(function->constants),symb);
+}
 
+tInstr *genInstr(tSymbolTable* table,tItype type, void *dest, void *src1, void *src2) {
+   tInstr *inst = mmuMalloc(sizeof(tInstr));
+   inst->type = type;
+   inst->dest = dest;
+   inst->src1 = src1;
+   inst->src2 = src2;
+   return i;
 }

@@ -34,18 +34,19 @@ typedef enum tdatatype{
 
 typedef union tdata{
   int iData;
+  bool bData;
   double dData;
   tString sData;
 } tData;
 
-typedef struct tlibrarydata{
+typedef struct tsymboldata{
   tDataType type;
   tData data;
-} tLibraryData; // hodil sem to sem a prejmenoval, bylo to zakomentovany, takze to nikdo asi nepouzival :P
+} tSymbolData; // hodil sem to sem a prejmenoval, bylo to zakomentovany, takze to nikdo asi nepouzival :P
 
 typedef struct tsymbol{
   tString key;
-  tData data;
+  tSymbolData *data; //pole, pro vice instanci stejne promenne
   tDataType type;
 } tSymbol;
 
