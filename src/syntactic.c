@@ -296,7 +296,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                     if(symbolTableSearchFunction(table,gToken.data)==NULL)
                         return ERROR_SEMANTIC_FUNCTION;//nedefinovana fce
                     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-                    if ((err = prsDefParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
+                    if ((err = prsCallParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
                     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
                 }
                 break;
