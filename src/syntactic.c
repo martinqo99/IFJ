@@ -241,50 +241,61 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
     E_CODE err = ERROR_OK;
     tKeyword kw;
     tSymbol *tmpSymb;
+    tFunction *tmpFunc;
     tInstr *i;
     switch (kw = getToken()){
         case KW_INPUT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-            break;
+            i=genInstr(I_INPUT,dest,NULL,NULL);
+            listInsertLast(&(table->currentFunc->instructions),i);
         }
-        case KW_NUMERIC:
-        case KW_TYPEOF:
-        case KW_LEN:{ //syntaxe u tehto 3 je stejna, ale nakonec se to bude muset rozdelit kvuli generovani rozdilnych instrukci myslim
+        break;
+        case KW_NUMERIC:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if (getToken() != LEX_ID) return ERROR_SYNTAX; //potreba check jestli ID existuje!
-            if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            i=genInstr(I_NUMERIC,dest,NULL,NULL);
+            listInsertLast(&(table->currentFunc->instructions),i);
+        }
+        break;
+        case KW_LEN:{
+            if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            i=genInstr(I_LEN,dest,NULL,NULL);
+            listInsertLast(&(table->currentFunc->instructions),i);
         }
         break;
         case KW_PRINT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if (err=prsTerm() != ERROR_OK) return err;
-            if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            i=genInstr(I_PRINT,dest,NULL,NULL);
+            listInsertLast(&(table->currentFunc->instructions),i);
 
         }
         break;
         case KW_FIND:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if ((help = getToken()) != LEX_STRING || help != LEX_ID)
-              return ERROR_SYNTAX;
-            if (getToken() != LEX_COMMA) return ERROR_SYNTAX;
-            if ((help = getToken()) != LEX_STRING || help != LEX_ID)
-              return ERROR_SYNTAX;
-            if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+            i=genInstr(I_FIND,dest,NULL,NULL);
+            listInsertLast(&(table->currentFunc->instructions),i);
 
         }
         break;
         case KW_SORT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if ((help = getToken()) != LEX_STRING || help != LEX_ID)
-              return ERROR_SYNTAX;
-            if (getToken() != LEX_R_BRACKET) return ERROR_SYNTAX;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
-
+            i=genInstr(I_SORT,dest,NULL,NULL);
+            listInsertLast(&(table->currentFunc->instructions),i);
+        }
+        break;
+        case KW_TYPEOF:{
+            //typeof ma jine parametry pac bere i funkce
         }
         break;
         case LEX_ID:{
@@ -293,11 +304,13 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         //ID-> string (string[1.0:6.4])
             switch(getTokenAhead()){
                 case LEX_L_BRACKET:{//funkce
-                    if(symbolTableSearchFunction(table,gToken.data)==NULL)
+                    if(tmpFunc=symbolTableSearchFunction(table,gToken.data)==NULL)
                         return ERROR_SEMANTIC_FUNCTION;//nedefinovana fce
                     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
                     if ((err = prsCallParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
                     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+                    i=genInstr(I_CALL,dest,tmpFunc,NULL);
+                    listInsertLast(&(table->currentFunc->instructions),i);
                 }
                 break;
                 case LEX_L_SBRACKET:{//fce string
