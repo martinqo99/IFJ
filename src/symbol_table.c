@@ -73,11 +73,16 @@ tSymbol* getLastConstant(tFunction* F){
 
 tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type){
     tSymbol *symb=mmuMalloc(sizeof(tSymbol));
+    if (symb == NULL) return NULL;
+
     symb->data=mmuMalloc(sizeof(tSymbolData));
+    if (symb->data == NULL) return NULL;
+
     switch(type){
         case LEX_STRING:{
             symb->data->type = DT_STRING;
-            strCopyString(&data,&(symb->data->data.sData));
+            if (strCopyString(&data,&(symb->data->data.sData)) != ERROR_OK)
+              return NULL;
         }
         break;
         case LEX_NUMBER:{
