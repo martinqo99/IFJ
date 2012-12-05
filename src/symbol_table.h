@@ -46,7 +46,7 @@ typedef union tdata{
 typedef struct tsymboldata{
   tDataType type;
   tData data;
-} tSymbolData; // hodil sem to sem a prejmenoval, bylo to zakomentovany, takze to nikdo asi nepouzival :P
+} tSymbolData, tLibraryData; // to, ze sem to pojmenoval tak jak sem to pojmenoval melo vyznam, VAZNE
 
 typedef struct tsymbol{
   tString key;
