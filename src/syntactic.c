@@ -312,7 +312,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                 }
                 break;
                 default:{//expression
-                    err=prsExpression();
+                    err=prsExpression(table, kw);
                 }
             }
         }
