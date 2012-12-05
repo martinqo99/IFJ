@@ -20,29 +20,42 @@
  * @param   tKeyword - uz nactene klicove slovo
  * @return  E_CODE - chybovy kod
  */
-E_CODE prsExpression (tSymbolTable *table, tKeyword kw)
+E_CODE prsExpression (tSymbolTable *table, tKeyword a)
 {
-  if (kw == KW_IF || kw == KW_WHILE || kw == KW_RETURN)
-    kw = getToken();
+  if (a == KW_IF || a == KW_WHILE || a == KW_RETURN)
+    a = getToken(); // aby jsme se dostali do stejneho stavu, jako kdyz se sem dostaneme z ostatnich stavu
+
+  if (a == LEX_ID) {
+    if (functionSearchSymbol(table->currentFunc, gToken->data) == NULL)
+      return ERROR_SYNTAX;
+  }
+  else if (a == LEX_NUMBER || a == LEX_STRING)
+    if (functionInsertConstant(table->currentFunc, gToken.data, a) == NULL)
+        return ERROR_COMPILATOR;
+  else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL)
+    // pridani nekam jinam
 
   E_CODE err = ERROR_OK;
-  tKeyword a = -1, b = -1;
+  tKeyword b = -1;
   char x; // vysledek hledani v tabulce
   tStack *S = stackCreate();
   err = stackInit(S);
 
-  err = stackPush(S, &kw);
+  err = stackPush(S, &a);
 
   while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
     b = stackTop(S);
     a = getToken();
-    if (a == LEX_ID)
+    if (a == LEX_ID) {
       if (functionSearchSymbol(table->currentFunc, gToken->data) == NULL)
         return ERROR_SYNTAX;
-    else if (a == LEX_NUMBER || a == LEX_STRING)
-      // pridani do stromu/listu konstant
+    }
+    else if (a == LEX_NUMBER || a == LEX_STRING) {
+      if (functionInsertConstant(table->currentFunc, gToken.data, a) == NULL)
+        return ERROR_COMPILATOR;
     else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL)
       // pridani nekam jinam
+
     x = precedentTable[b][a];
 
     if (x == 0) return ERROR_SYNTAX;

@@ -441,7 +441,8 @@ E_CODE prsCallParams(tSymbolTable *table)
       return ERROR_SEMANTIC_VARIABLE;
   }
   else if (kw == LEX_NUMBER || kw == LEX_STRING)
-    functionInsertConstant(table->currentFunc,gToken.data,kw);//nekam si to kdyztak uloz, tady nevim presne, co a jak
+    if (functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
+      return ERROR_COMPILATOR; // timto error codem si nejsu jistej
   else if (kw == LEX_R_BRACKET)
     return ERROR_OK;
   else return ERROR_SYNTAX;
@@ -467,7 +468,8 @@ E_CODE prsCallParamsN(tSymbolTable *table)
       return ERROR_SEMANTIC_VARIABLE;
   }
   else if (kw == LEX_NUMBER || kw == LEX_STRING)
-    functionInsertConstant(table->currentFunc,gToken.data,kw);//nekam si to kdyztak uloz, tady nevim presne, co a jak
+    if (functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
+      return ERROR_COMPILATOR; // timto error codem si nejsu jistej
   else return ERROR_SYNTAX;
 
   return ERROR_OK;
