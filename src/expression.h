@@ -20,6 +20,12 @@
 #include "symbol_table.h"
 #define MAXTABLE 16
 
+typedef struct texprdata
+{
+  tKeyword kw;
+  tSymbol *token;
+} tExprData;
+
 const char precedentTable [MAXTABLE][MAXTABLE] =
 { // tabulka nemusi byt dobre, chce se to nekomu kontrolovat?
   // tokeny                         id  (   )   +   -   *   /   **  ==  !=  <   <=  >   >=

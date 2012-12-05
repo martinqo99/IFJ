@@ -25,15 +25,21 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a)
   if (a == KW_IF || a == KW_WHILE || a == KW_RETURN)
     a = getToken(); // aby jsme se dostali do stejneho stavu, jako kdyz se sem dostaneme z ostatnich stavu
 
+  tExprData *help;
+  if ((help = mmuMalloc(sizeof(tExprData))) == NULL) return ERROR_COMPILATOR;
+
+  help->kw = a;
+  help->token = NULL;
   if (a == LEX_ID) {
-    if (functionSearchSymbol(table->currentFunc, gToken->data) == NULL)
+    if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
       return ERROR_SYNTAX;
   }
-  else if (a == LEX_NUMBER || a == LEX_STRING)
-    if (functionInsertConstant(table->currentFunc, gToken.data, a) == NULL)
+  else if (a == LEX_NUMBER || a == LEX_STRING) {
+    if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
         return ERROR_COMPILATOR;
-  else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL)
-    // pridani nekam jinam
+  }
+  //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
+
 
   E_CODE err = ERROR_OK;
   tKeyword b = -1;
@@ -41,35 +47,42 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a)
   tStack *S = stackCreate();
   err = stackInit(S);
 
-  err = stackPush(S, &a);
+  err = stackPush(S, help);
 
   while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
     b = stackTop(S);
     a = getToken();
+
+    help->kw = a;
+    help->token = NULL;
     if (a == LEX_ID) {
-      if (functionSearchSymbol(table->currentFunc, gToken->data) == NULL)
+      if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
         return ERROR_SYNTAX;
     }
     else if (a == LEX_NUMBER || a == LEX_STRING) {
-      if (functionInsertConstant(table->currentFunc, gToken.data, a) == NULL)
+      if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
         return ERROR_COMPILATOR;
-    else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL)
-      // pridani nekam jinam
+    }
+    //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
-    x = precedentTable[b][a];
+    if (a == LEX_NUMBER || a == LEX_STRING)
+      x = precedentTable[b][LEX_ID];
+    else
+      x = precedentTable[b][a];
 
     if (x == 0) return ERROR_SYNTAX;
     else if (x == '=' || x == '<') {
-      err = stackPush(S, &a);
+      err = stackPush(S, help);
     }
     else if (x == '>') {
       // tady to bude chtit vymyslet co presne je treba udelat
+      // tady to bude kurevsky cerna magie
+      err = stackPush(S, help);
     }
     else if (x == '$') {
       // tady je konec vyrazu, ale vlastne k tomu nemuze dojit...fuck
     }
     else return ERROR_SYNTAX;
-
   } // konec while cyklu /////////////////////////////////
 
   err = stackDispose(S);
