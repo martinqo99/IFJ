@@ -296,7 +296,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                     if(symbolTableSearchFunction(table,gToken.data)==NULL)
                         return ERROR_SEMANTIC_FUNCTION;//nedefinovana fce
                     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-                    if ((err = prsParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
+                    if ((err = prsDefParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
                     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
                 }
                 break;
@@ -315,7 +315,6 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                     err=prsExpression();
                 }
             }
-           
         }
         break;
         case LEX_STRING:{
@@ -332,12 +331,10 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                 //naparsuji parametry
                 err=prsStringselect(table,dest);
                 if (err!=ERROR_OK) return err;
-                if (getToken() != LEX_EOL) return ERROR_SYNTAX; 
-                return err;             
+                if (getToken() != LEX_EOL) return ERROR_SYNTAX;
+                return err;
             }
-
         }
-
         default:{
             err=prsExpression(table, kw);
         }
@@ -365,7 +362,7 @@ E_CODE prsStringselect(tSymbolTable *table, tSymbol *dest)
         }
         else return ERROR_SYNTAX;
 
-        if (kw=getToken() != LEX_COLON)return ERROR_SYNTAX; 
+        if (kw=getToken() != LEX_COLON)return ERROR_SYNTAX;
     }
 
     //parsujeme druhy param
@@ -379,7 +376,7 @@ E_CODE prsStringselect(tSymbolTable *table, tSymbol *dest)
         }
         else return ERROR_SYNTAX;
 
-        if (kw=getToken() != LEX_R_SBRACKET)return ERROR_SYNTAX; 
+        if (kw=getToken() != LEX_R_SBRACKET)return ERROR_SYNTAX;
     }
 
     tInstr *i=genInstr(I_STRING,dest,param1,param2);
@@ -419,21 +416,61 @@ E_CODE prsDefParamsN (tSymbolTable *table)
   // <params_n> - eps
 
   tKeyword kw;
-    if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
-    if (kw != LEX_COMMA) return ERROR_SYNTAX;
-    if (getToken() == LEX_ID){
-        if(functionInsertSymbol(table->currentFunc,gToken.data)==ERROR_IN_EXIST)
-            return ERROR_SEMANTIC;//2 parametry se jmenuji stejne
-        if (symbolTableSearchFunction(table,gToken.data)!=NULL)
-            return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
-        return prsParamsN(table);
-    }
-    else return ERROR_SYNTAX;
+  if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
+  if (kw != LEX_COMMA) return ERROR_SYNTAX;
+  if (getToken() == LEX_ID) {
+    if(functionInsertSymbol(table->currentFunc,gToken.data)==ERROR_IN_EXIST)
+      return ERROR_SEMANTIC;//2 parametry se jmenuji stejne
+    if (symbolTableSearchFunction(table,gToken.data)!=NULL)
+      return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
+    return prsParamsN(table);
+  }
+  else return ERROR_SYNTAX;
 }
 
+/**
+ * @info      Parsovani parametru pri volani fce
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
 E_CODE prsCallParams(tSymbolTable *table)
-{//TO BE IMPLEMENTED
+{
+  tKeyword kw;
+  if ((kw = getToken()) == LEX_ID) {
+    if (functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
+      return ERROR_SEMANTIC_VARIABLE;
+  }
+  else if (kw == LEX_NUMBER || kw == LEX_STRING)
+    functionInsertConstant(table->currentFunc,gToken.data,kw);//nekam si to kdyztak uloz, tady nevim presne, co a jak
+  else if (kw == LEX_R_BRACKET)
+    return ERROR_OK;
+  else return ERROR_SYNTAX;
 
+  return ERROR_OK;
+}
+
+/**
+ * @info      Parsovani dalsich parametru pri volani fce
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE prsCallParamsN(tSymbolTable *table)
+{
+  tKeyword kw;
+  if ((kw = getToken()) == LEX_R_BRACKET)
+    return ERROR_OK;
+  else if (kw != LEX_COMMA)
+    return ERROR_SYNTAX;
+
+  if ((kw = getToken()) == LEX_ID) {
+    if (functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
+      return ERROR_SEMANTIC_VARIABLE;
+  }
+  else if (kw == LEX_NUMBER || kw == LEX_STRING)
+    functionInsertConstant(table->currentFunc,gToken.data,kw);//nekam si to kdyztak uloz, tady nevim presne, co a jak
+  else return ERROR_SYNTAX;
+
+  return ERROR_OK;
 }
 
 /**
