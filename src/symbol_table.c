@@ -67,18 +67,18 @@ tSymbol* getLastSymbol(tFunction* F){
     return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
 }
 
-E_CODE functionInsertConstant(tFunction *function,tString data,tDataType type){
+E_CODE functionInsertConstant(tFunction *function,tString data,tKeyword type){
     tSymbol *symb=mmuMalloc(sizeof(tSymbol));
     symb->data=mmuMalloc(sizeof(tSymbolData));
     switch(type){
         case LEX_STRING:{
             symb->data->type = DT_STRING;
-            strCopyString(&data,&(sym->data->sData));
+            strCopyString(&data,&(symb->data->data.sData));
         }
         break;
         case LEX_NUMBER:{
             symb->data->type = DT_NUMBER;
-            symb->data->dData=atof(data.data);
+            symb->data->data.dData=atof(data.data);
         }
         break;
         case KW_NIL:{
@@ -87,25 +87,25 @@ E_CODE functionInsertConstant(tFunction *function,tString data,tDataType type){
         break;
         case KW_TRUE:{
             symb->data->type = DT_BOOL;
-            symb->data->bData = TRUE;
+            symb->data->data.bData = TRUE;
         }
         break;
         case KW_FALSE:{
             symb->data->type = DT_BOOL;
-            symb->data->bData = FALSE;
+            symb->data->data.bData = FALSE;
         }
         break;
-        case default return ERROR_COMPILATOR;
+        default: return ERROR_COMPILATOR;
     }
     symb->key.data=NULL;
-    return lisInsertLast(&(function->constants),symb);
+    return listInsertLast(&(function->constants),symb);
 }
 
-tInstr *genInstr(tSymbolTable* table,tItype type, void *dest, void *src1, void *src2) {
+tInstr* genInstr(tItype type, void *dest, void *src1, void *src2) {
    tInstr *inst = mmuMalloc(sizeof(tInstr));
    inst->type = type;
    inst->dest = dest;
    inst->src1 = src1;
    inst->src2 = src2;
-   return i;
+   return inst;
 }

@@ -23,6 +23,10 @@
 #include "binary_tree.h"
 #include "list.h"
 #include "strings.h"
+#include "scanner.h"
+
+#define TRUE true
+#define FALSE false
 
 typedef enum tdatatype{
   DT_NIL,
@@ -57,22 +61,9 @@ typedef struct tfunction{
 
     bool declared;
     int called;
-
+    tList constants;
     tList instructions;
 } tFunction;
-
-typedef struct {
-   tItype type;//bude ENUM
-   void *dest;
-   void *src1;
-   void *src2;
-} tInstr;
-
-typedef struct tsymboltable{
-    tBTree functions;
-    tFunction mainFunc;
-    tFunction *currentFunc;
-} tSymbolTable;
 
 typedef enum {
     I_RETURN,
@@ -116,6 +107,21 @@ typedef enum {
 
 }tItype;
 
+typedef struct {
+   tItype type;//bude ENUM
+   void *dest;
+   void *src1;
+   void *src2;
+} tInstr;
+
+typedef struct tsymboltable{
+    tBTree functions;
+    tFunction mainFunc;
+    tFunction *currentFunc;
+} tSymbolTable;
+
+
+
 /*
  * generuje instrukci
  * @param   tabulka symbolu
@@ -125,7 +131,8 @@ typedef enum {
  * @param   src2
  * @return  ukazatel na instrukci
  */
-E_CODE *genInstr(tSymbolTable*,tItype, void*, void*, void*);
+tInstr* genInstr(tItype, void*, void*, void*);
+E_CODE functionInsertConstant(tFunction*,tString,tKeyword);
 void symbolTableInit(tSymbolTable*);
 E_CODE symbolTableInsertFunction(tSymbolTable*, tString);
 tFunction* symbolTableSearchFunction(tSymbolTable*, tString);
