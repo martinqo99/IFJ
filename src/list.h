@@ -12,10 +12,14 @@ typedef struct tListItem{
 typedef struct{
     tListItem *first;
     tListItem *last;
+    tListItem *act;
 }tList;
 
 void initList(tList*);
 E_CODE listInsertFirst(tList*, void*);
 E_CODE listInsertLast(tList*, void*);
 E_CODE listDeleteFirst(tList*);
+void Succ (tList*);
+void PostInsert (tList*, void*);
+void Last (tList*);
 #endif

@@ -1,7 +1,7 @@
 #include"list.h"
 
 void initList(tList *L){
-    L->first=L->last=NULL;
+    L->first=L->last=L->act=NULL;
 }
 
 E_CODE listInsertLast(tList *L,void *data){
@@ -32,4 +32,29 @@ E_CODE listDeleteFirst(tList *L){
     L->first=L->first->next;
     mmuFree(tmp);
     return ERROR_OK;
+}
+void Last (tList *L)		{
+	L->act=L->last;
+
+}
+void PostInsert (tList *L, void *data)	{
+
+        tListItem *new; 
+	if (L->act!=NULL)
+          {
+            new=mmuMalloc(sizeof(tListItem));
+            new->data=data;
+            new->next=L->act->next; //ukazatel nového prvku naplní ukazatelem z aktuálního 
+            L->act->next=new; //vloží nový prvek za aktuální
+          }
+	
+}
+void Succ (tList *L)	{
+/*
+** Posune aktivitu na následující prvek seznamu L.
+** Všimněte si, že touto operací se může aktivní seznam stát neaktivním.
+** Pokud seznam L není aktivní, nedělá nic.
+**/
+	if (L->act!=NULL) //kontrola aktivity
+            L->act=L->act->next; //posun aktivního prvku
 }
