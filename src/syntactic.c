@@ -153,14 +153,13 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
                     return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
             }
             if (getToken() != LEX_ASSIGN) return ERROR_SYNTAX;
-            else if ((err = prsAssign(table)) != ERROR_OK) return err;
+            else if ((err = prsAssign(table,getLastSymbol(table->currentFunction))) != ERROR_OK) return err;
             break;
         }
         case KW_IF:{
         //checkni if/else vetev: if expression EOL <stat_list> else EOL <stat_list> end EOL
             if ((err = prsExpression(table, kw)) != ERROR_OK) return err;
-            if ((err = prsStatlist(table)) != ERROR_OK) return err;
-            if (getToken() != KW_ELSE) return ERROR_SYNTAX;
+            if ((err = prsStatlist(table)) != ERROR_ELSE) return err;
             if ((err=prsStatlist(table)) != ERROR_OK) return err; //end se nacte v prsStatlist
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             break;
@@ -216,6 +215,7 @@ E_CODE prsStatlist (tSymbolTable *table)
     tKeyword kw;
     while ((kw = getToken()) == LEX_EOL); //procykli prazdne radky
     if (kw == KW_END) return ERROR_OK;
+    if (kw == KW_ELSE) return ERROR_ELSE;
     if ((err = prsCommand(table,kw)) == ERROR_OK) return prsStatlist(table); //@kw - prsCommand potrebuje znat posledni token
     else return err;
 }
