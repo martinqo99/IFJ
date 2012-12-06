@@ -195,6 +195,8 @@ E_CODE prsDefFunction (tSymbolTable *table)
     if (table->currentFunc==NULL)return ERROR_COMPILATOR;
     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
     if ((err = prsDefParams(table)) != ERROR_OK) return err;//prava zavorka se nacte uvnitr params
+    tInst *i=genInstr(I_SEMPTY,NULL,NULL,NULL);
+    listInsertLast(&(table->currentFunc->instructions),i);
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
     if ((err = prsStatlist(table)) != ERROR_OK) return err;//posledni nacteny kw je end
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
