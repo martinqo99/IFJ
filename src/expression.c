@@ -20,7 +20,7 @@
  * @param   tKeyword - uz nactene klicove slovo
  * @return  E_CODE - chybovy kod
  */
-E_CODE prsExpression (tSymbolTable *table, tKeyword a)
+E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
 {
   if (a == KW_IF || a == KW_WHILE || a == KW_RETURN)
     a = getToken(); // aby jsme se dostali do stejneho stavu, jako kdyz se sem dostaneme z ostatnich stavu
@@ -33,16 +33,18 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a)
   if (a == LEX_ID) {
     if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
       return ERROR_SYNTAX;
+    help->kw = EXPR;
   }
   else if (a == LEX_NUMBER || a == LEX_STRING) {
     if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
-        return ERROR_COMPILATOR;
+      return ERROR_COMPILATOR;
+    help->kw = EXPR;
   }
   //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
 
   E_CODE err = ERROR_OK;
-  tKeyword b = -1;
+  tKeyword b = EXPR;
   char x; // vysledek hledani v tabulce
   tStack *S = stackCreate();
   err = stackInit(S);
@@ -58,10 +60,12 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a)
     if (a == LEX_ID) {
       if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
         return ERROR_SYNTAX;
+      help->kw = EXPR;
     }
     else if (a == LEX_NUMBER || a == LEX_STRING) {
       if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
         return ERROR_COMPILATOR;
+      help->kw = EXPR;
     }
     //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
@@ -75,16 +79,19 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a)
       err = stackPush(S, help);
     }
     else if (x == '>') {
-      // tady to bude chtit vymyslet co presne je treba udelat
       // tady to bude kurevsky cerna magie
       err = stackPush(S, help);
     }
     else if (x == '$') {
-      // tady je konec vyrazu, ale vlastne k tomu nemuze dojit...fuck
+      help = stackPop(S);
+      if (help->kw == EXPR)
+        result = help->token;
+      else return ERROR_SYNTAX;
     }
     else return ERROR_SYNTAX;
   } // konec while cyklu /////////////////////////////////
 
+  mmuFree(help);
   err = stackDispose(S);
   err = stackDestroy(S);
 

@@ -19,6 +19,7 @@
 #include "stack.h"
 #include "symbol_table.h"
 #define MAXTABLE 16
+#define EXPR -1
 
 typedef struct texprdata
 {

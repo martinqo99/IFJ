@@ -240,7 +240,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
   // <assign> - string[ <num>:<num> ]
     E_CODE err = ERROR_OK;
     tKeyword kw;
-    tSymbol *tmpSymb;
+    tSymbol *tmpSymb, *exprResult;
     tFunction *tmpFunc;
     tInstr *i;
     switch (kw = getToken()){
@@ -325,7 +325,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                 }
                 break;
                 default:{//expression
-                    err=prsExpression(table, kw);
+                    err=prsExpression(table, kw, exprResult);
                 }
             }
         }
@@ -349,7 +349,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
             }
         }
         default:{
-            err=prsExpression(table, kw);
+            err=prsExpression(table, kw, exprResult);
         }
     }
     return err;
