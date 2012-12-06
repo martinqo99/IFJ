@@ -16,8 +16,25 @@
 
 /**
  * @info      Vyhodnoceni vyrazu
+ * @param   tStack* - ukazatel na stack s hodnotama
+ * @param   tInstr - instrukce
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE findRule (tStack *S, tInstr instr)
+{
+  E_CODE err = ERROR_OK;
+  tExprData *help = NULL;
+
+  if (stackEmpty(S) == true)
+    return ERROR_SYNTAX;
+
+
+}
+/**
+ * @info      Vyhodnoceni vyrazu
  * @param   tSymbolTable* - ukazatel na tabulku znaku
  * @param   tKeyword - uz nactene klicove slovo
+ * @param   tSmybol* - semka ulozime vysledek
  * @return  E_CODE - chybovy kod
  */
 E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
@@ -45,6 +62,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
 
   E_CODE err = ERROR_OK;
   tKeyword b = EXPR;
+  tInstr instr = {EXPR, NULL, NULL, NULL};
   char x; // vysledek hledani v tabulce
   tStack *S = stackCreate();
   err = stackInit(S);
