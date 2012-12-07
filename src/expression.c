@@ -157,7 +157,8 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
   while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
     tStackPtr save = S->top;
     while (save != NULL && ((tExprData*)(S->top->data))->kw == EXPR) save = S->top->ptr;
-    b = ((tExprData*)(save->data))->kw;
+    if (save == NULL) b = EXPR;
+    else b = ((tExprData*)(save->data))->kw;
     a = getToken();
 
     help->kw = a;
