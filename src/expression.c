@@ -135,12 +135,12 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
   if (a == LEX_ID) {
     if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
       return ERROR_SEMANTIC_VARIABLE;
-    help->kw = EXPR;
+    help->kw = LEX_EOL;
   }
   else if (a == LEX_NUMBER || a == LEX_STRING) {
     if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
       return ERROR_COMPILATOR;
-    help->kw = EXPR;
+    help->kw = LEX_EOL;
   }
   //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
@@ -163,12 +163,11 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
     if (a == LEX_ID) {
       if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
         return ERROR_SEMANTIC_VARIABLE;
-      help->kw = EXPR;
     }
     else if (a == LEX_NUMBER || a == LEX_STRING) {
       if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
         return ERROR_COMPILATOR;
-      help->kw = EXPR;
+      help->kw = LEX_ID;
     }
     //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
