@@ -33,12 +33,7 @@ E_CODE findInstr (tStack *S, tInstr *instr)
     if (stackEmpty(S) == true) return ERROR_SYNTAX;
     help = stackPop(S);
     if (help->kw < LEX_ADDITION || help->kw > LEX_UNEQUAL) return ERROR_SYNTAX;
-    if (help->kw == LEX_ADDITION && instr->src2->type == DT_STRING)
-      instr->type = I_CON; // konkatenace je taky +
-    else if (help->kw == LEX_MULTIPLICATION && instr->src2->type == DT_STRING)
-      instr->type = I_POW_STR; // mocnina retezce
-    else
-      instr->type = help->kw; // prideleni operandu
+    instr->type = help->kw; // prideleni operandu
     free(help);
 
     if (stackEmpty(S) == true) return ERROR_SYNTAX;
@@ -79,16 +74,27 @@ E_CODE checkInstr(tInstr *instr)
     if (instr->src1->type != DT_NUMBER) return ERROR_SEMANTIC;
     if (instr->src2->type != DT_NUMBER) return ERROR_SEMANTIC;
   }
-  else if (instr->type == I_CON) {
-    if (instr->src1->type != DT_NUMBER && instr->src1->type != DT_STRING) return ERROR_SEMANTIC;
-    if (instr->src2->type != DT_NUMBER && instr->src1->type != DT_STRING) return ERROR_SEMANTIC;
-  }
-  else if (instr->type == I_POW_STR) {
-    if (instr->src1->type != DT_STRING) return ERROR_SEMANTIC;
-    if (instr->src2->type != DT_NUMBER) return ERROR_SEMANTIC;
-  }
 
   return ERROR_OK;
+}
+
+/**
+ * @info      Vlozeni instrukce do tabulky
+ * @param   tSymbolTable* - ukazatel na tabulku znaku
+ * @param   tInstr* - instrukce
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE insertInstr(tSymbolTable *table, tInstr *instr)
+{
+  if (instr->type == EXPR) return ERROR_OK;
+
+  tSymbol *help = insertBlankConstant(table->currentFunc);
+  if (help == NULL) return ERROR_COMPILATOR;
+  instr->dest = help;
+
+  tInstr *instruction = genInstr(instr->type, instr->dest, instr->src1, instr->src2);
+  if (instruction == NULL) return ERROR_COMPILATOR;
+  return listInsertLast(&(table->currentFunc->instructions), instruction);
 }
 
 /**
@@ -110,7 +116,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
   help->token = NULL;
   if (a == LEX_ID) {
     if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
-      return ERROR_SYNTAX;
+      return ERROR_SEMANTIC_VARIABLE;
     help->kw = EXPR;
   }
   else if (a == LEX_NUMBER || a == LEX_STRING) {
@@ -138,7 +144,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
     help->token = NULL;
     if (a == LEX_ID) {
       if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
-        return ERROR_SYNTAX;
+        return ERROR_SEMANTIC_VARIABLE;
       help->kw = EXPR;
     }
     else if (a == LEX_NUMBER || a == LEX_STRING) {
@@ -161,7 +167,10 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
       // tady to bude kurevsky cerna magie
       if ((err = findInstr(S, &instr)) != ERROR_OK) return err;
       if ((err = checkInstr(&instr)) != ERROR_OK) return err;
+      if ((err = insertInstr(table, &instr)) != ERROR_OK) return err;
 
+      help->kw = EXPR;
+      help->token = instr.dest;
       err = stackPush(S, help);
     }
     else if (x == '$') {
