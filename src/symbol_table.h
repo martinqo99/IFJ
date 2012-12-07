@@ -82,6 +82,7 @@ typedef enum {
     I_DIV = LEX_DIVISION,
     I_POW = LEX_POWER,
     I_CON, // toto myslim nemame, tak to smaz pokud to nepouzivas
+    I_POW_STR,
 //logika
     I_EQUAL = LEX_EQUAL,		// ==
     I_NEQUAL = LEX_UNEQUAL,	// !=
