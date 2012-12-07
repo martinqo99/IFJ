@@ -174,6 +174,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
       err = stackPush(S, help);
     }
     else if (x == '$') {
+      if (stackEmpty(S) == true) return ERROR_SYNTAX;
       help = stackPop(S);
       if (help->kw == EXPR)
         result = help->token;
