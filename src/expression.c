@@ -15,44 +15,46 @@
 #include "expression.h"
 
 /**
- * @info      Vyhodnoceni vyrazu
+ * @info      Nalezeni pravidla a ulozeni do instrukce
  * @param   tStack* - ukazatel na stack s hodnotama
- * @param   tInstr - instrukce
+ * @param   tInstr* - instrukce
  * @return  E_CODE - chybovy kod
  */
-E_CODE findRule (tStack *S, tInstr *instr)
+E_CODE findInstr (tStack *S, tInstr *instr)
 {
   tExprData *help = NULL;
 
   if (stackEmpty(S) == true) return ERROR_SYNTAX;
   help = stackPop(S);
-  if (help->kw == EXPR) {
-    instr->src2 = help->token;
+  if (help->kw == EXPR) { // E -> E operator E
+    instr->src2 = help->token; // druhy E
     mmuFree(help);
 
     if (stackEmpty(S) == true) return ERROR_SYNTAX;
     help = stackPop(S);
     if (help->kw < LEX_ADDITION || help->kw > LEX_UNEQUAL) return ERROR_SYNTAX;
     if (help->kw == LEX_ADDITION && instr->src2->type == DT_STRING)
-      instr->type = I_CON;
+      instr->type = I_CON; // konkatenace je taky +
+    else if (help->kw == LEX_MULTIPLICATION && instr->src2->type == DT_STRING)
+      instr->type = I_POW_STR; // mocnina retezce
     else
-      instr->type = help->kw;
+      instr->type = help->kw; // prideleni operandu
     free(help);
 
     if (stackEmpty(S) == true) return ERROR_SYNTAX;
     help = stackPop(S);
     if (help->kw != EXPR) return ERROR_SYNTAX;
-    instr->src1 = help->token;
+    instr->src1 = help->token; // prvni E
     mmuFree(help);
   }
-  else if (help->kw == LEX_R_BRACKET) {
+  else if (help->kw == LEX_R_BRACKET) { // E -> (E)
     instr->type = EXPR;
     mmuFree(help);
 
     if (stackEmpty(S) == true) return ERROR_SYNTAX;
     help = stackPop(S);
     if (help->kw != EXPR) return ERROR_SYNTAX;
-    instr->dest = help->token;
+    instr->dest = help->token; // (E)
     mmuFree(help);
 
     if (stackEmpty(S) == true) return ERROR_SYNTAX;
@@ -64,6 +66,31 @@ E_CODE findRule (tStack *S, tInstr *instr)
 
   return ERROR_OK;
 }
+
+/**
+ * @info      Semanticka kontrola vyrazu
+ * @param   tInstr* - instrukce
+ * @return  E_CODE - chybovy kod
+ */
+E_CODE checkInstr(tInstr *instr)
+{
+  if (instr->type == EXPR) return ERROR_OK;
+  else if (instr->type >= I_ADD && instr->type <= I_POW) {
+    if (instr->src1->type != DT_NUMBER) return ERROR_SEMANTIC;
+    if (instr->src2->type != DT_NUMBER) return ERROR_SEMANTIC;
+  }
+  else if (instr->type == I_CON) {
+    if (instr->src1->type != DT_NUMBER && instr->src1->type != DT_STRING) return ERROR_SEMANTIC;
+    if (instr->src2->type != DT_NUMBER && instr->src1->type != DT_STRING) return ERROR_SEMANTIC;
+  }
+  else if (instr->type == I_POW_STR) {
+    if (instr->src1->type != DT_STRING) return ERROR_SEMANTIC;
+    if (instr->src2->type != DT_NUMBER) return ERROR_SEMANTIC;
+  }
+
+  return ERROR_OK;
+}
+
 /**
  * @info      Vyhodnoceni vyrazu
  * @param   tSymbolTable* - ukazatel na tabulku znaku
@@ -132,8 +159,8 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
     }
     else if (x == '>') {
       // tady to bude kurevsky cerna magie
-      err = findRule(S, &instr);
-      if (err != ERROR_OK) return err;
+      if ((err = findInstr(S, &instr)) != ERROR_OK) return err;
+      if ((err = checkInstr(&instr)) != ERROR_OK) return err;
 
       err = stackPush(S, help);
     }
