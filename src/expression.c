@@ -20,15 +20,49 @@
  * @param   tInstr - instrukce
  * @return  E_CODE - chybovy kod
  */
-E_CODE findRule (tStack *S, tInstr instr)
+E_CODE findRule (tStack *S, tInstr *instr)
 {
-  E_CODE err = ERROR_OK;
   tExprData *help = NULL;
 
-  if (stackEmpty(S) == true)
-    return ERROR_SYNTAX;
+  if (stackEmpty(S) == true) return ERROR_SYNTAX;
+  help = stackPop(S);
+  if (help->kw == EXPR) {
+    instr->src2 = help->token;
+    mmuFree(help);
 
+    if (stackEmpty(S) == true) return ERROR_SYNTAX;
+    help = stackPop(S);
+    if (help->kw < LEX_ADDITION || help->kw > LEX_UNEQUAL) return ERROR_SYNTAX;
+    if (help->kw == LEX_ADDITION && instr->src2->type == DT_STRING)
+      instr->type = I_CON;
+    else
+      instr->type = help->kw;
+    free(help);
 
+    if (stackEmpty(S) == true) return ERROR_SYNTAX;
+    help = stackPop(S);
+    if (help->kw != EXPR) return ERROR_SYNTAX;
+    instr->src1 = help->token;
+    mmuFree(help);
+  }
+  else if (help->kw == LEX_R_BRACKET) {
+    instr->type = EXPR;
+    mmuFree(help);
+
+    if (stackEmpty(S) == true) return ERROR_SYNTAX;
+    help = stackPop(S);
+    if (help->kw != EXPR) return ERROR_SYNTAX;
+    instr->dest = help->token;
+    mmuFree(help);
+
+    if (stackEmpty(S) == true) return ERROR_SYNTAX;
+    help = stackPop(S);
+    if (help->kw != LEX_L_BRACKET) return ERROR_SYNTAX;
+    mmuFree(help);
+  }
+  else return ERROR_SYNTAX;
+
+  return ERROR_OK;
 }
 /**
  * @info      Vyhodnoceni vyrazu
@@ -98,6 +132,9 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
     }
     else if (x == '>') {
       // tady to bude kurevsky cerna magie
+      err = findRule(S, &instr);
+      if (err != ERROR_OK) return err;
+
       err = stackPush(S, help);
     }
     else if (x == '$') {
