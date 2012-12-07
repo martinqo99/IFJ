@@ -63,6 +63,14 @@ E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
     return err;
 }
 
+E_CODE insertBlankConstant(tFunction* function){
+    tSymbol *symb=mmuMalloc(sizeof(tSymbol));
+    symb->data=NULL;
+    symb->key.data=NULL;
+    listInsertLast(&(function->constants),symb);
+    return symb;
+}
+
 tSymbol* getLastSymbol(tFunction* F){
     return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
 }
