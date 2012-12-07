@@ -329,7 +329,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         case KW_TYPEOF:{
             //typeof ma jine parametry pac bere i funkce
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsTypeofParams(table)!=ERROR_OK) return err;
+            if(err=prsCallParams(table)!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_TYPEOF,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -505,7 +505,9 @@ E_CODE prsCallParams(tSymbolTable *table)
   Last(&(table->currentFunc->instructions));//aktivita na posledni instrukci
   if ((kw == LEX_ID) {
     if (symb=functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
-      return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
+      if (symbolTableSearchFunction(table,gToken.data)==NULL)
+        return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
+      else symb=functionInsertConstant(table->currentFunc, gToken.data, kw);//byla predana funkce
   }
   else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL)
     if (symb=functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
@@ -543,50 +545,4 @@ E_CODE prsCallParamsN(tSymbolTable *table)
   return prsCallParamsN(table);
 }
 
-prsTypeofParams(tSymbolTable *table)
-{
-  tKeyword kw=getToken();
-  tSymbol *symb;
-  if (kw==LEX_R_BRACKET) return ERROR_OK; //no params
-  Last(&(table->currentFunc->instructions));//aktivita na posledni instrukci
-  if ((kw == LEX_ID) {
-    if (symb=functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
-      if (symbolTableSearchFunction(table,gToken.data)==NULL)
-        return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
-      else symb=functionInsertConstant(table->currentFunc, gToken.data, kw);//byla predana funkce
-  }
-  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL)
-    if (symb=functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
-      return ERROR_COMPILATOR; // chyba mallocu - nenastane
-  else return ERROR_SYNTAX;
-  tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
-  listPostInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
-  return prsCallParamsN(table);
-}
 
-/**
- * @info      Analyza termu - VELMI PRAVDEPODOBNE NEBUDE VUBEC POTREBA!
- * @param   tSymbolTable* - ukazatel na tabulku znaku
- * @return  E_CODE - chybovy kod
- */
-E_CODE prsTerm (tSymbolTable *table)
-{
-  // <term> - id
-  // <term> - <value>
-  // <value> - num
-  // <value> - string
-  // <value> - logic
-  tKeyword kw;
-  if ((kw = getToken()) == LEX_ID)
-    // neco
-    return ERROR_OK;
-  else if (kw == LEX_NUMBER)
-    return psrNum(table, kw);
-  else if (kw = LEX_STRING)
-    // tady se bude neco dit :D
-    return ERROR_OK;
-  else if (kw == KW_FALSE || kw == KW_TRUE)
-    // doplnit
-    return ERROR_OK;
-  else return ERROR_SYNTAX;
-}
