@@ -104,7 +104,7 @@ E_CODE insertInstr(tSymbolTable *table, tInstr *instr)
  * @param   tSmybol* - semka ulozime vysledek
  * @return  E_CODE - chybovy kod
  */
-E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
+E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
 {
   if (a == KW_IF || a == KW_WHILE || a == KW_RETURN)
     a = getToken(); // aby jsme se dostali do stejneho stavu, jako kdyz se sem dostaneme z ostatnich stavu
@@ -177,7 +177,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol *result)
       if (stackEmpty(S) == true) return ERROR_SYNTAX;
       help = stackPop(S);
       if (help->kw == EXPR)
-        result = help->token;
+        *result = help->token;
       else return ERROR_SYNTAX;
     }
     else return ERROR_SYNTAX;

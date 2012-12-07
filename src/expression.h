@@ -47,6 +47,6 @@ const char precedentTable [MAXTABLE][MAXTABLE] =
   [LEX_EOL]             ={[LEX_ID]='<','<', 0 ,'<','<','<','<','<','<','<','<','<','<','<',[LEX_EOL]='$'},
 }
 
-E_CODE prsExpression (tSymbolTable *table, tKeyword kw);
+E_CODE prsExpression (tSymbolTable *table, tKeyword kw, tSymbol **result);
 
 #endif
