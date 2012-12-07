@@ -114,7 +114,7 @@ tLibraryData typeOf (tLibraryData id)
     tmp.data.dData = 1.0;
   else if (id.type == DT_NUMBER)
     tmp.data.dData = 3.0;
-  else if (id.type == DT_UNKNOWN)
+  else if (id.type == DT_FUNCTION)
     tmp.data.dData = 6.0;
   else
     tmp.data.dData = 8.0;
