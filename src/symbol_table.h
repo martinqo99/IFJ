@@ -144,5 +144,6 @@ tSymbol* functionSearchSymbol(tFunction*, tString);
 E_CODE functionInsertSymbol(tFunction*,tString);
 tSymbol* getLastSymbol(tFunction*);
 tSymbol* getLastConstant(tFunction*);
+tSymbol* insertBlankConstant(tFunction*);
 
 #endif
