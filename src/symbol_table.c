@@ -63,7 +63,7 @@ E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
     return err;
 }
 
-E_CODE insertBlankConstant(tFunction* function){
+tSymbol* insertBlankConstant(tFunction* function){
     tSymbol *symb=mmuMalloc(sizeof(tSymbol));
     symb->data=NULL;
     symb->key.data=NULL;
