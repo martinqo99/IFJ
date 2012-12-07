@@ -39,15 +39,26 @@ void Last (tList *L)		{
 }
 void PostInsert (tList *L, void *data)	{
 
-        tListItem *new; 
-	if (L->act!=NULL)
+    tListItem *new; 
+    new=mmuMalloc(sizeof(tListItem));
+    new->data=data;
+	if (L->act!=NULL)//seznam je aktivni
           {
-            new=mmuMalloc(sizeof(tListItem));
-            new->data=data;
             new->next=L->act->next; //ukazatel nového prvku naplní ukazatelem z aktuálního 
             L->act->next=new; //vloží nový prvek za aktuální
+            if(new->next==NULL) L->last=new;
           }
-	
+    else if(L->first==NULL)//seznam je prazdny  - vlozime 1.prvek
+         {
+            new->next=NULL;
+            L->first=new; 
+         }
+    else//seznam je neaktivni, vlozime 1.prvek
+        {
+           new->next=L->first;
+           L->first=new;
+        }
+
 }
 void Succ (tList *L)	{
 /*

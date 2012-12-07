@@ -33,6 +33,7 @@ typedef enum tdatatype{
   DT_BOOL,
   DT_NUMBER,
   DT_STRING,
+  DT_FUNCTION,//pro TypeOf
   DT_UNKNOWN
 } tDataType;
 
