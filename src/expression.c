@@ -155,7 +155,9 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
   err = stackPush(S, help);
 
   while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
-    b = ((tExprData*)stackTop(S))->kw;
+    tStackPtr save = S->top;
+    while (save != NULL && S->top->data->kw == EXPR) save = S->top->ptr;
+    b = save->data->kw;
     a = getToken();
 
     help->kw = a;
@@ -163,24 +165,25 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
     if (a == LEX_ID) {
       if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
         return ERROR_SEMANTIC_VARIABLE;
+      help->kw = EXPR;
     }
     else if (a == LEX_NUMBER || a == LEX_STRING) {
       if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
         return ERROR_COMPILATOR;
-      help->kw = LEX_ID;
+      help->kw = EXPR;
     }
     //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
-    if (a == LEX_NUMBER || a == LEX_STRING)
+    if (a == LEX_NUMBER || a == LEX_STRING) // nalezeni x v tabulce
       x = PrecedentTable[b][LEX_ID];
     else
       x = PrecedentTable[b][a];
 
-    if (x == 0) return ERROR_SYNTAX;
-    else if (x == '=' || x == '<') {
+    if (x == 0) return ERROR_SYNTAX; // chyba
+    else if (x == '=' || x == '<') { // nic se nedeje, jen push
       err = stackPush(S, help);
     }
-    else if (x == '>') {
+    else if (x == '>') { // jediny kde se neco deje
       // tady to bude kurevsky cerna magie
       if ((err = findInstr(S, &instr)) != ERROR_OK) return err;
       //if ((err = checkInstr(&instr)) != ERROR_OK) return err;
@@ -190,14 +193,14 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
       help->token = instr.dest;
       err = stackPush(S, help);
     }
-    else if (x == '$') {
+    else if (x == '$') { // konecna
       if (stackEmpty(S) == true) return ERROR_SYNTAX;
       help = stackPop(S);
       if (help->kw == EXPR)
         *result = help->token;
       else return ERROR_SYNTAX;
     }
-    else return ERROR_SYNTAX;
+    else return ERROR_SYNTAX; // cokoli jinyho je spatne, nemuze nastat
   } // konec while cyklu /////////////////////////////////
 
   mmuFree(help);
