@@ -76,19 +76,19 @@ typedef enum {
     I_MOV,
     I_SET,
 //aritmetika
-    I_ADD,
-    I_SUB,
-    I_MUL,
-    I_DIV,
-    I_POW,
-    I_CON,
+    I_ADD = LEX_ADDITION,
+    I_SUB = LEX_SUBSTRACTION,
+    I_MUL = LEX_MULTIPLICATION,
+    I_DIV = LEX_DIVISION,
+    I_POW = LEX_POWER,
+    I_CON, // toto myslim nemame, tak to smaz pokud to nepouzivas
 //logika
-    I_EQUAL,		// ==
-    I_NEQUAL,	// !=
-    I_ELESS,		// <=
-    I_LESS,		// <
-    I_MORE,		// >
-    I_EMORE,		// >=
+    I_EQUAL = LEX_EQUAL,		// ==
+    I_NEQUAL = LEX_UNEQUAL,	// !=
+    I_ELESS = LEX_LESSER_EQUAL,		// <=
+    I_LESS = LEX_LESSER,		// <
+    I_MORE = LEX_GREATER,		// >
+    I_EMORE = LEX_GREATER_EQUAL,		// >=
 //skoky - snad nebudou potreba vsechny
     I_LABEL,		// jenom labeldsfds
     I_TJUMP,		//true jump
