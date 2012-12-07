@@ -118,10 +118,10 @@ tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type)
             symb->data->data.bData = FALSE;
         }
         break;
-        case KW_ID:{ //funkce pro TypeOf
+        case LEX_ID:{ //funkce pro TypeOf
             symb->data->type = DT_FUNCTION;
         }
-        default: return ERROR_COMPILATOR;
+        default: return NULL;
     }
     symb->key.data=NULL;
     listInsertLast(&(function->constants),symb);

@@ -111,7 +111,7 @@ typedef enum {
 }tItype;
 
 typedef struct {
-   tItype type;//bude ENUM
+   int type;//bude ENUM
    void *dest;
    void *src1;
    void *src2;

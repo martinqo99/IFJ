@@ -13,7 +13,25 @@
  */
 
 #include "expression.h"
-
+const char PrecedentTable [MAXTABLE][MAXTABLE] =
+{ // tabulka nemusi byt dobre, chce se to nekomu kontrolovat?
+  // tokeny                         id  (   )   +   -   *   /   **  ==  !=  <   <=  >   >=
+  [LEX_ID]              ={[LEX_ID]= 0 , 0 ,'>','>','>','>','>','>','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_L_BRACKET]       ={[LEX_ID]='<','<','=','<','<','<','<','<','<','<','<','<','<','<',[LEX_EOL]= 0 },
+  [LEX_R_BRACKET]       ={[LEX_ID]= 0 , 0 ,'>','>','>','>','>','>','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_ADDITION]        ={[LEX_ID]='<','<','>','>','>','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_SUBSTRACTION]     ={[LEX_ID]='<','<','>','>','>','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_MULTIPLICATION]  ={[LEX_ID]='<','<','>','>','>','>','>','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_DIVISION]        ={[LEX_ID]='<','<','>','>','>','>','>','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_POWER]           ={[LEX_ID]='<','<','>','>','>','>','>','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_EQUAL]           ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_UNEQUAL]         ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_LESSER]          ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_LESSER_EQUAL]    ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_GREATER]         ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_GREATER_EQUAL]   ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_EOL]             ={[LEX_ID]='<','<', 0 ,'<','<','<','<','<','<','<','<','<','<','<',[LEX_EOL]='$'},
+};
 /**
  * @info      Nalezeni pravidla a ulozeni do instrukce
  * @param   tStack* - ukazatel na stack s hodnotama
@@ -71,8 +89,8 @@ E_CODE checkInstr(tInstr *instr)
 {
   if (instr->type == EXPR) return ERROR_OK;
   else if (instr->type >= I_ADD && instr->type <= I_POW) {
-    if (instr->src1->type != DT_NUMBER) return ERROR_SEMANTIC;
-    if (instr->src2->type != DT_NUMBER) return ERROR_SEMANTIC;
+    if (((tSymbol*)(instr->src1))->type != DT_NUMBER) return ERROR_SEMANTIC;
+    if (((tSymbol*)(instr->src2))->type != DT_NUMBER) return ERROR_SEMANTIC;
   }
 
   return ERROR_OK;
@@ -115,7 +133,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
   help->kw = a;
   help->token = NULL;
   if (a == LEX_ID) {
-    if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
+    if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
       return ERROR_SEMANTIC_VARIABLE;
     help->kw = EXPR;
   }
@@ -137,13 +155,13 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
   err = stackPush(S, help);
 
   while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
-    b = stackTop(S);
+    b = ((tExprData*)stackTop(S))->kw;
     a = getToken();
 
     help->kw = a;
     help->token = NULL;
     if (a == LEX_ID) {
-      if ((help->token = functionSearchSymbol(table->currentFunc, gToken->data)) == NULL)
+      if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
         return ERROR_SEMANTIC_VARIABLE;
       help->kw = EXPR;
     }
@@ -155,9 +173,9 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
     //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
 
     if (a == LEX_NUMBER || a == LEX_STRING)
-      x = precedentTable[b][LEX_ID];
+      x = PrecedentTable[b][LEX_ID];
     else
-      x = precedentTable[b][a];
+      x = PrecedentTable[b][a];
 
     if (x == 0) return ERROR_SYNTAX;
     else if (x == '=' || x == '<') {
@@ -166,7 +184,7 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
     else if (x == '>') {
       // tady to bude kurevsky cerna magie
       if ((err = findInstr(S, &instr)) != ERROR_OK) return err;
-      if ((err = checkInstr(&instr)) != ERROR_OK) return err;
+      //if ((err = checkInstr(&instr)) != ERROR_OK) return err;
       if ((err = insertInstr(table, &instr)) != ERROR_OK) return err;
 
       help->kw = EXPR;
@@ -184,8 +202,8 @@ E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
   } // konec while cyklu /////////////////////////////////
 
   mmuFree(help);
-  err = stackDispose(S);
-  err = stackDestroy(S);
+  stackDispose(S);
+  stackDestroy(S);
 
   return err;
 }
