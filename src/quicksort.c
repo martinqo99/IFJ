@@ -42,5 +42,4 @@ void quicksort(char *array[], int left_begin, int right_begin)
   } while (left_index < right_index);
   if (right_index > left_begin) quicksort(array, left_begin, right_index);
   if (left_index < right_begin) quicksort(array, left_index, right_begin);
-  printf("Text vevnitr: %s\n", *array);
 }
