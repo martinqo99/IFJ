@@ -95,7 +95,7 @@ typedef enum {
     I_JUMP,		//nepodmineny jump
     I_GOTO,
     I_FCEJUMP,
-
+    I_CALL,
 //vestavene fce
     I_INPUT,
     I_NUMERIC,

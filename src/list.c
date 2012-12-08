@@ -37,7 +37,7 @@ void Last (tList *L)		{
 	L->act=L->last;
 
 }
-void PostInsert (tList *L, void *data)	{
+void postInsert (tList *L, void *data)	{
 
     tListItem *new; 
     new=mmuMalloc(sizeof(tListItem));

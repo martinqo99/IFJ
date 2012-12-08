@@ -11,10 +11,13 @@
  *            Michaela Muzikarova <xmuzik04@stud.fit.vutbr.cz>,
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
+#ifndef SYNTACTIC_H_INCLUDED
+#define SYNTACTIC_H_INCLUDED
 
 #include "scanner.h"
 #include "expression.h"
 #include "library.h"
+#include "list.h"
 
 E_CODE parser (tSymbolTable*);
 E_CODE prsBody (tSymbolTable*);
@@ -22,11 +25,11 @@ E_CODE findDefFunctions(tSymbolTable*);
 E_CODE prsCommand (tSymbolTable*,tKeyword);
 E_CODE prsDefFunction (tSymbolTable*);
 E_CODE prsStatlist (tSymbolTable*);
-E_CODE prsAssign (tSymbolTable*);
+E_CODE prsAssign (tSymbolTable*,tSymbol*);
 E_CODE prsStringselect(tSymbolTable*, tSymbol*);
 E_CODE prsDefParams (tSymbolTable*);
 E_CODE prsDefParamsN (tSymbolTable*);
 E_CODE prsCallParams(tSymbolTable *table);
 E_CODE prsCallParamsN(tSymbolTable *table);
-//E_CODE prsNum (tSymbolTable*, tKeyword);
-E_CODE prsTerm (tSymbolTable*);
+#endif
+

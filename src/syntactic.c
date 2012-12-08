@@ -82,7 +82,7 @@ E_CODE parser (tSymbolTable *table)
 {
   //tady bude jeste prvni prubeh pro pridani ID funkci do tabulky
     E_CODE err;
-    if(err=findDefFunctions(table)!=ERROR_OK)return err;
+    if((err=findDefFunctions(table))!=ERROR_OK)return err;
     return prsBody(table);
 }
 
@@ -95,7 +95,7 @@ E_CODE findDefFunctions(tSymbolTable *table)
 {
     E_CODE err=ERROR_OK;
     tKeyword kw;
-    while(kw=getToken()!=LEX_EOF){
+    while((kw=getToken())!=LEX_EOF){
         if(kw==LEX_UNKNOWN || kw==LEX_ERROR || kw==LEX_RESERVED)
             return ERROR_LEX;
         if(kw==KW_FUNCTION){
@@ -128,7 +128,7 @@ E_CODE prsBody (tSymbolTable *table)
             if((err = prsDefFunction(table)) != ERROR_OK) return err;
             else return prsBody(table);
             }
-        case default:{
+       default:{
             if((err = prsCommand(table,kw)) != ERROR_OK) return err;
             else return prsBody(table);
             }
@@ -155,7 +155,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
                     return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
             }
             if (getToken() != LEX_ASSIGN) return ERROR_SYNTAX;
-            else if ((err = prsAssign(table,getLastSymbol(table->currentFunction))) != ERROR_OK) return err;
+            else if ((err = prsAssign(table,getLastSymbol(table->currentFunc))) != ERROR_OK) return err;
         }
         break;
         case KW_IF:{
@@ -179,7 +179,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
             jmp2->dest=table->currentFunc->instructions.last;
         }
         break;
-        case KW_while:{
+        case KW_WHILE:{
         //while loop: while expression EOL <stat_list> end EOL
             jmp2=genInstr(I_JUMP,NULL,NULL,NULL); //jmp to start while -skokova instrukce je vygenerovana dopredu
 
@@ -206,7 +206,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
             listInsertLast(&(table->currentFunc->instructions),i);
         }
         break;
-        case default: return ERROR_SYNTAX;
+        default: return ERROR_SYNTAX;
     }
     return err;
 }
@@ -225,7 +225,7 @@ E_CODE prsDefFunction (tSymbolTable *table)
     if (table->currentFunc==NULL)return ERROR_COMPILATOR;
     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
     if ((err = prsDefParams(table)) != ERROR_OK) return err;//prava zavorka se nacte uvnitr params
-    tInst *i=genInstr(I_SEMPTY,NULL,NULL,NULL);//po precteni parametru vyprazdnit stack
+    tInstr *i=genInstr(I_SEMPTY,NULL,NULL,NULL);//po precteni parametru vyprazdnit stack
     listInsertLast(&(table->currentFunc->instructions),i);
     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
     if ((err = prsStatlist(table)) != ERROR_OK) return err;//posledni nacteny kw je end
@@ -278,7 +278,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
     switch (kw = getToken()){
         case KW_INPUT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_INPUT,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -286,7 +286,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         break;
         case KW_NUMERIC:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_NUMERIC,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -294,7 +294,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         break;
         case KW_LEN:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_LEN,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -302,7 +302,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         break;
         case KW_PRINT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_PRINT,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -311,7 +311,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         break;
         case KW_FIND:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_FIND,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -320,7 +320,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         break;
         case KW_SORT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_SORT,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -329,7 +329,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         case KW_TYPEOF:{
             //typeof ma jine parametry pac bere i funkce
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-            if(err=prsCallParams(table)!=ERROR_OK) return err;
+            if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;
             i=genInstr(I_TYPEOF,dest,NULL,NULL);
             listInsertLast(&(table->currentFunc->instructions),i);
@@ -341,10 +341,10 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
         //ID-> string (string[1.0:6.4])
             switch(getTokenAhead()){
                 case LEX_L_BRACKET:{//funkce
-                    if(tmpFunc=symbolTableSearchFunction(table,gToken.data)==NULL)
+                    if((tmpFunc=symbolTableSearchFunction(table,gToken.data))==NULL)
                         return ERROR_SEMANTIC_FUNCTION;//nedefinovana fce
                     if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
-                    if ((err = prsCallParams()) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
+                    if ((err = prsCallParams(table)) != ERROR_OK) return err; //prava zavorka se checkne uz v prsParams
                     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
                     i=genInstr(I_CALL,tmpFunc,NULL,NULL);//instrukce zavolani fce
                     listInsertLast(&(table->currentFunc->instructions),i);
@@ -354,11 +354,11 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
                 break;
                 case LEX_L_SBRACKET:{//fce string
 
-                    if(tmpSymb=functionSearchSymbol(table->currentFunc,gToken.data)==NULL)
+                    if((tmpSymb=functionSearchSymbol(table->currentFunc,gToken.data))==NULL)
                         return ERROR_SEMANTIC_VARIABLE;
                     //instrukce co hodi string na stack
                     i=genInstr(I_PUSH,tmpSymb,NULL,NULL);
-                    listInsertLast(table->currentFunc->instructions,i);
+                    listInsertLast(&(table->currentFunc->instructions),i);
                     err=prsStringselect(table,dest);
                     if (getToken() != LEX_EOL) return ERROR_SYNTAX;
                 }
@@ -377,11 +377,11 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
 
             if(getTokenAhead()==LEX_L_SBRACKET){
                 //hodim string do tabulky konstant
-                tmpSymb=functionInsertconstant(table->currentFunc,gToken.data,kw);
+                tmpSymb=functionInsertConstant(table->currentFunc,gToken.data,kw);
                 if (err!=ERROR_OK) return err;
                 //a vygeneruji instrukci ktera ho da na stack
                 i=genInstr(I_PUSH,tmpSymb,NULL,NULL);
-                listInsertLast(table->currentFunc->instructions,i);
+                listInsertLast(&(table->currentFunc->instructions),i);
                 //naparsuji parametry
                 err=prsStringselect(table,dest);
                 if (err!=ERROR_OK) return err;
@@ -390,7 +390,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
             }
         }
         default:{
-            err=prsExpression(table, kw, exprResult);
+            err=prsExpression(table, kw, &expResult);
             i=genInstr(I_MOV,dest,expResult,NULL);//presun vyhodnoceni vyrazu do dest
             listInsertLast(&(table->currentFunc->instructions),i);
         }
@@ -408,9 +408,9 @@ E_CODE prsStringselect(tSymbolTable *table, tSymbol *dest)
   //if (err != ERROR_OK) return err;
 
     if (getToken() != LEX_L_SBRACKET) return ERROR_SYNTAX;
-    if (kw=getToken() != LEX_COLON){//prvni param je zadan
+    if ((kw=getToken()) != LEX_COLON){//prvni param je zadan
         if (kw==LEX_ID){
-            param1=functionSearchSymbol(table->currentFunc,gToken.data,kw)
+            param1=functionSearchSymbol(table->currentFunc,gToken.data);
             if (param1==NULL) return ERROR_SEMANTIC_VARIABLE;//nedefinovana promenna
         }
         else if(kw==LEX_NUMBER){
@@ -418,13 +418,13 @@ E_CODE prsStringselect(tSymbolTable *table, tSymbol *dest)
         }
         else return ERROR_SYNTAX;
 
-        if (kw=getToken() != LEX_COLON)return ERROR_SYNTAX;
+        if ((kw=getToken()) != LEX_COLON)return ERROR_SYNTAX;
     }
 
     //parsujeme druhy param
-    if (kw=getToken() != LEX_R_SBRACKET){//druhy param je zadan
+    if ((kw=getToken()) != LEX_R_SBRACKET){//druhy param je zadan
         if (kw==LEX_ID){
-            param2=functionSearchSymbol(table->currentFunc,gToken.data,kw)
+            param2=functionSearchSymbol(table->currentFunc,gToken.data);
             if (param2==NULL) return ERROR_SEMANTIC_VARIABLE;//nedefinovana promenna
         }
         else if(kw==LEX_NUMBER){
@@ -432,11 +432,11 @@ E_CODE prsStringselect(tSymbolTable *table, tSymbol *dest)
         }
         else return ERROR_SYNTAX;
 
-        if (kw=getToken() != LEX_R_SBRACKET)return ERROR_SYNTAX;
+        if ((kw=getToken()) != LEX_R_SBRACKET)return ERROR_SYNTAX;
     }
 
     tInstr *i=genInstr(I_STRING,dest,param1,param2);
-    err=listInsertLast(table->currentFunc->instructions,i);
+    err=listInsertLast(&(table->currentFunc->instructions),i);
     return err;
 }
 
@@ -457,9 +457,9 @@ E_CODE prsDefParams (tSymbolTable *table)
         if (symbolTableSearchFunction(table,gToken.data)!=NULL)
             return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
         i=genInstr(I_SET,(getLastSymbol(table->currentFunc)),NULL,NULL);
-        listInsertLast((table->currentFunc->instructions,i));
+        listInsertLast(&(table->currentFunc->instructions),i);
         i=genInstr(I_POP,(getLastSymbol(table->currentFunc)),NULL,NULL);
-        listInsertLast((table->currentFunc->instructions,i));
+        listInsertLast(&(table->currentFunc->instructions),i);
         return prsDefParamsN(table);
     }
   else return ERROR_SYNTAX;
@@ -474,20 +474,20 @@ E_CODE prsDefParamsN (tSymbolTable *table)
 {
   // <params_n> - , id <params_n>
   // <params_n> - eps
-
+  tInstr *i;
   tKeyword kw;
   if ((kw = getToken()) == LEX_R_BRACKET) return ERROR_OK;
   if (kw != LEX_COMMA) return ERROR_SYNTAX;
   if (getToken() == LEX_ID) {
-    if(functionInsertSymbol(table->currentFunc,gToken.data)==ERROR_IN_EXIST)
+    if(functionInsertSymbol(table->currentFunc,gToken.data)==ERROR_INS_EXIST)
       return ERROR_SEMANTIC;//2 parametry se jmenuji stejne
     if (symbolTableSearchFunction(table,gToken.data)!=NULL)
       return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
     i=genInstr(I_SET,(getLastSymbol(table->currentFunc)),NULL,NULL);
-    listInsertLast((table->currentFunc->instructions,i));
+    listInsertLast(&(table->currentFunc->instructions),i);
     i=genInstr(I_POP,(getLastSymbol(table->currentFunc)),NULL,NULL);
-    listInsertLast((table->currentFunc->instructions,i));
-    return prsParamsN(table);
+    listInsertLast(&(table->currentFunc->instructions),i);
+    return prsDefParamsN(table);
   }
   else return ERROR_SYNTAX;
 }
@@ -503,18 +503,21 @@ E_CODE prsCallParams(tSymbolTable *table)
   tSymbol *symb;
   if (kw==LEX_R_BRACKET) return ERROR_OK; //no params
   Last(&(table->currentFunc->instructions));//aktivita na posledni instrukci
-  if ((kw == LEX_ID) {
-    if (symb=functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
-      if (symbolTableSearchFunction(table,gToken.data)==NULL)
+  if (kw == LEX_ID) {
+    if ((symb=functionSearchSymbol(table->currentFunc, gToken.data)) == NULL){
+      if (symbolTableSearchFunction(table,gToken.data)==NULL){
         return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
+      }
       else symb=functionInsertConstant(table->currentFunc, gToken.data, kw);//byla predana funkce
+    }
   }
-  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL)
-    if (symb=functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
-      return ERROR_COMPILATOR; // chyba mallocu - nenastane
+  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL){
+    if ((symb=functionInsertConstant(table->currentFunc, gToken.data, kw)) == NULL)
+        return ERROR_COMPILATOR; // chyba mallocu - nenastane
+  }    
   else return ERROR_SYNTAX;
   tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
-  listPostInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
+  postInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
   return prsCallParamsN(table);
 }
 
@@ -533,15 +536,16 @@ E_CODE prsCallParamsN(tSymbolTable *table)
     return ERROR_SYNTAX;
 
   if ((kw = getToken()) == LEX_ID) {
-    if (symb=functionSearchSymbol(table->currentFunc, gToken.data) == NULL)
+    if ((symb=functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
       return ERROR_SEMANTIC_VARIABLE;//predani nedefinovane promenne
   }
-  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL)
-    if (symb=functionInsertConstant(table->currentFunc, gToken.data, kw) == NULL)
+  else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL){
+    if ((symb=functionInsertConstant(table->currentFunc, gToken.data, kw)) == NULL)
       return ERROR_COMPILATOR; // error mallocu - nenastane
+  } 
   else return ERROR_SYNTAX;
   tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
-  listPostInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
+  postInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
   return prsCallParamsN(table);
 }
 

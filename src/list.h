@@ -20,6 +20,6 @@ E_CODE listInsertFirst(tList*, void*);
 E_CODE listInsertLast(tList*, void*);
 E_CODE listDeleteFirst(tList*);
 void Succ (tList*);
-void PostInsert (tList*, void*);
+void postInsert (tList*, void*);
 void Last (tList*);
 #endif
