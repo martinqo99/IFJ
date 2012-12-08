@@ -69,6 +69,7 @@ typedef enum tstate{
 
     S_STRING,
     S_STRING_ESCAPED,
+    S_STRING_ASCII,
 
     S_ID,
     S_NUMBER,

@@ -66,7 +66,8 @@ tKeyword getToken(){
     resetToken();
 
     tState state = S_START;
-    int c;
+    int c, ascii_cnt;
+    char ascii_val[2];
 
     //Hlavni nacitaci smycka
     while((c = getc(gFileHandler))){
@@ -155,8 +156,8 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'\
-                           c == '+' || c == '-' || c == '*' || c == '/'\
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n' ||
+                           c == '+' || c == '-' || c == '*' || c == '/' ||
                            c == '=' || c == '!' || c == '<' || c == '>') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
@@ -178,8 +179,8 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'\
-                           c == '+' || c == '-' || c == '*' || c == '/'\
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'
+                           c == '+' || c == '-' || c == '*' || c == '/'
                            c == '=' || c == '!' || c == '<' || c == '>') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
@@ -284,7 +285,7 @@ tKeyword getToken(){
                     state = S_STRING;
                     pushToken('\n');
                 }
-                else if(c == '\t'){
+                else if(c == 't'){
                     state = S_STRING;
                     pushToken('\t');
 
@@ -294,11 +295,31 @@ tKeyword getToken(){
                     pushToken('\\');
 
                 }
-                else if(c == '\"'){
+                else if(c == '"'){
                     state = S_STRING;
                     pushToken('\"');
 
                 }
+                else if (c == 'x') {
+                    state = S_STRING_ASCII;
+                    ascii_cnt = 0;
+                }
+                else
+                    return LEX_ERROR;
+                break;
+            case S_STRING_ASCII:
+                if ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F')) {
+                    if (ascii_cnt < 2)
+                        ascii_val[ascii_cnt++] = c;
+                    else {
+                        ungetc(c, gFileHandler);
+                        char *endptr = NULL;
+                        long ascii_tmp = strtol(ascii_val, &endptr);
+                        if (*endptr != '\0' || strcmp(endptr, ascii_val) == 0)
+                            return LEX_ERROR;
+                        pushToken((int) ascii_tmp);
+                        state = S_STRING;
+                    }
                 else
                     return LEX_ERROR;
                 break;
