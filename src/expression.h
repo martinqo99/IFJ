@@ -24,11 +24,17 @@
 typedef struct texprdata
 {
   int kw;
-  tSymbol *token;
+  tSymbol *symbol;
 } tExprData;
 
 
 
 E_CODE prsExpression (tSymbolTable*, tKeyword, tSymbol**);
+tExprData* newExprdata(tKeyword,tSymbol*);
+tKeyword topTerm(tStack*);
+E_CODE pushExprdata(tSymbolTable *,tStack *,tKeyword ,tSymbol *);
+tExprData* newExprdata(tKeyword ,tSymbol *);
+bool isOper(tKeyword);
+tItype getItype(tKeyword);
 
 #endif

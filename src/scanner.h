@@ -48,6 +48,7 @@ typedef enum tkeyword{
     LEX_UNKNOWN, //nepovoleny lexem
     LEX_RESERVED,
     LEX_ERROR,
+    EXPRESSION
 } tKeyword;
 
 typedef enum tstate{

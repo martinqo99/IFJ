@@ -81,13 +81,11 @@ typedef enum {
     I_MUL = LEX_MULTIPLICATION,
     I_DIV = LEX_DIVISION,
     I_POW = LEX_POWER,
-    I_CON, // toto myslim nemame, tak to smaz pokud to nepouzivas
-    I_POW_STR,
 //logika
     I_EQUAL = LEX_EQUAL,		// ==
     I_NEQUAL = LEX_UNEQUAL,	// !=
+    I_LESS = LEX_LESSER, //<
     I_ELESS = LEX_LESSER_EQUAL,		// <=
-    I_LESS = LEX_LESSER,		// <
     I_MORE = LEX_GREATER,		// >
     I_EMORE = LEX_GREATER_EQUAL,		// >=
 //skoky - snad nebudou potreba vsechny
@@ -106,8 +104,8 @@ typedef enum {
     I_LEN,
     I_FIND,
     I_SORT,
-    I_STRING // dest od do, string je na stacku
-
+    I_STRING, // dest od do, string je na stacku
+    NOINSTR
 }tItype;
 
 typedef struct {

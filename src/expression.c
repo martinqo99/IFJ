@@ -12,7 +12,7 @@
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
-#include "expression.h"
+#include"expression.h"
 const char PrecedentTable [MAXTABLE][MAXTABLE] =
 { // tabulka nemusi byt dobre, chce se to nekomu kontrolovat?
   // tokeny                         id  (   )   +   -   *   /   **  ==  !=  <   <=  >   >=
@@ -20,7 +20,7 @@ const char PrecedentTable [MAXTABLE][MAXTABLE] =
   [LEX_L_BRACKET]       ={[LEX_ID]='<','<','=','<','<','<','<','<','<','<','<','<','<','<',[LEX_EOL]= 0 },
   [LEX_R_BRACKET]       ={[LEX_ID]= 0 , 0 ,'>','>','>','>','>','>','>','>','>','>','>','>',[LEX_EOL]='>'},
   [LEX_ADDITION]        ={[LEX_ID]='<','<','>','>','>','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
-  [LEX_SUBSTRACTION]     ={[LEX_ID]='<','<','>','>','>','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
+  [LEX_SUBSTRACTION]    ={[LEX_ID]='<','<','>','>','>','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
   [LEX_MULTIPLICATION]  ={[LEX_ID]='<','<','>','>','>','>','>','<','>','>','>','>','>','>',[LEX_EOL]='>'},
   [LEX_DIVISION]        ={[LEX_ID]='<','<','>','>','>','>','>','<','>','>','>','>','>','>',[LEX_EOL]='>'},
   [LEX_POWER]           ={[LEX_ID]='<','<','>','>','>','>','>','<','>','>','>','>','>','>',[LEX_EOL]='>'},
@@ -32,181 +32,157 @@ const char PrecedentTable [MAXTABLE][MAXTABLE] =
   [LEX_GREATER_EQUAL]   ={[LEX_ID]='<','<','>','<','<','<','<','<','>','>','>','>','>','>',[LEX_EOL]='>'},
   [LEX_EOL]             ={[LEX_ID]='<','<', 0 ,'<','<','<','<','<','<','<','<','<','<','<',[LEX_EOL]='$'},
 };
-/**
- * @info      Nalezeni pravidla a ulozeni do instrukce
- * @param   tStack* - ukazatel na stack s hodnotama
- * @param   tInstr* - instrukce
- * @return  E_CODE - chybovy kod
- */
-E_CODE findInstr (tStack *S, tInstr *instr)
+
+
+E_CODE prsExpression(tSymbolTable *table,tKeyword kw,tSymbol **result)
 {
-  tExprData *help = NULL;
+    E_CODE err=ERROR_OK;
+    tKeyword a,b;
+    char c;
+    tExprData *tmpData;
+    tSymbol *dest=NULL,*sourc1=NULL,*sourc2=NULL;
+    tInstr *i;
+    tItype itype=NOINSTR;
+    tStack* stack=stackCreate();
+    stackInit(stack);
 
-  if (stackEmpty(S) == true) return ERROR_SYNTAX;
-  help = stackPop(S);
-  if (help->kw == EXPR) { // E -> E operator E
-    instr->src2 = help->token; // druhy E
-    mmuFree(help);
 
-    if (stackEmpty(S) == true) return ERROR_SYNTAX;
-    help = stackPop(S);
-    if (help->kw < LEX_ADDITION || help->kw > LEX_UNEQUAL) return ERROR_SYNTAX;
-    instr->type = help->kw; // prideleni operandu
-    free(help);
+    stackPush(stack,(newExprdata(LEX_EOL,NULL)));//vlozi $ na zasobnik
+    do{
+        a=topTerm(stack);
+        b=kw;
+        if(b==LEX_ID || b==LEX_STRING || b==LEX_NUMBER ){
+            c=PrecedentTable[a][LEX_ID]; 
+            if(((tExprData*)stackTop(stack))->kw==EXPRESSION)c=0;//nesmi byt 2 termy za sebou
+        }
+        else c=PrecedentTable[a][b];
+        if(c==0)
+        {
+            b=LEX_EOL;
+            c=PrecedentTable[a][b];
+        }
+printf("C je:%c\n",c);
+        switch(c)
+        {
+            case '=':
+            case '<':
+                    if((err=pushExprdata(table,stack,b,NULL))!=ERROR_OK)return err;
+                    kw=getToken();
+                    break;
+            case '>':
+                    //najdi pravidla
+                    if (stackEmpty(stack))return ERROR_SYNTAX;
+                        //E->(E)
+                    if((tmpData=((tExprData*)stackPop(stack)))->kw==LEX_R_BRACKET)
+                    {
+                        itype=NOINSTR;
+                        mmuFree(tmpData);
 
-    if (stackEmpty(S) == true) return ERROR_SYNTAX;
-    help = stackPop(S);
-    if (help->kw != EXPR) return ERROR_SYNTAX;
-    instr->src1 = help->token; // prvni E
-    mmuFree(help);
-  }
-  else if (help->kw == LEX_R_BRACKET) { // E -> (E)
-    instr->type = EXPR;
-    mmuFree(help);
+                        if(stackEmpty(stack))return ERROR_SYNTAX;
+                        if((tmpData=((tExprData*)stackPop(stack)))->kw!=EXPRESSION)
+                            {mmuFree(tmpData);return ERROR_SYNTAX;}
+                        dest = tmpData->symbol;
+                        mmuFree(tmpData);
 
-    if (stackEmpty(S) == true) return ERROR_SYNTAX;
-    help = stackPop(S);
-    if (help->kw != EXPR) return ERROR_SYNTAX;
-    instr->dest = help->token; // (E)
-    mmuFree(help);
+                        if(stackEmpty(stack))return ERROR_SYNTAX;
+                        if((tmpData=((tExprData*)stackPop(stack)))->kw!=LEX_L_BRACKET)
+                            {mmuFree(tmpData);return ERROR_SYNTAX;}
+                        mmuFree(tmpData);
+                    }
+                    //E-> E op E
+                    else if(tmpData->kw==EXPRESSION)
+                    {
+                        sourc2 = tmpData->symbol;
+                        mmuFree(tmpData);
 
-    if (stackEmpty(S) == true) return ERROR_SYNTAX;
-    help = stackPop(S);
-    if (help->kw != LEX_L_BRACKET) return ERROR_SYNTAX;
-    mmuFree(help);
-  }
-  else return ERROR_SYNTAX;
+                        if(stackEmpty(stack))return ERROR_SYNTAX;
+                        tmpData=((tExprData*)stackPop(stack));
+                        if(!isOper(tmpData->kw)){mmuFree(tmpData);return ERROR_SYNTAX;}
+                        itype = getItype(tmpData->kw);
+                        mmuFree(tmpData);
 
-  return ERROR_OK;
+                        if(stackEmpty(stack))return ERROR_SYNTAX;
+                        if((tmpData=((tExprData*)stackPop(stack)))->kw!=EXPRESSION)
+                            {mmuFree(tmpData);return ERROR_SYNTAX;}
+                        sourc1 = tmpData->symbol;
+                        mmuFree(tmpData);
+                    }
+                    else return ERROR_SYNTAX;
+                    //vlozit instrukci
+                    if(itype!=NOINSTR){//jen v pripade E->EopE
+                        dest=insertBlankConstant(table->currentFunc);
+                        i=genInstr(itype,dest,sourc1,sourc2);
+                        listInsertLast(&(table->currentFunc->instructions),i);
+                    }
+                    if((err=pushExprdata(table,stack,EXPRESSION,dest))!=ERROR_OK)return err;//pushne se vysledek expr
+                    break;
+
+            case '$':
+
+                    tmpData=NULL;
+                    if(stackEmpty(stack))return ERROR_SYNTAX;
+                    if((tmpData=((tExprData*)stackPop(stack)))->kw!=EXPRESSION)
+                        {mmuFree(tmpData);return ERROR_SYNTAX;}
+                    *result=tmpData->symbol;
+                    return ERROR_OK;
+
+
+
+            default:printf("print");return ERROR_SYNTAX;
+        }
+
+
+    }while(!(a==LEX_EOL && b==LEX_EOL));
+
+    stackDispose(stack);
+    stackDestroy(stack);
+    return ERROR_OK;
 }
 
-/**
- * @info      Semanticka kontrola vyrazu
- * @param   tInstr* - instrukce
- * @return  E_CODE - chybovy kod
- */
-E_CODE checkInstr(tInstr *instr)
+tExprData* newExprdata(tKeyword kw,tSymbol *symbol)
 {
-  if (instr->type == EXPR) return ERROR_OK;
-  else if (instr->type >= I_ADD && instr->type <= I_POW) {
-    if (((tSymbol*)(instr->src1))->type != DT_NUMBER) return ERROR_SEMANTIC;
-    if (((tSymbol*)(instr->src2))->type != DT_NUMBER) return ERROR_SEMANTIC;
-  }
-
-  return ERROR_OK;
+    tExprData *new=mmuMalloc(sizeof(tExprData));
+    new->kw=kw;
+    new->symbol=symbol;
+    return new;
 }
 
-/**
- * @info      Vlozeni instrukce do tabulky
- * @param   tSymbolTable* - ukazatel na tabulku znaku
- * @param   tInstr* - instrukce
- * @return  E_CODE - chybovy kod
- */
-E_CODE insertInstr(tSymbolTable *table, tInstr *instr)
+E_CODE pushExprdata(tSymbolTable *table,tStack *stack,tKeyword kw,tSymbol *symb)
 {
-  if (instr->type == EXPR) return ERROR_OK;
-
-  tSymbol *help = insertBlankConstant(table->currentFunc);
-  if (help == NULL) return ERROR_COMPILATOR;
-  instr->dest = help;
-
-  tInstr *instruction = genInstr(instr->type, instr->dest, instr->src1, instr->src2);
-  if (instruction == NULL) return ERROR_COMPILATOR;
-  return listInsertLast(&(table->currentFunc->instructions), instruction);
+    if(kw==LEX_ID)
+    {
+        if((symb=functionSearchSymbol(table->currentFunc,gToken.data))==NULL)
+            return ERROR_SEMANTIC_VARIABLE;
+        kw=EXPRESSION; //E->id
+    }
+    else if (kw==LEX_STRING || kw==LEX_NUMBER)
+    {
+        symb=functionInsertConstant(table->currentFunc,gToken.data,kw);
+        kw=EXPRESSION; //E->id
+    }
+    stackPush(stack,(newExprdata(kw,symb)));
+    return ERROR_OK;
 }
 
-/**
- * @info      Vyhodnoceni vyrazu
- * @param   tSymbolTable* - ukazatel na tabulku znaku
- * @param   tKeyword - uz nactene klicove slovo
- * @param   tSmybol* - semka ulozime vysledek
- * @return  E_CODE - chybovy kod
- */
-E_CODE prsExpression (tSymbolTable *table, tKeyword a, tSymbol **result)
+tKeyword topTerm(tStack *stack)
 {
-  if (a == KW_IF || a == KW_WHILE || a == KW_RETURN)
-    a = getToken(); // aby jsme se dostali do stejneho stavu, jako kdyz se sem dostaneme z ostatnich stavu
-
-  tExprData *help;
-  if ((help = mmuMalloc(sizeof(tExprData))) == NULL) return ERROR_COMPILATOR;
-
-  help->kw = a;
-  help->token = NULL;
-  if (a == LEX_ID) {
-    if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
-      return ERROR_SEMANTIC_VARIABLE;
-    help->kw = LEX_EOL;
-  }
-  else if (a == LEX_NUMBER || a == LEX_STRING) {
-    if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
-      return ERROR_COMPILATOR;
-    help->kw = LEX_EOL;
-  }
-  //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
-
-
-  E_CODE err = ERROR_OK;
-  tKeyword b = EXPR;
-  tInstr instr = {EXPR, NULL, NULL, NULL};
-  char x; // vysledek hledani v tabulce
-  tStack *S = stackCreate();
-  err = stackInit(S);
-
-  err = stackPush(S, help);
-
-  while ((a != LEX_EOL || b != LEX_EOL) && err == ERROR_OK) {
-    tStackPtr save = S->top;
-    while (save != NULL && ((tExprData*)(S->top->data))->kw == EXPR) save = S->top->ptr;
-    if (save == NULL) b = EXPR;
-    else b = ((tExprData*)(save->data))->kw;
-    a = getToken();
-
-    help->kw = a;
-    help->token = NULL;
-    if (a == LEX_ID) {
-      if ((help->token = functionSearchSymbol(table->currentFunc, gToken.data)) == NULL)
-        return ERROR_SEMANTIC_VARIABLE;
-      help->kw = EXPR;
-    }
-    else if (a == LEX_NUMBER || a == LEX_STRING) {
-      if ((help->token = functionInsertConstant(table->currentFunc, gToken.data, a)) == NULL)
-        return ERROR_COMPILATOR;
-      help->kw = EXPR;
-    }
-    //else if (a >= LEX_L_BRACKET && a <= LEX_UNEQUAL) // asi nebude treba
-
-    if (a == LEX_NUMBER || a == LEX_STRING) // nalezeni x v tabulce
-      x = PrecedentTable[b][LEX_ID];
-    else
-      x = PrecedentTable[b][a];
-
-    if (x == 0) return ERROR_SYNTAX; // chyba
-    else if (x == '=' || x == '<') { // nic se nedeje, jen push
-      err = stackPush(S, help);
-    }
-    else if (x == '>') { // jediny kde se neco deje
-      // tady to bude kurevsky cerna magie
-      if ((err = findInstr(S, &instr)) != ERROR_OK) return err;
-      //if ((err = checkInstr(&instr)) != ERROR_OK) return err;
-      if ((err = insertInstr(table, &instr)) != ERROR_OK) return err;
-
-      help->kw = EXPR;
-      help->token = instr.dest;
-      err = stackPush(S, help);
-    }
-    else if (x == '$') { // konecna
-      if (stackEmpty(S) == true) return ERROR_SYNTAX;
-      help = stackPop(S);
-      if (help->kw == EXPR)
-        *result = help->token;
-      else return ERROR_SYNTAX;
-    }
-    else return ERROR_SYNTAX; // cokoli jinyho je spatne, nemuze nastat
-  } // konec while cyklu /////////////////////////////////
-
-  mmuFree(help);
-  stackDispose(S);
-  stackDestroy(S);
-
-  return err;
+    tStackPtr tmp=stack->top;
+    while(tmp!=NULL && (((tExprData*)tmp->data)->kw==EXPRESSION))
+          {
+              tmp=tmp->ptr;
+          }
+    return (tmp==NULL) ? EXPRESSION:((tExprData*)tmp->data)->kw;
 }
+
+bool isOper(tKeyword kw)
+{
+    return(kw==LEX_ADDITION||kw==LEX_SUBSTRACTION||kw==LEX_MULTIPLICATION||
+           kw==LEX_DIVISION||kw==LEX_POWER||kw==LEX_LESSER||kw==LEX_LESSER_EQUAL||
+           kw==LEX_EQUAL||kw==LEX_UNEQUAL||kw==LEX_GREATER||kw==LEX_GREATER_EQUAL);
+}
+
+tItype getItype(tKeyword kw)
+{
+   return (tItype)(kw+(I_ADD-LEX_ADDITION));
+}
+
