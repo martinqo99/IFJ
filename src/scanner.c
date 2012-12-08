@@ -137,10 +137,8 @@ tKeyword getToken(){
                         pushToken(c);
                         break;
                     }
-                    else {
-                        ungetc(c, gFileHandler);
-                        return LEX_NUMBER;
-                    }
+                    else
+                        return LEX_ERROR;
                 break;
             //Cislo - desetina cast
             case S_NUMBER_POINT:
@@ -157,10 +155,12 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else {
+                else if (c == '(' || c == ')' || c == '[' || c == ']') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
+                else
+                    return LEX_ERROR;
                 break;
             //Cislo - exponent
             case S_NUMBER_EXPONENT:
@@ -176,10 +176,12 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else {
+                else if (c == '(' || c == ')' || c == '[' || c == ']') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
+                else
+                    return LEX_ERROR;
                 break;
             //Identifikator
             case S_ID:
