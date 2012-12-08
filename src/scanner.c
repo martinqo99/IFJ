@@ -137,8 +137,10 @@ tKeyword getToken(){
                         pushToken(c);
                         break;
                     }
-                    else
+                    else {
+                        ungetc(c, gFileHandler);
                         return LEX_NUMBER;
+                    }
                 break;
             //Cislo - desetina cast
             case S_NUMBER_POINT:
@@ -155,8 +157,10 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else
+                else {
+                    ungetc(c, gFileHandler);
                     return LEX_NUMBER;
+                }
                 break;
             //Cislo - exponent
             case S_NUMBER_EXPONENT:
@@ -340,7 +344,7 @@ tKeyword getTokenAhead()
 
   tKeyword kw = getToken();
   strFree(&gToken.data);
-  
+
   token.data=data;
   gToken = token;
 
