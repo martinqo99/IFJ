@@ -18,22 +18,22 @@
  * @info      Inicializace struktury pro string
  * @param   char* - pole znaku
  * @param   int - zacatek a konec
- * @return  tLibraryData - serazeny string
+ * @return  void
  */
-tLibraryData quicksort(char array[], int left_begin, int right_begin)
+void quicksort(char *array[], int left_begin, int right_begin)
 {
-  int pivot = array[(left_begin + right_begin) / 2];
+  int pivot = (*array)[(left_begin + right_begin) / 2];
   int left_index = left_begin, right_index = right_begin, pom;
   do {
-    while (array[left_index] < pivot && left_index < right_begin)
+    while ((*array)[left_index] < pivot && left_index < right_begin)
       left_index++;
-    while (array[right_index] > pivot && right_index > left_begin)
+    while ((*array)[right_index] > pivot && right_index > left_begin)
       right_index--;
 
     if (left_index <= right_index) {
-      pom = array[left_index];
-      array[left_index] = array[right_index];
-      array[right_index] = pom;
+      pom = (*array)[left_index];
+      (*array)[left_index] = (*array)[right_index];
+      (*array)[right_index] = pom;
       if (left_index < right_begin)
         left_index++;
       if (right_index > left_begin)
@@ -42,11 +42,5 @@ tLibraryData quicksort(char array[], int left_begin, int right_begin)
   } while (left_index < right_index);
   if (right_index > left_begin) quicksort(array, left_begin, right_index);
   if (left_index < right_begin) quicksort(array, left_index, right_begin);
-
-  tLibraryData help;
-  help.type = DT_STRING;
-  pom = 0;
-  while (pom <= right_begin)
-    strAdd(help.data.sData, array[pom++]);
-  return help;
+  printf("Text vevnitr: %s\n", *array);
 }

@@ -18,6 +18,6 @@
 #include "mmu.h"
 #include "strings.h"
 
-tLibraryData quicksort(char array[], int left_begin, int right_begin);
+void quicksort(char *array[], int left_begin, int right_begin);
 
 #endif

@@ -165,5 +165,6 @@ tLibraryData sort (tLibraryData nonsorted, E_CODE *err)
     *err = ERROR_INCOMPATIBLE_TYPE;
     return {.type = DT_NIL};
   }
-  return quicksort(nonsorted.data.sData.data, 0, nonsorted.data.sData.len-1);
+  quicksort(&nonsorted.data.sData.data, 0, nonsorted.data.sData.len-1);
+  return nonsorted;
 }
