@@ -155,7 +155,7 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']') {
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
@@ -176,7 +176,7 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']') {
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
