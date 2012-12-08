@@ -12,8 +12,13 @@
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
+#ifndef KMP_H_INCLUDED
+#define KMP_H_INCLUDED
+
 #include "mmu.h"
 #include "strings.h"
 
 void kmpCrtTable (tString text, int table[]);
 int kmpSearch (tString text, tString searched);
+
+#endif
