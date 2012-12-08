@@ -16,10 +16,10 @@
 
 /**
  * @info      Interpret
- * @param   netusim
+ * @param   tInstr - instrukce v 3 adresnym kodu
  * @return  E_CODE - chybovy kod
  */
-E_CODE interpret ()
+E_CODE interpret (tList instr)
 {
 
 }

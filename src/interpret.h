@@ -4,7 +4,7 @@
  * Varianta:  a/1/I
  * Soubor:    interpret.h
  * Popis:     Interpret prekladace jazyka IFJ12
- * Datum:     08.12.2012
+ * Datum:     8.12.2012
  * Autori:    Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>,
  *            Petr Matyas         <xmatya03@stud.fit.vutbr.cz>,
  *            Veronika Necasova   <xnecas21@stud.fit.vutbr.cz>,
@@ -17,6 +17,6 @@
 
 #include "syntactic.c"
 
-E_CODE interpret();
+E_CODE interpret(tList instr);
 
 #endif
