@@ -12,9 +12,7 @@
  *            Dalibor Skacel      <xskace11@stud.fit.vutbr.cz>
  */
 
-#include "strings.h"
-#include "mmu.h"
-
+#include "ial.h"
 ///////////////////////// Knuth-Moris-Prattuv algoritmus ///////////////////////
 /**
  * @info      Vytvoreni pomocne tabulky
@@ -111,3 +109,231 @@ void quicksort(char *array[], int left_begin, int right_begin)
 }
 
 ////////////////// Tabulka symbolu pomoci binarniho stromu /////////////////////
+
+typedef struct tBTreeNode {
+    struct tBTreeNode *right;
+    struct tBTreeNode *left;
+    void *data;
+    tString *key;
+    int height;
+  } *tBTNode;
+
+
+typedef struct{
+    tBTNode root;
+    tBTNode lastAdded;
+}tBTree;
+
+int Max( int x, int y )
+{
+    return x > y ? x : y;
+}
+
+int Height(tBTNode N){
+    if (N==NULL) return -1;
+        else return N->height;
+}
+void btInit(tBTree *T){
+    T->root=NULL;
+    T->lastAdded=NULL;
+}
+
+void deleteNodes(tBTNode N){
+    if(N->left!=NULL)deleteNodes(N->left);
+    if(N->right!=NULL)deleteNodes(N->right);
+    mmuFree(N);
+}
+
+void btFree(tBTree *T){
+    deleteNodes(T->root);
+    btInit(T);
+}
+
+tBTNode searchNodes(tBTNode N, tString *key){
+    if(N==NULL) return NULL;
+    else {
+         int cmp=strCmp(key,N->key);
+         if(cmp!=0){
+             if(cmp<0)return searchNodes(N->left,key);
+             else return searchNodes(N->right,key);
+         }
+         else return N;
+    }
+}
+
+tBTNode btFind(tBTree *T,tString *key){
+    return searchNodes(T->root,key);
+}
+
+E_CODE BTInsert (tBTree *T,tString *key, void *data) {
+/*   --------
+** Vloží do stromu nový uzel s hodnotou Content.
+**
+** Z pohledu vkládání chápejte vytvářený strom jako binární vyhledávací strom,
+** kde uzly s hodnotou menší než má otec leží v levém podstromu a uzly větší
+** leží vpravo. Pokud vkládaný uzel již existuje, neprovádí se nic (daná hodnota
+** se ve stromu může vyskytnout nejvýše jednou). Pokud se vytváří nový uzel,
+** vzniká vždy jako list stromu. Funkci implementujte nerekurzivně.
+**/
+	if (T->root==NULL){ //prázdný strom
+	        T->root=mmuMalloc(sizeof(struct tBTreeNode));
+            T->root->key=key;
+            T->root->data=data;
+            T->root->left=T->root->right=NULL;
+            T->root->height=0;
+            T->lastAdded=T->root;
+            return ERROR_OK;
+	}
+    tBTNode tmp = T->root;
+    int cmpResult;
+	while(tmp!=NULL){
+            cmpResult=strCmp(key,tmp->key);
+            if (cmpResult<0){
+                if(tmp->left==NULL){
+                //vlož levý
+                tmp->left=mmuMalloc(sizeof(struct tBTreeNode));
+                tmp->left->key=key;
+                tmp->left->data=data;
+                tmp->left->left=tmp->left->right=NULL;
+                tmp->left->height=(tmp->height)+1;
+                T->lastAdded=tmp->left;
+                return ERROR_OK;
+                }
+                else tmp=tmp->left;//hledej dál vlevo
+            }
+            else if (cmpResult>0){
+                if (tmp->right==NULL){
+                //vlož pravý
+                tmp->right=mmuMalloc(sizeof(struct tBTreeNode));
+                tmp->right->key=key;
+                tmp->right->data=data;
+                tmp->right->left=tmp->right->right=NULL;
+                tmp->right->height=(tmp->height)+1;
+                T->lastAdded=tmp->right;
+                return ERROR_OK;
+                }
+                else tmp=tmp->right;//hledej dál vpravo
+            }
+            else{ T->lastAdded=tmp;return ERROR_INS_EXIST; }
+        }
+    return ERROR_OK;
+}
+
+void symbolTableInit(tSymbolTable* symbolTable){
+    btInit(&(symbolTable->functions));
+    symbolTable->currentFunc=&(symbolTable->mainFunc);
+}
+
+E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
+    tFunction *func=mmuMalloc(sizeof(tFunction));
+    strCopyString(&functionName,&(func->name));
+    btInit(&(func->symbols));
+    initList(&(func->instructions));
+    func->called=0;
+    E_CODE err=BTInsert(&(symbolTable->functions),&(func->name),func);
+    if (err!=ERROR_OK){strFree(&(func->name));mmuFree(func);}
+    return err;
+}
+
+tFunction* symbolTableSearchFunction(tSymbolTable* symbolTable, tString functionName){
+    tBTNode tmp=btFind(&(symbolTable->functions),&functionName);
+    return (tmp==NULL) ? NULL:(tFunction *)(tmp->data);
+}
+
+void symbolTableDispose(tSymbolTable* symbolTable){//je treba tyhle veci delat kdyz mame mmu?
+    if (symbolTable==NULL) return;
+    //projit stromem a zavolat functionDispose - zatim je tu memory leak
+    btFree(&(symbolTable->functions));
+    mmuFree(symbolTable);
+    symbolTable=NULL;
+
+}
+
+tSymbol* functionSearchSymbol(tFunction *function, tString symbolname){
+    tBTNode tmp=btFind(&(function->symbols),&symbolname);
+    return (tmp==NULL) ? NULL:(tSymbol *)(tmp->data);
+}
+
+E_CODE functionInsertSymbol(tFunction* function,tString symbolname){
+    tSymbol *symb=mmuMalloc(sizeof(tSymbol));
+    strCopyString(&symbolname,&(symb->key));
+    //symb->type=DT_UNKNOWN;
+    symb->data=NULL;
+    E_CODE err=BTInsert(&(function->symbols),&(symb->key),symb);
+    if (err!=ERROR_OK){strFree(&(symb->key));mmuFree(symb);}
+    return err;
+}
+
+tSymbol* insertBlankConstant(tFunction* function){
+    tSymbol *symb=mmuMalloc(sizeof(tSymbol));
+    symb->data=NULL;
+    symb->key.data=NULL;
+    listInsertLast(&(function->constants),symb);
+    return symb;
+}
+
+tSymbol* getLastSymbol(tFunction* F){
+    return (F==NULL ||F->symbols.lastAdded==NULL) ? NULL:(tSymbol*)(F->symbols.lastAdded->data);
+}
+
+tSymbol* getLastConstant(tFunction* F){
+    return (F==NULL || F->constants.last==NULL) ? NULL:(tSymbol*)(F->constants.last->data);
+}
+
+tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type){
+    tSymbol *symb=mmuMalloc(sizeof(tSymbol));
+    if (symb == NULL) return NULL;
+
+    symb->data=mmuMalloc(sizeof(tSymbolData));
+    if (symb->data == NULL) return NULL;
+
+    switch(type){
+        case LEX_STRING:{
+            symb->data->type = DT_STRING;
+            if (strCopyString(&data,&(symb->data->data.sData)) != ERROR_OK)
+              return NULL;
+        }
+        break;
+        case LEX_NUMBER:{
+            char *endptr = NULL;
+            symb->data->type = DT_NUMBER;
+            symb->data->data.dData=strtod(data.data, &endptr); // ATOF SE NEPOUZIVA, je to HNUSNA fce
+            if (*endptr != '\0' || strcmp(endptr, data.data) == 0) {
+              //*err = ERROR_SYNTAX; // toto je nejspis neco jinyho, ty tu kua nemas err...a ani ho nemas jak vratit
+              mmuFree(symb);
+              return NULL;
+            }
+        }
+        break;
+        case KW_NIL:{
+            symb->data->type = DT_NIL;
+        }
+        break;
+        case KW_TRUE:{
+            symb->data->type = DT_BOOL;
+            symb->data->data.bData = TRUE;
+        }
+        break;
+        case KW_FALSE:{
+            symb->data->type = DT_BOOL;
+            symb->data->data.bData = FALSE;
+        }
+        break;
+        case LEX_ID:{ //funkce pro TypeOf
+            symb->data->type = DT_FUNCTION;
+        }
+        default: return NULL;
+    }
+    symb->key.data=NULL;
+    listInsertLast(&(function->constants),symb);
+    return symb;
+}
+
+tInstr* genInstr(tItype type, void *dest, void *src1, void *src2) {
+   tInstr *inst = mmuMalloc(sizeof(tInstr));
+   inst->type = type;
+   inst->dest = dest;
+   inst->src1 = src1;
+   inst->src2 = src2;
+   return inst;
+}
