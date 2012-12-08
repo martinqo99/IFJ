@@ -50,7 +50,7 @@ E_CODE prsExpression(tSymbolTable *table,tKeyword kw,tSymbol **result)
     stackPush(stack,(newExprdata(LEX_EOL,NULL)));//vlozi $ na zasobnik
     do{
         a=topTerm(stack);
-        b=kw;
+        b=kw;printf("a=%d,b=%d\n",a,b);
         if(b==LEX_ID || b==LEX_STRING || b==LEX_NUMBER ){
             c=PrecedentTable[a][LEX_ID]; 
             if(((tExprData*)stackTop(stack))->kw==EXPRESSION)c=0;//nesmi byt 2 termy za sebou
@@ -128,7 +128,7 @@ printf("C je:%c\n",c);
 
 
 
-            default:printf("print");return ERROR_SYNTAX;
+            default:printf("ERROR - default\n");return ERROR_SYNTAX;
         }
 
 

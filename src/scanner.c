@@ -155,8 +155,8 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'\
-                           c == '+' || c == '-' || c == '*' || c == '/'\
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'||
+                           c == '+' || c == '-' || c == '*' || c == '/'||
                            c == '=' || c == '!' || c == '<' || c == '>') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
@@ -178,8 +178,8 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'\
-                           c == '+' || c == '-' || c == '*' || c == '/'\
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'||
+                           c == '+' || c == '-' || c == '*' || c == '/'||
                            c == '=' || c == '!' || c == '<' || c == '>') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
