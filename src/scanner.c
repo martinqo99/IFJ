@@ -179,8 +179,8 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n'
-                           c == '+' || c == '-' || c == '*' || c == '/'
+                else if (c == '(' || c == ')' || c == '[' || c == ']' || c == '\n' ||
+                           c == '+' || c == '-' || c == '*' || c == '/' ||
                            c == '=' || c == '!' || c == '<' || c == '>') {
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
@@ -314,7 +314,7 @@ tKeyword getToken(){
                     else {
                         ungetc(c, gFileHandler);
                         char *endptr = NULL;
-                        long ascii_tmp = strtol(ascii_val, &endptr);
+                        long ascii_tmp = strtol(ascii_val, &endptr, 16);
                         if (*endptr != '\0' || strcmp(endptr, ascii_val) == 0)
                             return LEX_ERROR;
                         pushToken((int) ascii_tmp);
