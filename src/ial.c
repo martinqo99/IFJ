@@ -58,9 +58,6 @@ int kmpSearch(tString text, tString searched){
 
     kmpCrtTable(text, table);
 
-    //for(unsigned int i = 0; i < text.len; i++)
-    //    printf("Polozka %d: %d\n", i, table[i]);
-
     while((match + index) < (int) text.len){
         if(searched.data[index] == text.data[match + index]){
             if(index == (int)searched.len - 1)
@@ -111,7 +108,6 @@ void quicksort(char *array[], int left_begin, int right_begin)
   } while (left_index < right_index);
   if (right_index > left_begin) quicksort(array, left_begin, right_index);
   if (left_index < right_begin) quicksort(array, left_index, right_begin);
-  printf("Text vevnitr: %s\n", *array);
 }
 
 ////////////////// Tabulka symbolu pomoci binarniho stromu /////////////////////
