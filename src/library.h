@@ -17,6 +17,7 @@
 
 #include <stdarg.h>
 #include "kmp.h"
+#include "quicksort.h"
 
 tLibraryData input (E_CODE *err);
 tLibraryData numeric (tLibraryData id, E_CODE *err);
