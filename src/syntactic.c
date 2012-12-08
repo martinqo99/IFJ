@@ -83,7 +83,9 @@ E_CODE parser (tSymbolTable *table)
   //tady bude jeste prvni prubeh pro pridani ID funkci do tabulky
     E_CODE err;
     if((err=findDefFunctions(table))!=ERROR_OK)return err;
+    printf("prvni pruchod ukoncen");
     return prsBody(table);
+
 }
 
 /**
@@ -160,6 +162,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         break;
         case KW_IF:{
         //checkni if/else vetev: if expression EOL <stat_list> else EOL <stat_list> end EOL
+            kw=getToken();
             if ((err = prsExpression(table, kw,&expResult)) != ERROR_OK) return err;
             jmp1=genInstr(I_FJUMP,NULL,expResult,NULL); //jump to else
             listInsertLast(&(table->currentFunc->instructions),jmp1);
@@ -181,6 +184,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         break;
         case KW_WHILE:{
         //while loop: while expression EOL <stat_list> end EOL
+            kw=getToken();
             jmp2=genInstr(I_JUMP,NULL,NULL,NULL); //jmp to start while -skokova instrukce je vygenerovana dopredu
 
             i=genInstr(I_LABEL,NULL,NULL,NULL); //navesti zacatku while
@@ -199,6 +203,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
         break;
         case KW_RETURN:{
         //return function: return expression EOL
+            kw=getToken();
             if ((err = prsExpression(table, kw,&expResult)) != ERROR_OK) return err;
             i=genInstr(I_PUSH,expResult,NULL,NULL); //push vysledek expr
             listInsertLast(&(table->currentFunc->instructions),i);

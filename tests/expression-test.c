@@ -32,8 +32,18 @@ int main(int argc, char* argv[]){
     functionInsertSymbol(table.currentFunc,x);
 
     tSymbol *result=NULL;
-    if(getToken()!=LEX_ID)printf("chyba: scanner nepoznal ID\n");
-    if(getToken()!=LEX_ASSIGN)printf("chyba: scanner nepoznal =\n");
+   // if(getToken()==LEX_L_BRACKET)printf("leva zavorka\n");
+
+
+    //if(getToken()==LEX_R_BRACKET)printf("prava zavorka\n");
+
+    if(getToken()==LEX_ID)printf("tady je ID\n");
+    if(getToken()==LEX_ASSIGN)printf("tady je =\n");
+    if(getToken()==LEX_STRING)printf("cislo\n");
+    printf("string je:%s\n",gToken.data.data);
+if(getToken()==LEX_ADDITION)printf("plus");
+    if(getToken()==LEX_STRING)printf("cislo\n");
+    if(getToken()==LEX_EOL)printf("konec radku\n");
     tKeyword kw=getToken();kw=kw;
     err=prsExpression(&table,kw,&result);
 

@@ -1,7 +1,9 @@
 #include"list.h"
 
 void initList(tList *L){
-    L->first=L->last=L->act=NULL;
+    L->first=NULL;
+    L->last=NULL;
+    L->act=NULL;
 }
 
 E_CODE listInsertLast(tList *L,void *data){
@@ -9,8 +11,8 @@ E_CODE listInsertLast(tList *L,void *data){
     if (tmp==NULL) return ERROR_COMPILATOR;
     tmp->data=data;
     tmp->next=NULL;
-    if(L->first==NULL) L->first=L->last=tmp;
-    else L->last->next=tmp;
+    if(L->first==NULL){ L->first=L->last=tmp;}
+    else {L->last->next=tmp;}
     L->last=tmp;
     return ERROR_OK;
 }
@@ -51,7 +53,7 @@ void postInsert (tList *L, void *data)	{
     else if(L->first==NULL)//seznam je prazdny  - vlozime 1.prvek
          {
             new->next=NULL;
-            L->first=new; 
+            L->first=L->last=new; 
          }
     else//seznam je neaktivni, vlozime 1.prvek
         {

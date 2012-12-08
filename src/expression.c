@@ -124,7 +124,7 @@ printf("C je:%c\n",c);
                     if((tmpData=((tExprData*)stackPop(stack)))->kw!=EXPRESSION)
                         {mmuFree(tmpData);return ERROR_SYNTAX;}
                     *result=tmpData->symbol;
-                    return ERROR_OK;
+                    break;
 
 
 
@@ -136,6 +136,8 @@ printf("C je:%c\n",c);
 
     stackDispose(stack);
     stackDestroy(stack);
+
+    printf("uspesne expression\n");
     return ERROR_OK;
 }
 
