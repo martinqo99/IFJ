@@ -176,8 +176,10 @@ tKeyword getToken(){
                     ungetc(c, gFileHandler);
                     return LEX_NUMBER;
                 }
-                else
-                    return LEX_ERROR;
+                else {
+                    ungetc(c, gFileHandler);
+                    return LEX_NUMBER;
+                }
                 break;
             //Identifikator
             case S_ID:
