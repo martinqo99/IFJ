@@ -24,6 +24,6 @@ tLibraryData print (tLibraryData id1, ...);
 tLibraryData typeOf (tLibraryData id);
 tLibraryData len (tLibraryData id);
 tLibraryData find (tLibraryData text, tLibraryData searched);
-tLibraryData sort (tLibraryData nonsorted);
+tLibraryData sort (tLibraryData nonsorted, E_CODE *err);
 
 #endif
