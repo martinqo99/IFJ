@@ -1,4 +1,4 @@
-PRJ=expression
+PRJ=quicksort
 #
 PROGS=$(PRJ)-test
 CC=gcc

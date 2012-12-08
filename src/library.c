@@ -159,7 +159,12 @@ tLibraryData find (tLibraryData text, tLibraryData searched)
  * @param   tLibraryData - retezec k serazeni
  * @return  tLibraryData - vrati serazeny string
  */
-tLibraryData sort (tLibraryData nonsorted)
+tLibraryData sort (tLibraryData nonsorted, E_CODE *err)
 {
-  // return to_co_dela_verca;
+  if (nonsorted.type != DT_STRING) {
+    *err = ERROR_INCOMPATIBLE_TYPE;
+    return {.type = DT_NIL};
+  }
+  quicksort(&nonsorted.data.sData.data, 0, nonsorted.data.sData.len-1);
+  return nonsorted;
 }

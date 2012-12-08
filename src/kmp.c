@@ -132,7 +132,7 @@ int kmpSearch(tString text, tString searched){
         }
     }
 
-    return -1;
+    return text.len;
 }
 
 /*
