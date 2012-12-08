@@ -320,6 +320,16 @@ tKeyword getToken(){
                         pushToken((int) ascii_tmp);
                         state = S_STRING;
                     }
+                }
+                else if (ascii_cnt == 2) {
+                    ungetc(c, gFileHandler);
+                    char *endptr = NULL;
+                    long ascii_tmp = strtol(ascii_val, &endptr, 16);
+                    if (*endptr != '\0' || strcmp(endptr, ascii_val) == 0)
+                        return LEX_ERROR;
+                    pushToken((int) ascii_tmp);
+                    state = S_STRING;
+                }
                 else
                     return LEX_ERROR;
                 break;
