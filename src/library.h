@@ -19,12 +19,12 @@
 #include "kmp.h"
 #include "quicksort.h"
 
-tLibraryData input (E_CODE *err);
-tLibraryData numeric (tLibraryData id, E_CODE *err);
-tLibraryData print (tLibraryData id1, ...);
-tLibraryData typeOf (tLibraryData id);
-tLibraryData len (tLibraryData id);
-tLibraryData find (tLibraryData text, tLibraryData searched);
-tLibraryData sort (tLibraryData nonsorted, E_CODE *err);
+tSymbolData input (E_CODE *err);
+tSymbolData numeric (tSymbolData id, E_CODE *err);
+tSymbolData print (tSymbolData id1, ...);
+tSymbolData typeOf (tSymbolData id);
+tSymbolData len (tSymbolData id);
+tSymbolData find (tSymbolData text, tSymbolData searched);
+tSymbolData sort (tSymbolData nonsorted, E_CODE *err);
 
 #endif
