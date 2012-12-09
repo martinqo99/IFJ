@@ -51,7 +51,7 @@ E_CODE prsExpression(tSymbolTable *table,tKeyword kw,tSymbol **result)
     do{
         a=topTerm(stack);
         b=kw;//printf("a=%d,b=%d\n",a,b);
-        if(b==LEX_ID || b==LEX_STRING || b==LEX_NUMBER ){
+        if(b==LEX_ID || b==LEX_STRING || b==LEX_NUMBER ||kw==LEX_NIL||kw==LEX_TRUE||kw==LEX_FALSE){
             c=PrecedentTable[a][LEX_ID];
             if(((tExprData*)stackTop(stack))->kw==EXPRESSION)c=0;//nesmi byt 2 termy za sebou
         }
@@ -157,7 +157,7 @@ E_CODE pushExprdata(tSymbolTable *table,tStack *stack,tKeyword kw,tSymbol *symb)
             return ERROR_SEMANTIC_VARIABLE;
         kw=EXPRESSION; //E->id
     }
-    else if (kw==LEX_STRING || kw==LEX_NUMBER)
+    else if (kw==LEX_STRING || kw==LEX_NUMBER ||kw==LEX_NIL ||kw==LEX_FALSE ||kw==LEX_TRUE)
     {
         symb=functionInsertConstant(table->currentFunc,gToken.data,kw);
         kw=EXPRESSION; //E->id
