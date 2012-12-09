@@ -21,7 +21,7 @@
 #include "errors.h"
 #include "mmu.h"
 #include "scanner.h"
-#include "syntactic.c"
+#include "syntactic.h"
 
 int main(int argc, char* argv[]){
 
@@ -52,5 +52,5 @@ int main(int argc, char* argv[]){
 
     mmuGlobalFree();
 
-    return ERROR_OK;
+    return err;
 }

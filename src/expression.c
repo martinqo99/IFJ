@@ -50,9 +50,9 @@ E_CODE prsExpression(tSymbolTable *table,tKeyword kw,tSymbol **result)
     stackPush(stack,(newExprdata(LEX_EOL,NULL)));//vlozi $ na zasobnik
     do{
         a=topTerm(stack);
-        b=kw;printf("a=%d,b=%d\n",a,b);
+        b=kw;//printf("a=%d,b=%d\n",a,b);
         if(b==LEX_ID || b==LEX_STRING || b==LEX_NUMBER ){
-            c=PrecedentTable[a][LEX_ID]; 
+            c=PrecedentTable[a][LEX_ID];
             if(((tExprData*)stackTop(stack))->kw==EXPRESSION)c=0;//nesmi byt 2 termy za sebou
         }
         else c=PrecedentTable[a][b];
@@ -61,7 +61,7 @@ E_CODE prsExpression(tSymbolTable *table,tKeyword kw,tSymbol **result)
             b=LEX_EOL;
             c=PrecedentTable[a][b];
         }
-printf("C je:%c\n",c);
+//printf("C je:%c\n",c);
         switch(c)
         {
             case '=':
@@ -128,7 +128,7 @@ printf("C je:%c\n",c);
 
 
 
-            default:printf("ERROR - default\n");return ERROR_SYNTAX;
+            default:/*printf("ERROR - default\n")*/;return ERROR_SYNTAX;
         }
 
 
@@ -137,7 +137,7 @@ printf("C je:%c\n",c);
     stackDispose(stack);
     stackDestroy(stack);
 
-    printf("uspesne expression\n");
+    //printf("uspesne expression\n");
     return ERROR_OK;
 }
 

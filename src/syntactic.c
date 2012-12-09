@@ -83,7 +83,7 @@ E_CODE parser (tSymbolTable *table)
   //tady bude jeste prvni prubeh pro pridani ID funkci do tabulky
     E_CODE err;
     if((err=findDefFunctions(table))!=ERROR_OK)return err;
-    printf("prvni pruchod ukoncen");
+    //printf("prvni pruchod ukoncen");
     return prsBody(table);
 
 }
@@ -519,7 +519,7 @@ E_CODE prsCallParams(tSymbolTable *table)
   else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL){
     if ((symb=functionInsertConstant(table->currentFunc, gToken.data, kw)) == NULL)
         return ERROR_COMPILATOR; // chyba mallocu - nenastane
-  }    
+  }
   else return ERROR_SYNTAX;
   tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
   postInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
@@ -547,7 +547,7 @@ E_CODE prsCallParamsN(tSymbolTable *table)
   else if (kw == LEX_NUMBER || kw == LEX_STRING || kw== KW_TRUE || kw== KW_FALSE || kw== KW_NIL){
     if ((symb=functionInsertConstant(table->currentFunc, gToken.data, kw)) == NULL)
       return ERROR_COMPILATOR; // error mallocu - nenastane
-  } 
+  }
   else return ERROR_SYNTAX;
   tInstr *i=genInstr(I_PUSH,symb,NULL,NULL);//pushnuti parametru
   postInsert(&(table->currentFunc->instructions),i);//instrukci vlozim za aktivni prvek
