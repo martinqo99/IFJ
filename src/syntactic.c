@@ -463,8 +463,6 @@ E_CODE prsDefParams (tSymbolTable *table)
         functionInsertSymbol(table->currentFunc,gToken.data);
         if (symbolTableSearchFunction(table,gToken.data)!=NULL)
             return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
-        i=genInstr(I_SET,(getLastSymbol(table->currentFunc)),NULL,NULL);
-        listInsertLast(&(table->currentFunc->instructions),i);
         i=genInstr(I_POP,(getLastSymbol(table->currentFunc)),NULL,NULL);
         listInsertLast(&(table->currentFunc->instructions),i);
         return prsDefParamsN(table);
@@ -490,8 +488,6 @@ E_CODE prsDefParamsN (tSymbolTable *table)
       return ERROR_SEMANTIC;//2 parametry se jmenuji stejne
     if (symbolTableSearchFunction(table,gToken.data)!=NULL)
       return ERROR_SEMANTIC;//promenna se jmenuje jako funkce
-    i=genInstr(I_SET,(getLastSymbol(table->currentFunc)),NULL,NULL);
-    listInsertLast(&(table->currentFunc->instructions),i);
     i=genInstr(I_POP,(getLastSymbol(table->currentFunc)),NULL,NULL);
     listInsertLast(&(table->currentFunc->instructions),i);
     return prsDefParamsN(table);

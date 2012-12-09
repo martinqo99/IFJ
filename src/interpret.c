@@ -19,181 +19,408 @@
  * @param   tInstr - instrukce v 3 adresnym kodu
  * @return  E_CODE - chybovy kod
  */
-E_CODE interpret (tList instr)
+E_CODE interpret(tSymbolTable *table)
 {
-  tListItem *help = instr.first;
-  E_CODE err = ERROR_OK;
-  tStack *stack;
+
+  E_CODE err;
+  tStack *stack=stackCreate();
   err = stackInit(stack);
+  err= interpret_recursive(&(table->mainFunc),stack);
+  stackDispose(stack);
+  stackDestroy(stack);
+  return err;
+}
+
+E_CODE interpret_recursive (tFunction *function, tStack *stack)
+{
+  tListItem *help = function->instructions.first;
+  E_CODE err = ERROR_OK;
+    tInstr* instrPtr = NULL;
+    tSymbol* src1SymbPtr = NULL;
+    tSymbol* src2SymbPtr = NULL;
+    tSymbol* destSymbPtr = NULL;
+    tFunction* tmpFunc = NULL;
+    tSymbolData* data1=NULL;
+    tSymbolData* data2=NULL;
+    tSymbolData* data3=NULL;
 
   while (help != NULL && err == ERROR_OK) {
     instrPtr = (tInstr*) help->data;
-    src1SymbPtr = (tSymbol*) intrPtr->src1;
-    src2SymbPtr = (tSymbol*) intrPtr->src2;
-    destSymbPtr = (tSymbol*) intrPtr->dest; // pomocny ukazatele
+    src1SymbPtr = (tSymbol*) instrPtr->src1;
+    src2SymbPtr = (tSymbol*) instrPtr->src2;
+    destSymbPtr = (tSymbol*) instrPtr->dest; // pomocny ukazatele
 
-    switch ((tInstr* help->data)->type) {
-      case I_RETURN:
+    switch (instrPtr->type) {
+      case I_RETURN: 
+        return ERROR_OK;
+        break;
+
+      case I_CALL:
+        tmpFunc=(tFunction*)instrPtr->dest;
+        tmpFunc->called=tmpFunc->called+1;
+        err=interpret_recursive(tmpFunc,stack);
+        tmpFunc->called=tmpFunc->called-1;
+        break;
+
+      case I_LABEL:
         break;
 
       case I_POP:
-        destSymbPtr = stackPop(stack);
-        //mozna jeste neco dalsiho :)
+        reallocSymbol(destSymbPtr,function);
+        data1=(tSymbolData*)stackPop(stack);
+        data2=getData(destSymbPtr,function);
+        copySymbolData(data1,data2); 
+        mmuFree(data1);
+
         break;
 
       case I_PUSH:
-        err = stackPush(stack, src1SymbPtr);
-        // ze by neco vic?
+        if (destSymbPtr==NULL)return ERROR_COMPILATOR;
+        if (destSymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        data1=getData(destSymbPtr,function);
+        err=copySymbolData(data1,data2);//nakopiruju data do data2
+        stackPush(stack,data2);
+        
         break;
 
       case I_SEMPTY:
-        err = stackDispose(stack);
+            err = stackDispose(stack);
         break;
 
       case I_MOV:
-        destSymbPtr = src1SymbPtr;
-        break;
+            if (src1SymbPtr->data==NULL) return ERROR_SEMANTIC_VARIABLE;
+            reallocSymbol(destSymbPtr,function);
+            data1=getData(src1SymbPtr,function);
+            data2=getData(destSymbPtr,function);
+            copySymbolData(data1,data2);
 
-      case I_SET:
         break;
 
       case I_ADD:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.dData = src1SymbPtr->data->data.dData + src2SymbPtr->data->data.dData;
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING) {
-          int temp = src1SymbPtr->data->data.sData.len + src2SymbPtr->data->data.sData.len;
-          destSymbPtr->data->data.sData.data = mmuMalloc(sizeof(temp*char));
-          if (destSymbPtr->data->data.sData.data == NULL) return ERROR_COMPILATOR;
-          destSymbPtr->data->data.sData.data = strcat (src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data);
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            data3->data.dData = data1->data.dData + data2->data.dData;
+            data3->type=DT_NUMBER;
         }
-        else if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_STRING) {
+        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING) {
+
+          data3->data.sData.data = mmuMalloc((data1->data.sData.len + data2->data.sData.len)*sizeof(char));
+
+          strcat (data3->data.sData.data, data1->data.sData.data);
+          strcat (data3->data.sData.data, data2->data.sData.data);
+          data3->type=DT_STRING;
+        }
+        else if (data1->type == DT_NUMBER && data2->type == DT_STRING) {
           // tady nevim
         }
         else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_NUMBER) {
           // tady nevim
+            
         }
-        else return ERROR_SEMANTIC;
+        else return ERROR_INCOMPATIBLE_TYPE;
         break;
 
       case I_SUB:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.dData = src1SymbPtr->data->data.dData - src2SymbPtr->data->data.dData;
-        else return ERROR_SEMANTIC;
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        if(data1->type!=DT_NUMBER ||data2->type!=DT_NUMBER)return ERROR_INCOMPATIBLE_TYPE;
+        data3->data.dData = data1->data.dData - data2->data.dData;
+        data3->type=DT_NUMBER;
+
         break;
 
       case I_MUL:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.dData = src1SymbPtr->data->data.dData * src2SymbPtr->data->data.dData;
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_NUMBER) {
-          // n-ta mocnina retezce, nevim
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            data3->data.dData = data1->data.dData * data2->data.dData;
+            data3->type=DT_NUMBER;
         }
-        else return ERROR_SEMANTIC;
+        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_NUMBER) {
+          // n-ta mocnina retezce
+          data3->data.sData.data = mmuMalloc((data1->data.sData.len * ((int)floor(data2->data.dData)))*sizeof(char));
+          for(int i=0;i<(int)floor(data2->data.dData);i++) strcat(data3->data.sData.data,data1->data.sData.data);
+        }
+        else return ERROR_INCOMPATIBLE_TYPE;
         break;
 
       case I_DIV:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.dData = src1SymbPtr->data->data.dData / src2SymbPtr->data->data.dData;
-        else return ERROR_SEMANTIC;
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            if (data2->data.dData==0) return ERROR_ZERO_DIVISION;
+            data3->data.dData = data1->data.dData / data2->data.dData;
+            data3->type=DT_NUMBER;
+        }
+        else return ERROR_INCOMPATIBLE_TYPE;
         break;
 
       case I_POW:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.dData = pow(src1SymbPtr->data->data.dData, src2SymbPtr->data->data.dData);
-        else return ERROR_SEMANTIC;
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER)
+          data3->data.dData = pow(data1->data.dData, data2->data.dData);
+        else return ERROR_INCOMPATIBLE_TYPE;
         break;
 
       case I_EQUAL:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData == src2SymbPtr->data->data.dData);
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
 
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING)
-          if (strcmp(src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data) == 0)
-            destSymbPtr->data->data.bData = true;
+        data3->type=DT_BOOL;
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+          data3->data.bData = (data1->data.dData == data2->data.dData);
+        }
+        else if (data1->type == DT_STRING && data2->type == DT_STRING){
+          if (strcmp(data1->data.sData.data, data2->data.sData.data) == 0)
+            data3->data.bData = true;
           else
-            destSymbPtr->data->data.bData = false;
-
-        else if (src1SymbPtr->type == DT_BOOL && src2SymbPtr->type == DT_BOOL)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData == src2SymbPtr->data->data.dData);
-
+            data3->data.bData = false;
+        }
+        else if (data1->type == DT_BOOL && data2->type == DT_BOOL){
+          data3->data.bData = (data1->data.dData == data2->data.dData);
+        }
+        else if(data1->type==DT_NIL && data2->type==DT_NIL)
+          data3->data.bData = true;
         else
-          destSymbPtr->data->data.bData = false;
+          data3->data.bData = false;
         break;
 
       case I_NEQUAL:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData != src2SymbPtr->data->data.dData);
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        data3->type=DT_BOOL;
 
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING)
-          if (strcmp(src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data) == 0)
-            destSymbPtr->data->data.bData = false;
-          else
-            destSymbPtr->data->data.bData = true;
-
-        else if (src1SymbPtr->type == DT_BOOL && src2SymbPtr->type == DT_BOOL)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData != src2SymbPtr->data->data.dData);
-
-        else
-          destSymbPtr->data->data.bData = false;
+        if(data1->type==data2->type){
+            if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+                data3->data.bData = (data1->data.dData != data2->data.dData);
+            }
+            else if (data1->type == DT_STRING && data2->type == DT_STRING){
+                if (strcmp(data1->data.sData.data, data2->data.sData.data) == 0)
+                    data3->data.bData = false;
+                else
+                    data3->data.bData = true;
+           }
+           else if (data1->type == DT_BOOL && data2->type == DT_BOOL){
+               data3->data.bData = (data1->data.dData != data2->data.dData);
+           }
+           else
+              data3->data.bData = false;
+        }
+        else data3->data.bData = true;
         break;
 
-      case I_LESS:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData < src2SymbPtr->data->data.dData);
-
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING)
-          if (strcmp(src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data) < 0)
-            destSymbPtr->data->data.bData = true;
+      case I_LESS: // <
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        data3->type=DT_BOOL;
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            data3->data.bData = (data1->data.dData < data2->data.dData);
+        }
+        else if (data1->type == DT_STRING && data2->type == DT_STRING){
+          if (strcmp(data1->data.sData.data, data2->data.sData.data) < 0)
+            data3->data.bData = true;
           else
-            destSymbPtr->data->data.bData = false;
-
+            data3->data.bData = false;
+        }
         else
-          destSymbPtr->data->data.bData = false;
+          return ERROR_INCOMPATIBLE_TYPE;
         break;
 
-      case I_ELESS:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData <= src2SymbPtr->data->data.dData);
-
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING)
-          if (strcmp(src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data) <= 0)
-            destSymbPtr->data->data.bData = true;
+      case I_ELESS: //<=
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        data3->type=DT_BOOL;
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            data3->data.bData = (data1->data.dData <= data2->data.dData);
+        }
+        else if (data1->type == DT_STRING && data2->type == DT_STRING){
+          if (strcmp(data1->data.sData.data, data2->data.sData.data) <= 0)
+            data3->data.bData = true;
           else
-            destSymbPtr->data->data.bData = false;
-
+            data3->data.bData = false;
+        }
         else
-          destSymbPtr->data->data.bData = false;
+          return ERROR_INCOMPATIBLE_TYPE;
+
         break;
 
-      case I_MORE:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData > src2SymbPtr->data->data.dData);
-
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING)
-          if (strcmp(src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data) > 0)
-            destSymbPtr->data->data.bData = true;
+      case I_MORE:  //>
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        data3->type=DT_BOOL;
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            data3->data.bData = (data1->data.dData > data2->data.dData);
+        }
+        else if (data1->type == DT_STRING && data2->type == DT_STRING){
+          if (strcmp(data1->data.sData.data, data2->data.sData.data) > 0)
+            data3->data.bData = true;
           else
-            destSymbPtr->data->data.bData = false;
-
+            data3->data.bData = false;
+        }
         else
-          destSymbPtr->data->data.bData = false;
+          return ERROR_INCOMPATIBLE_TYPE;
         break;
 
-      case I_EMORE:
-        if (src1SymbPtr->type == DT_NUMBER && src2SymbPtr->type == DT_NUMBER)
-          destSymbPtr->data->data.bData = (src1SymbPtr->data->data.dData >= src2SymbPtr->data->data.dData);
-
-        else if (src1SymbPtr->type == DT_STRING && src2SymbPtr->type == DT_STRING)
-          if (strcmp(src1SymbPtr->data->data.sData.data, src2SymbPtr->data->data.sData.data) >= 0)
-            destSymbPtr->data->data.bData = true;
+      case I_EMORE: //>=
+        if(src1SymbPtr->data==NULL ||src2SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(src1SymbPtr,function);
+        data2=getData(src2SymbPtr,function);
+        data3=getData(destSymbPtr,function);
+        data3->type=DT_BOOL;
+        if (data1->type == DT_NUMBER && data2->type == DT_NUMBER){
+            data3->data.bData = (data1->data.dData >= data2->data.dData);
+        }
+        else if (data1->type == DT_STRING && data2->type == DT_STRING){
+          if (strcmp(data1->data.sData.data, data2->data.sData.data) >= 0)
+            data3->data.bData = true;
           else
-            destSymbPtr->data->data.bData = false;
-
+            data3->data.bData = false;
+        }
         else
-          destSymbPtr->data->data.bData = false;
+          return ERROR_INCOMPATIBLE_TYPE;
         break;
 
-      case
-    }
+      case I_JUMP:
+        help=(tListItem*)instrPtr->dest;
+        break;
+
+      case I_FJUMP:
+        data1=getData(src1SymbPtr,function);
+        if (data1->type==DT_NUMBER && data1->data.dData==0.0)help=(tListItem*)instrPtr->dest;
+        else if (data1->type==DT_BOOL && data1->data.bData==false)help=(tListItem*)instrPtr->dest;
+        else if (data1->type==DT_STRING && (strcmp(data1->data.sData.data,"")==0))help=(tListItem*)instrPtr->dest;
+        else if (data1->type==DT_NIL)help=(tListItem*)instrPtr->dest;
+        break;
+
+      case I_INPUT:
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        err=input(data1);
+        stackDispose(stack); 
+        break;
+
+     case I_NUMERIC:
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        data2=(tSymbolData*)stackPop(stack);
+        err=numeric(data1,data2);
+        stackDispose(stack); 
+       break;
+    case I_PRINT:  
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        data1->type=DT_NIL;    
+        while((data1=(tSymbolData*)stackPop(stack))!=NULL){
+            print(*data1);
+        }  
+
+        break;
+    case I_TYPEOF:
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        data2=(tSymbolData*)stackPop(stack);
+        TypeOf(data1,data2);
+        stackDispose(stack); 
+       break;
+    case I_LEN:
+        if(src1SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;        
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        data2=(tSymbolData*)stackPop(stack);
+        len(data1,data2);
+        stackDispose(stack); 
+       break;
+    case I_FIND:
+        if(src1SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;        
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        data2=(tSymbolData*)stackPop(stack);
+        data3=(tSymbolData*)stackPop(stack);
+        find(data1,data2,data3);
+        stackDispose(stack); 
+       break;
+    case I_SORT:    
+        if(src1SymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;        
+        reallocSymbol(destSymbPtr,function);
+        data1=getData(destSymbPtr,function);
+        data2=(tSymbolData*)stackPop(stack);
+        err=sort(data1,data2);
+        stackDispose(stack); 
+        break;   
+
+    default: return ERROR_COMPILATOR;         
+    }//switch end
     help = help->next;
-  }
+    return err;
+  }//while end
+  return err;
+}
+
+bool isConstant(tSymbol *symb)
+{
+
+    return (symb->key.data==NULL)?TRUE:FALSE;
+}
+
+E_CODE copySymbolData(tSymbolData *src,tSymbolData *dest)
+{
+    if (src==NULL)return ERROR_SEMANTIC_VARIABLE;
+    if(dest==NULL)return ERROR_COMPILATOR;
+    dest=malloc(sizeof(tSymbolData));
+    dest->type=src->type;
+    if(src->type==DT_STRING){
+        strCopyString(&(src->data.sData),&(dest->data.sData));
+    }
+    else dest->data=src->data;
+    
+    return ERROR_OK;
+}
+void reallocSymbol(tSymbol *symb,tFunction *F)
+{
+    tSymbolData *tmpdata;
+    if(!isConstant(symb)){
+        tmpdata=mmuRealloc(symb->data,(F->called+1)*sizeof(tSymbolData));
+        symb->data=tmpdata;
+    }
+    else if (symb->data==NULL) symb->data=mmuMalloc(sizeof(tSymbolData));
+}
+tSymbolData* getData(tSymbol* symb,tFunction *F)
+{
+    
+    if(isConstant(symb)) return &(symb->data[0]);
+    else return &(symb->data[F->called]);
+
 }

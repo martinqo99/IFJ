@@ -15,8 +15,15 @@
 #ifndef INTERPRET_H_INCLUDED
 #define INTERPRET_H_INCLUDED
 
-#include "syntactic.c"
-
-E_CODE interpret(tList instr);
+#include "syntactic.h"
+#include "symbol_table.h"
+#include "library.h"
+#include <math.h>
+E_CODE interpret(tSymbolTable *);
+E_CODE interpret_recursive (tFunction *, tStack *);
+bool isConstant(tSymbol *);
+E_CODE copySymbolData(tSymbolData *,tSymbolData *);
+void reallocSymbol(tSymbol *,tFunction *);
+tSymbolData* getData(tSymbol*,tFunction *);
 
 #endif
