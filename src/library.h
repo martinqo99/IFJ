@@ -22,12 +22,12 @@
 #include "quicksort.h"
 #include "symbol_table.h"
 
-tSymbolData input (E_CODE *err);
-tSymbolData numeric (tSymbolData id, E_CODE *err);
-tSymbolData print (tSymbolData id1, ...);
-tSymbolData typeOf (tSymbolData id);
-tSymbolData len (tSymbolData id);
-tSymbolData find (tSymbolData text, tSymbolData searched);
-tSymbolData sort (tSymbolData nonsorted, E_CODE *err);
+E_CODE input (tSymbolData*);
+E_CODE numeric (tSymbolData*, tSymbolData*);
+void print (tSymbolData);
+void typeOf (tSymbolData*, tSymbolData*);
+void len (tSymbolData*, tSymbolData*);
+void find (tSymbolData*, tSymbolData*, tSymbolData*);
+E_CODE sort (tSymbolData*);
 
 #endif

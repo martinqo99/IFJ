@@ -19,18 +19,17 @@
  * @param   E_CODE - odkaz na chybovy kod
  * @return  tSymbolData - nacteny retezec
  */
-tSymbolData input (E_CODE *err)
+E_CODE input (tSymbolData *dest)
 {
   int c;
   tString save;
-  *err = strInit(&save);
-  while ((c = fgetc(stdin)) != EOF && c != '\n' && *err == ERROR_OK)
-    *err = strAdd(&save, (char) c);
+  E_CODE err = strInit(&save);
+  while ((c = fgetc(stdin)) != EOF && c != '\n' && err == ERROR_OK)
+    err = strAdd(&save, (char) c);
 
-  tSymbolData tmp;
-  tmp.type = DT_STRING;
-  tmp.data.sData = save;
-  return tmp;
+  dest->type = DT_STRING;
+  dest->data.sData = save;
+  return err;
 }
 
 /**
@@ -39,32 +38,30 @@ tSymbolData input (E_CODE *err)
  * @param   E_CODE - odkaz a chybovy kod
  * @return  tSymbolData - vrati prevedene cislo
  */
-tSymbolData numeric (tSymbolData id, E_CODE *err)
+E_CODE numeric (tSymbolData *dest, tSymbolData *id)
 {
-  tSymbolData tmp;
-  if (id.type == DT_BOOL || id.type == DT_NIL || id.type == DT_UNKNOWN) {
-    *err = ERROR_NUMERIC_CONVERSION;
-    tmp.type = DT_NIL;
-    return tmp;
+  if (id == NULL) return ERROR_OK;
+  if (id->type == DT_BOOL || id->type == DT_NIL || id->type == DT_UNKNOWN) {
+    dest->type = DT_NIL;
+    return ERROR_NUMERIC_CONVERSION;
   }
 
-  if (id.type == DT_NUMBER) {
-    tmp.type = DT_NUMBER;
-    tmp.data.dData = id.data.dData;
-    return tmp;
+  if (id->type == DT_NUMBER) {
+    dest->type = DT_NUMBER;
+    dest->data.dData = id->data.dData;
+    return ERROR_OK;
   }
 
   char *endptr = NULL;
-  tmp.type = DT_NUMBER;
-  tmp.data.dData = strtod(id.data.sData.data, &endptr);
+  dest->type = DT_NUMBER;
+  dest->data.dData = strtod(id->data.sData.data, &endptr);
 
-  if (*endptr != '\0' || strcmp(endptr, id.data.sData.data) == 0) {
-    *err = ERROR_NUMERIC_CONVERSION;
-    tmp.type = DT_NIL;
-    return tmp;
+  if (*endptr != '\0' || strcmp(endptr, id->data.sData.data) == 0) {
+    dest->type = DT_NIL;
+    return ERROR_NUMERIC_CONVERSION;
   }
 
-  return tmp;
+  return ERROR_OK;
 }
 
 /**
@@ -72,30 +69,18 @@ tSymbolData numeric (tSymbolData id, E_CODE *err)
  * @param   tSymbolData - string, cislo nebo bool; nahodny pocet
  * @return  tSymbolData - vrati DT_NIL
  */
-tSymbolData print (tSymbolData id1, ...)
+void print (tSymbolData id)
 {
-  va_list ap;
-  tSymbolData i;
-
-  va_start(ap, id1);
-  for (i = id1; ; i = va_arg(ap, tSymbolData))
-    if (i.type == DT_NIL)
-      printf("Nil");
-    else if (i.type == DT_BOOL)
-      if (i.data.iData == 0)
-        printf("false");
-      else printf("true");
-    else if (i.type == DT_NUMBER)
-      printf("%g", i.data.dData);
-    else if (i.type == DT_STRING)
-      printf ("%s", i.data.sData.data);
-    else if (i.type == DT_UNKNOWN)
-      break;
-  va_end(ap);
-
-  tSymbolData tmp;
-  tmp.type = DT_NIL;
-  return tmp;
+  if (id.type == DT_NIL)
+    printf("Nil");
+  else if (id.type == DT_BOOL)
+    if (id.data.bData == false)
+      printf("false");
+    else printf("true");
+  else if (id.type == DT_NUMBER)
+    printf("%g", id.data.dData);
+  else if (id.type == DT_STRING)
+    printf ("%s", id.data.sData.data);
 }
 
 /**
@@ -103,23 +88,21 @@ tSymbolData print (tSymbolData id1, ...)
  * @param   tSymbolData - string, cislo nebo bool
  * @return  tSymbolData - vrati identifikator promenne
  */
-tSymbolData typeOf (tSymbolData id)
+void typeOf (tSymbolData *dest, tSymbolData *id)
 {
-  tSymbolData tmp;
-  tmp.type = DT_NUMBER;
+  if (id == NULL) return;
+  dest->type = DT_NUMBER;
 
-  if (id.type == DT_NIL)
-    tmp.data.dData = 0.0;
-  else if (id.type == DT_BOOL)
-    tmp.data.dData = 1.0;
-  else if (id.type == DT_NUMBER)
-    tmp.data.dData = 3.0;
-  else if (id.type == DT_FUNCTION)
-    tmp.data.dData = 6.0;
+  if (id->type == DT_NIL)
+    dest->data.dData = 0.0;
+  else if (id->type == DT_BOOL)
+    dest->data.dData = 1.0;
+  else if (id->type == DT_NUMBER)
+    dest->data.dData = 3.0;
+  else if (id->type == DT_FUNCTION)
+    dest->data.dData = 6.0;
   else
-    tmp.data.dData = 8.0;
-
-  return tmp;
+    dest->data.dData = 8.0;
 }
 
 /**
@@ -127,19 +110,17 @@ tSymbolData typeOf (tSymbolData id)
  * @param   tSymbolData - string, cislo nebo bool
  * @return  tSymbolData - vrati delku retezce
  */
-tSymbolData len (tSymbolData id)
+void len (tSymbolData *dest, tSymbolData *id)
 {
-  tSymbolData tmp;
-  if (id.type == DT_STRING) {
-    tmp.type = DT_NUMBER;
-    tmp.data.dData = (double) strlen(id.data.sData.data);
+  if (id == NULL) return;
+  if (id->type == DT_STRING) {
+    dest->type = DT_NUMBER;
+    dest->data.dData = (double) strlen(id->data.sData.data);
   }
   else {
-    tmp.type = DT_NUMBER;
-    tmp.data.dData = 0.0;
+    dest->type = DT_NUMBER;
+    dest->data.dData = 0.0;
   }
-
-  return tmp;
 }
 
 /**
@@ -147,12 +128,11 @@ tSymbolData len (tSymbolData id)
  * @param   tSymbolData - retezce, v prvnim se hleda, druhy se hleda v prvnim
  * @return  tSymbolData - vrati pozici v prvnim stringu, na ktere nasel druhy string
  */
-tSymbolData find (tSymbolData text, tSymbolData searched)
+void find (tSymbolData *dest, tSymbolData *text, tSymbolData *searched)
 {
-  tSymbolData tmp;
-  tmp.type = DT_NUMBER;
-  tmp.data.dData = (double) kmpSearch(text.data.sData, searched.data.sData);
-  return tmp;
+  if (text == NULL || searched == NULL) return;
+  dest->type = DT_NUMBER;
+  dest->data.dData = (double) kmpSearch(text->data.sData, searched->data.sData);
 }
 
 /**
@@ -160,13 +140,14 @@ tSymbolData find (tSymbolData text, tSymbolData searched)
  * @param   tSymbolData - retezec k serazeni
  * @return  tSymbolData - vrati serazeny string
  */
-tSymbolData sort (tSymbolData nonsorted, E_CODE *err)
+E_CODE sort (tSymbolData *text)
 {
-  if (nonsorted.type != DT_STRING) {
-    *err = ERROR_INCOMPATIBLE_TYPE;
-    nonsorted.type = DT_NIL;
+  if (text == NULL) return ERROR_OK;
+  if (text->type != DT_STRING) {
+    text->type = DT_NIL;
+    return ERROR_INCOMPATIBLE_TYPE;
   }
   else
-    quicksort(&nonsorted.data.sData.data, 0, nonsorted.data.sData.len-1);
-  return nonsorted;
+    quicksort(&text->data.sData.data, 0, text->data.sData.len-1);
+  return ERROR_OK;
 }
