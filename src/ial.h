@@ -33,7 +33,6 @@ typedef struct tBTreeNode {
 typedef struct{
     tBTNode root;
     tBTNode lastAdded;
-    //nevim co jeste sem dat
 }tBTree;
 
 typedef enum tdatatype{
@@ -55,7 +54,7 @@ typedef union tdata{
 typedef struct tsymboldata{
   tDataType type;
   tData data;
-} tSymbolData, tLibraryData; // to, ze sem to pojmenoval tak jak sem to pojmenoval melo vyznam, VAZNE
+} tSymbolData;
 
 typedef struct tsymbol{
   tString key;
@@ -117,7 +116,7 @@ typedef enum {
 }tItype;
 
 typedef struct {
-   int type;//bude ENUM
+   int type;
    void *dest;
    void *src1;
    void *src2;

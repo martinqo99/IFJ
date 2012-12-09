@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   main.c
- * 
- * Popis:    
- * 
- * 
- * Datum:    16.11.2012
- * 
+ *
+ * Popis:
+ *
+ *
+ * Datum:    9.12.2012
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -21,33 +21,36 @@
 #include "errors.h"
 #include "mmu.h"
 #include "scanner.h"
+#include "syntactic.c"
 
 int main(int argc, char* argv[]){
 
     //Inicializace MMU
-    mmuInit(); 
-    
+    mmuInit();
+
     if(argc != 2){
         fprintf(stderr, "Invalid arguments\n");
         return ERROR_COMPILATOR;
     }
-    
+
     if(!(gFileHandler = mmuFopen(argv[1], "r"))){
         fprintf(stderr, "Cannot open input file\n");
         return ERROR_COMPILATOR;
     }
-   
-    
-    /*
-      Test area
-    */
 
-    
+    initToken(&gToken);
+    E_CODE err = ERROR_OK;
+
+    tSymbolTable table;
+    symbolTableInit(&table);
+
+    err = parser(&table);
+
     mmuFclose(gFileHandler);
-    
-    mmuDump();
-    
+
+    //mmuDump();
+
     mmuGlobalFree();
-    
+
     return ERROR_OK;
 }

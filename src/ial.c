@@ -59,12 +59,12 @@ int kmpSearch(tString text, tString searched){
     while((match + index) < (int) text.len){
         if(searched.data[index] == text.data[match + index]){
             if(index == (int)searched.len - 1)
-                return match;
+                return match; // nalezeno
 
             index++;
         }
         else{
-            match += index - table[index];
+            match += index - table[index]; // posun dale v prvnim
 
             if(table[index] > -1)
                 index = table[index];
@@ -73,7 +73,7 @@ int kmpSearch(tString text, tString searched){
         }
     }
 
-    return -1;
+    return -1; // nenalezeno
 }
 
 /////////////////////// Quicksort //////////////////////////////////////////////
@@ -90,39 +90,25 @@ void quicksort(char *array[], int left_begin, int right_begin)
   int left_index = left_begin, right_index = right_begin, pom;
   do {
     while ((*array)[left_index] < pivot && left_index < right_begin)
-      left_index++;
+      left_index++; // posun leveho indexu
     while ((*array)[right_index] > pivot && right_index > left_begin)
-      right_index--;
+      right_index--; // posun praveho indexu
 
     if (left_index <= right_index) {
       pom = (*array)[left_index];
       (*array)[left_index] = (*array)[right_index];
-      (*array)[right_index] = pom;
+      (*array)[right_index] = pom; // presun hodnot
       if (left_index < right_begin)
         left_index++;
       if (right_index > left_begin)
         right_index--;
     }
-  } while (left_index < right_index);
+  } while (left_index < right_index); // nasleduje rekurzivni volani
   if (right_index > left_begin) quicksort(array, left_begin, right_index);
   if (left_index < right_begin) quicksort(array, left_index, right_begin);
 }
 
 ////////////////// Tabulka symbolu pomoci binarniho stromu /////////////////////
-
-typedef struct tBTreeNode {
-    struct tBTreeNode *right;
-    struct tBTreeNode *left;
-    void *data;
-    tString *key;
-    int height;
-  } *tBTNode;
-
-
-typedef struct{
-    tBTNode root;
-    tBTNode lastAdded;
-}tBTree;
 
 int Max( int x, int y )
 {
@@ -226,9 +212,9 @@ void symbolTableInit(tSymbolTable* symbolTable){
 
 E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName){
     tFunction *func=mmuMalloc(sizeof(tFunction));
-    strCopyString(&functionName,&(func->name));
-    btInit(&(func->symbols));
-    initList(&(func->instructions));
+    strCopyString(&functionName,&(func->name)); // jmeno fce
+    btInit(&(func->symbols)); // symboly
+    initList(&(func->instructions)); // instrukce
     func->called=0;
     E_CODE err=BTInsert(&(symbolTable->functions),&(func->name),func);
     if (err!=ERROR_OK){strFree(&(func->name));mmuFree(func);}

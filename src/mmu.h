@@ -3,12 +3,12 @@
  * Projekt:  Implementace interpretu imperativniho jazyka
  * Varianta: a/1/I
  * Soubor:   mmu.h (Memory management unit)
- * 
- * Popis:    
- * 
- * 
+ *
+ * Popis:
+ *
+ *
  * Datum:    28.11.2012
- * 
+ *
  * Autori:   Frantisek Kolacek   <xkolac12@stud.fit.vutbr.cz>
  *           Matyas Petr         <xmatya03@stud.fit.vutbr.cz>
  *           Muzikarova Michaela <xmuzik04@stud.fit.vutbr.cz>
@@ -36,22 +36,22 @@ typedef struct mmutableitem{
     //Klic datoveho bloku - adresa
     intptr_t key;
     tMMUTableItemType type;
-    
+
     //Ukazatel na datovy blok
     void* ptr;
-    unsigned long allocated;    
-    
+    unsigned long allocated;
+
     struct mmutableitem* next;
 } *tMMUTableItemPtr, tMMUTableItem;
 
 typedef struct mmutable{
     unsigned int size;
-    tMMUTableItem** data;    
+    tMMUTableItem** data;
 } tMMUTable;
 
 typedef struct mmu{
     tMMUTable* table;
-    
+
     //Pocitadla
     unsigned long mallocs;
     unsigned long reallocs;
@@ -59,7 +59,7 @@ typedef struct mmu{
     unsigned long fopens;
     unsigned long frees;
     unsigned long fcloses;
-    
+
     unsigned long allocated;
 } tMMU;
 
@@ -74,7 +74,7 @@ void* mmuFopen(const char*, const char*);
 void mmuFree(void*);
 void mmuFclose(void*);
 void mmuGlobalFree();
-void mmuDump();
+//void mmuDump();
 
 //Funkce pro praci s hashovaci tabulkou
 tMMUTable* mmuTableCreate();
