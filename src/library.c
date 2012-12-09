@@ -140,14 +140,15 @@ void find (tSymbolData *dest, tSymbolData *text, tSymbolData *searched)
  * @param   tSymbolData - retezec k serazeni
  * @return  tSymbolData - vrati serazeny string
  */
-E_CODE sort (tSymbolData *text)
+E_CODE sort (tSymbolData *dest, tSymbolData *text)
 {
   if (text == NULL) return ERROR_OK;
   if (text->type != DT_STRING) {
-    text->type = DT_NIL;
+    dest->type = DT_NIL;
     return ERROR_INCOMPATIBLE_TYPE;
   }
   else
-    quicksort(&text->data.sData.data, 0, text->data.sData.len-1);
+    dest->data.sData = strCreate(text->data.sData.data);
+    quicksort(&dest->data.sData.data, 0, text->data.sData.len-1);
   return ERROR_OK;
 }

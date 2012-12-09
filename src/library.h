@@ -28,6 +28,6 @@ void print (tSymbolData);
 void typeOf (tSymbolData*, tSymbolData*);
 void len (tSymbolData*, tSymbolData*);
 void find (tSymbolData*, tSymbolData*, tSymbolData*);
-E_CODE sort (tSymbolData*);
+E_CODE sort (tSymbolData*, tSymbolData*);
 
 #endif
