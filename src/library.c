@@ -17,9 +17,9 @@
 /**
  * @info      Fce ziska vstup od uzivatele
  * @param   E_CODE - odkaz na chybovy kod
- * @return  tLibraryData - nacteny retezec
+ * @return  tSymbolData - nacteny retezec
  */
-tLibraryData input (E_CODE *err)
+tSymbolData input (E_CODE *err)
 {
   int c;
   tString save;
@@ -27,7 +27,7 @@ tLibraryData input (E_CODE *err)
   while ((c = fgetc(stdin)) != EOL && c != '\n' && *err == ERROR_OK)
     *err = strAdd(&save, (char) c);
 
-  tLibraryData tmp;
+  tSymbolData tmp;
   tmp.type = DT_STRING;
   tmp.data.sData = save;
   return tmp;
@@ -35,13 +35,13 @@ tLibraryData input (E_CODE *err)
 
 /**
  * @info      Fce prevede string nebo cislo na cislo
- * @param   tLibraryData - string, cislo nebo bool
+ * @param   tSymbolData - string, cislo nebo bool
  * @param   E_CODE - odkaz a chybovy kod
- * @return  tLibraryData - vrati prevedene cislo
+ * @return  tSymbolData - vrati prevedene cislo
  */
-tLibraryData numeric (tLibraryData id, E_CODE *err)
+tSymbolData numeric (tSymbolData id, E_CODE *err)
 {
-  tLibraryData tmp;
+  tSymbolData tmp;
   if (id.type == DT_BOOL || id.type == DT_NIL || id.type == DT_UNKNOWN) {
     *err = ERROR_NUMERIC_CONVERSION;
     tmp.type = DT_NIL;
@@ -69,16 +69,16 @@ tLibraryData numeric (tLibraryData id, E_CODE *err)
 
 /**
  * @info      Fce vytiskne vsechno co prislo na vstup
- * @param   tLibraryData - string, cislo nebo bool; nahodny pocet
- * @return  tLibraryData - vrati DT_NIL
+ * @param   tSymbolData - string, cislo nebo bool; nahodny pocet
+ * @return  tSymbolData - vrati DT_NIL
  */
-tLibraryData print (tLibraryData id1, ...)
+tSymbolData print (tSymbolData id1, ...)
 {
   va_list ap;
-  tLibraryData i;
+  tSymbolData i;
 
   va_start(ap, id1);
-  for (i = id1; ; i = va_arg(ap, tLibraryData))
+  for (i = id1; ; i = va_arg(ap, tSymbolData))
     if (i.type == DT_NIL)
       printf("Nil");
     else if (i.type == DT_BOOL)
@@ -93,19 +93,19 @@ tLibraryData print (tLibraryData id1, ...)
       break;
   va_end(ap);
 
-  tLibraryData tmp;
+  tSymbolData tmp;
   tmp.type = DT_NIL;
   return tmp;
 }
 
 /**
  * @info      Fce vrati ciselny identifikator datoveho typu promenne
- * @param   tLibraryData - string, cislo nebo bool
- * @return  tLibraryData - vrati identifikator promenne
+ * @param   tSymbolData - string, cislo nebo bool
+ * @return  tSymbolData - vrati identifikator promenne
  */
-tLibraryData typeOf (tLibraryData id)
+tSymbolData typeOf (tSymbolData id)
 {
-  tLibraryData tmp;
+  tSymbolData tmp;
   tmp.type = DT_NUMBER;
 
   if (id.type == DT_NIL)
@@ -124,12 +124,12 @@ tLibraryData typeOf (tLibraryData id)
 
 /**
  * @info      Fce vrati delku retezce, jinak vrati 0.0
- * @param   tLibraryData - string, cislo nebo bool
- * @return  tLibraryData - vrati delku retezce
+ * @param   tSymbolData - string, cislo nebo bool
+ * @return  tSymbolData - vrati delku retezce
  */
-tLibraryData len (tLibraryData id)
+tSymbolData len (tSymbolData id)
 {
-  tLibraryData tmp;
+  tSymbolData tmp;
   if (id.type == DT_STRING) {
     tmp.type = DT_NUMBER
     tmp.data.dData = (double) strlen(id.data.sData.data);
@@ -143,12 +143,12 @@ tLibraryData len (tLibraryData id)
 
 /**
  * @info      Fce hleda podretezec v retezci
- * @param   tLibraryData - retezce, v prvnim se hleda, druhy se hleda v prvnim
- * @return  tLibraryData - vrati pozici v prvnim stringu, na ktere nasel druhy string
+ * @param   tSymbolData - retezce, v prvnim se hleda, druhy se hleda v prvnim
+ * @return  tSymbolData - vrati pozici v prvnim stringu, na ktere nasel druhy string
  */
-tLibraryData find (tLibraryData text, tLibraryData searched)
+tSymbolData find (tSymbolData text, tSymbolData searched)
 {
-  tLibraryData tmp;
+  tSymbolData tmp;
   tmp.type = DT_NUMBER;
   tmp.data.dData = (double) kmpSearch(text.data.sData, searched.data.sData)
   return tmp;
@@ -156,10 +156,10 @@ tLibraryData find (tLibraryData text, tLibraryData searched)
 
 /**
  * @info      Fce seradi hodnoty ve stringu
- * @param   tLibraryData - retezec k serazeni
- * @return  tLibraryData - vrati serazeny string
+ * @param   tSymbolData - retezec k serazeni
+ * @return  tSymbolData - vrati serazeny string
  */
-tLibraryData sort (tLibraryData nonsorted, E_CODE *err)
+tSymbolData sort (tSymbolData nonsorted, E_CODE *err)
 {
   if (nonsorted.type != DT_STRING) {
     *err = ERROR_INCOMPATIBLE_TYPE;
