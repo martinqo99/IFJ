@@ -99,7 +99,7 @@ E_CODE findDefFunctions(tSymbolTable *table)
     tKeyword kw;
     while((kw=getToken())!=LEX_EOF){
         if(kw==LEX_UNKNOWN || kw==LEX_ERROR || kw==LEX_RESERVED)
-            return ERROR_LEX;
+            return ERROR_SYNTAX;
         if(kw==KW_FUNCTION){
             if(getToken()==LEX_ID){
                 err=symbolTableInsertFunction(table,gToken.data);
