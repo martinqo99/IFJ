@@ -19,6 +19,8 @@
 #include "symbol_table.h"
 #include "library.h"
 #include <math.h>
+#include "quicksort.h"
+#include "kmp.h"
 E_CODE interpret(tSymbolTable *);
 E_CODE interpret_recursive (tFunction *, tStack *);
 bool isConstant(tSymbol *);

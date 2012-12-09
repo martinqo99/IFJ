@@ -352,7 +352,7 @@ E_CODE interpret_recursive (tFunction *function, tStack *stack)
         reallocSymbol(destSymbPtr,function);
         data1=getData(destSymbPtr,function);
         data2=(tSymbolData*)stackPop(stack);
-        TypeOf(data1,data2);
+        typeOf(data1,data2);
         stackDispose(stack); 
        break;
     case I_LEN:
