@@ -98,9 +98,11 @@ E_CODE findDefFunctions(tSymbolTable *table)
     E_CODE err=ERROR_OK;
     tKeyword kw;
     while((kw=getToken())!=LEX_EOF){
-        if(kw==LEX_UNKNOWN || kw==LEX_ERROR || kw==LEX_RESERVED)
+        if(kw==LEX_UNKNOWN || kw==LEX_ERROR)
+            return ERROR_LEX;
+        else if (kw==LEX_RESERVED)
             return ERROR_SYNTAX;
-        if(kw==KW_FUNCTION){
+        else if(kw==KW_FUNCTION){
             if(getToken()==LEX_ID){
                 err=symbolTableInsertFunction(table,gToken.data);
                 if (err==ERROR_INS_EXIST) return ERROR_SEMANTIC; //dvojita definice fce
