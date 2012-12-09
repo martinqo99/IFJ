@@ -206,6 +206,9 @@ E_CODE BTInsert (tBTree *T,tString *key, void *data) {
 }
 
 void symbolTableInit(tSymbolTable* symbolTable){
+    btInit(&(symbolTable->mainFunc.symbols));
+    initList(&(symbolTable->mainFunc.constants));
+    initList(&(symbolTable->mainFunc.instructions));
     btInit(&(symbolTable->functions));
     symbolTable->currentFunc=&(symbolTable->mainFunc);
 }
@@ -215,6 +218,7 @@ E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName
     strCopyString(&functionName,&(func->name)); // jmeno fce
     btInit(&(func->symbols)); // symboly
     initList(&(func->instructions)); // instrukce
+    initList(&(func->constants));
     func->called=0;
     E_CODE err=BTInsert(&(symbolTable->functions),&(func->name),func);
     if (err!=ERROR_OK){strFree(&(func->name));mmuFree(func);}
@@ -267,6 +271,7 @@ tSymbol* getLastConstant(tFunction* F){
 }
 
 tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type){
+    if(function==NULL)return NULL;
     tSymbol *symb=mmuMalloc(sizeof(tSymbol));
     if (symb == NULL) return NULL;
 
@@ -277,7 +282,7 @@ tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type)
         case LEX_STRING:{
             symb->data->type = DT_STRING;
             if (strCopyString(&data,&(symb->data->data.sData)) != ERROR_OK)
-              return NULL;
+              {return NULL;}
         }
         break;
         case LEX_NUMBER:{
@@ -308,6 +313,7 @@ tSymbol * functionInsertConstant(tFunction *function,tString data,tKeyword type)
         case LEX_ID:{ //funkce pro TypeOf
             symb->data->type = DT_FUNCTION;
         }
+        break;
         default: return NULL;
     }
     symb->key.data=NULL;
