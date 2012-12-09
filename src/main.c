@@ -22,6 +22,7 @@
 #include "mmu.h"
 #include "scanner.h"
 #include "syntactic.h"
+#include "interpret.h"
 
 int main(int argc, char* argv[]){
 
@@ -45,6 +46,9 @@ int main(int argc, char* argv[]){
     symbolTableInit(&table);
 
     err = parser(&table);
+
+    if (err == ERROR_OK)
+      err = interpret(&table);
 
     mmuFclose(gFileHandler);
 
