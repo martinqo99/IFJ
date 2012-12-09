@@ -210,6 +210,7 @@ void symbolTableInit(tSymbolTable* symbolTable){
     initList(&(symbolTable->mainFunc.constants));
     initList(&(symbolTable->mainFunc.instructions));
     btInit(&(symbolTable->functions));
+    symbolTable->mainFunc.called=0;
     symbolTable->currentFunc=&(symbolTable->mainFunc);
 }
 
@@ -219,7 +220,7 @@ E_CODE symbolTableInsertFunction(tSymbolTable* symbolTable, tString functionName
     btInit(&(func->symbols)); // symboly
     initList(&(func->instructions)); // instrukce
     initList(&(func->constants));
-    func->called=0;
+    func->called=1;
     E_CODE err=BTInsert(&(symbolTable->functions),&(func->name),func);
     if (err!=ERROR_OK){strFree(&(func->name));mmuFree(func);}
     return err;

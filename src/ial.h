@@ -96,12 +96,9 @@ typedef enum {
     I_MORE = LEX_GREATER,		// >
     I_EMORE = LEX_GREATER_EQUAL,		// >=
 //skoky - snad nebudou potreba vsechny
-    I_LABEL,		// jenom labeldsfds
-    I_TJUMP,		//true jump
+    I_LABEL,		// navesti
     I_FJUMP,		//false jump
     I_JUMP,		//nepodmineny jump
-    I_GOTO,
-    I_FCEJUMP,
 
 //vestavene fce
     I_INPUT,
