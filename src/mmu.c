@@ -264,11 +264,13 @@ void mmuGlobalFree(){
 
     mmuTable.table = NULL;
 
+    /*
     printf("\n\n---------------------------- MMU report ---------------------------\n");
     printf("Memmory (malloc/calloc/realloc/free): %lu/%lu/%lu/%lu\n", mmuTable.mallocs, mmuTable.callocs, mmuTable.reallocs, mmuTable.frees);
     printf("Files (open/close): %lu/%lu\n", mmuTable.fopens, mmuTable.fcloses);
     printf("Total allocated memory: %lu bytes\n", mmuTable.allocated);
     printf("-------------------------------------------------------------------\n");
+    */
 }
 
 /*void mmuDump(){
