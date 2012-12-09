@@ -15,9 +15,12 @@
 #ifndef LIBRARY_H_INCLUDED
 #define LIBRARY_H_INCLUDED
 
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include "kmp.h"
 #include "quicksort.h"
+#include "symbol_table.h"
 
 tSymbolData input (E_CODE *err);
 tSymbolData numeric (tSymbolData id, E_CODE *err);

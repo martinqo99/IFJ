@@ -24,7 +24,7 @@ tSymbolData input (E_CODE *err)
   int c;
   tString save;
   *err = strInit(&save);
-  while ((c = fgetc(stdin)) != EOL && c != '\n' && *err == ERROR_OK)
+  while ((c = fgetc(stdin)) != EOF && c != '\n' && *err == ERROR_OK)
     *err = strAdd(&save, (char) c);
 
   tSymbolData tmp;
@@ -131,8 +131,9 @@ tSymbolData len (tSymbolData id)
 {
   tSymbolData tmp;
   if (id.type == DT_STRING) {
-    tmp.type = DT_NUMBER
+    tmp.type = DT_NUMBER;
     tmp.data.dData = (double) strlen(id.data.sData.data);
+  }
   else {
     tmp.type = DT_NUMBER;
     tmp.data.dData = 0.0;
@@ -150,7 +151,7 @@ tSymbolData find (tSymbolData text, tSymbolData searched)
 {
   tSymbolData tmp;
   tmp.type = DT_NUMBER;
-  tmp.data.dData = (double) kmpSearch(text.data.sData, searched.data.sData)
+  tmp.data.dData = (double) kmpSearch(text.data.sData, searched.data.sData);
   return tmp;
 }
 
@@ -163,8 +164,9 @@ tSymbolData sort (tSymbolData nonsorted, E_CODE *err)
 {
   if (nonsorted.type != DT_STRING) {
     *err = ERROR_INCOMPATIBLE_TYPE;
-    return {.type = DT_NIL};
+    nonsorted.type = DT_NIL;
   }
-  quicksort(&nonsorted.data.sData.data, 0, nonsorted.data.sData.len-1);
+  else
+    quicksort(&nonsorted.data.sData.data, 0, nonsorted.data.sData.len-1);
   return nonsorted;
 }
