@@ -137,7 +137,7 @@ E_CODE prsExpression(tSymbolTable *table,tKeyword kw,tSymbol **result)
     stackDispose(stack);
     stackDestroy(stack);
 
-    //printf("uspesne expression\n");
+    printf("uspesne expression\n");
     return ERROR_OK;
 }
 

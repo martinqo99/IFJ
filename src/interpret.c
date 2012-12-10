@@ -75,12 +75,13 @@ E_CODE interpret_recursive (tFunction *function, tStack *stack)
         break;
 
       case I_PUSH:
-        if (destSymbPtr==NULL)return ERROR_COMPILATOR;
+        //if (destSymbPtr==NULL)return ERROR_COMPILATOR;
         if (destSymbPtr->data==NULL)return ERROR_SEMANTIC_VARIABLE;
-        data1=getData(destSymbPtr,function);
-        err=copySymbolData(data1,data2);//nakopiruju data do data2
-        stackPush(stack,data2);
-        
+        data1=getData(destSymbPtr,function);          ;
+        data2=mmuMalloc(sizeof(tSymbolData));
+        err=copySymbolData(data1,data2);//nakopiruju data do data2 
+        stackPush(stack,data2); 
+        //printf("na scack jsem pushnul:%d",((tSymbolData*)stackTop(stack))->type);
         break;
 
       case I_SEMPTY:
@@ -384,7 +385,7 @@ E_CODE interpret_recursive (tFunction *function, tStack *stack)
     default: return ERROR_COMPILATOR;         
     }//switch end
     help = help->next;
-    return err;
+
   }//while end
   return err;
 }
@@ -398,9 +399,10 @@ bool isConstant(tSymbol *symb)
 E_CODE copySymbolData(tSymbolData *src,tSymbolData *dest)
 {
     if (src==NULL)return ERROR_SEMANTIC_VARIABLE;
-    if(dest==NULL)return ERROR_COMPILATOR;
-    dest=malloc(sizeof(tSymbolData));
+    //if(dest==NULL)return ERROR_COMPILATOR;
+    //dest=malloc(sizeof(tSymbolData));
     dest->type=src->type;
+ 
     if(src->type==DT_STRING){
         strCopyString(&(src->data.sData),&(dest->data.sData));
     }
