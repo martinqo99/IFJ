@@ -43,6 +43,7 @@ E_CODE interpret_recursive (tFunction *function, tStack *stack)
     tSymbolData* data1=NULL;
     tSymbolData* data2=NULL;
     tSymbolData* data3=NULL;
+    int str_od,str_do;
 
   while (help != NULL && err == ERROR_OK) {
     instrPtr = (tInstr*) help->data;
@@ -381,7 +382,19 @@ E_CODE interpret_recursive (tFunction *function, tStack *stack)
         err=sort(data1,data2);
         stackDispose(stack); 
         break;   
-
+    case I_STRING:
+        reallocSymbol(destSymbPtr,function);
+        data3=(tSymbolData*)stackPop(stack);
+        data1=getData(src1SymbPtr,function);
+        if(data1==NULL) str_od=0;else str_od=(int)floor(data1->data.dData);
+        data2=getData(src2SymbPtr,function);
+        if(data2==NULL) str_do=strlen(data3->data.sData.data);else str_do=(int)floor(data2->data.dData);
+        data1=getData(destSymbPtr,function);
+        data1->type=DT_STRING;
+        data1->data.sData.data=mmuMalloc((str_do*sizeof(char))+1);
+        strncpy(data1->data.sData.data,data3->data.sData.data+str_od,str_do);
+        data1->data.sData.data[str_do+1]='\0';
+        break;
     default: return ERROR_COMPILATOR;         
     }//switch end
     help = help->next;

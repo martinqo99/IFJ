@@ -150,7 +150,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
     tInstr *i,*jmp1,*jmp2;
     tSymbol *expResult;
     switch (kw){
-        case LEX_ID:{printf("assign");
+        case LEX_ID:{
         //tady je treba pridat ID do tabulky, jestli tam uz neni
         //checkni =, zavolej prsAssign
             if(functionInsertSymbol(table->currentFunc,gToken.data)!=ERROR_INS_EXIST){
@@ -170,7 +170,7 @@ E_CODE prsCommand (tSymbolTable *table, tKeyword kw)
             listInsertLast(&(table->currentFunc->instructions),jmp1);
             //statlist IF vetve
             if ((err = prsStatlist(table)) != ERROR_ELSE) return err; //posledni token je else
-            if (getToken() != LEX_EOL) return ERROR_SYNTAX; printf("jsem za else EOL");
+            if (getToken() != LEX_EOL) return ERROR_SYNTAX; 
             jmp2=genInstr(I_JUMP,NULL,NULL,NULL); //jump to end of else
             listInsertLast(&(table->currentFunc->instructions),jmp2);
             i=genInstr(I_LABEL,NULL,NULL,NULL); //navesti zacatku else
@@ -307,7 +307,7 @@ E_CODE prsAssign (tSymbolTable *table,tSymbol *dest)
             listInsertLast(&(table->currentFunc->instructions),i);
         }
         break;
-        case KW_PRINT:{printf("pred print params");
+        case KW_PRINT:{
             if (getToken() != LEX_L_BRACKET) return ERROR_SYNTAX;
             if((err=prsCallParams(table))!=ERROR_OK) return err;
             if (getToken() != LEX_EOL) return ERROR_SYNTAX;

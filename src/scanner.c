@@ -223,8 +223,7 @@ tKeyword getToken(){
                 if(c == EOF)
                     return LEX_EOF;
                 else if(c == '\n'){
-                    state = S_START;
-                    resetToken();
+                    return LEX_EOL;
                 }
                 break;
             //Blokovy komentar
